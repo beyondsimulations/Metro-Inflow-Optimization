@@ -17,7 +17,7 @@ using SparseArrays
 # parameters for the actual model
 safety = 0.7            # safety factor that limits the arc capacity
 minutes_in_period = 60  # minutes in each period (in 15 minute intervals!)
-max_enter = 100         # number of maximal entries per minute per station
+max_enter = 200         # number of maximal entries per minute per station
 rate_closed = 100       # taxi "queue removal rate" per minute during closed metro hours
 closed = Hour.(3:5)     # hours during which the metro operation is closed
 scaling = 1.0           # scaling of the metro queue (to test lower or higher demand)
@@ -172,21 +172,37 @@ set_attribute(im, "presolve", "on")
 set_attribute(im, "time_limit", 120.0)
 set_attribute(im, "mip_rel_gap", 0.0)
 
+max_shift = 6
+
 println("Preparing optimization model.")
 @variable(im, 
-    X[o=1:modelInstance.nr_nodes,p=1:modelInstance.nr_periods] .>= 0
+    X[o=1:modelInstance.nr_nodes,p=1:modelInstance.nr_periods,u=max(p-max_shift,1):p] .>= 0
 )
+
+#for p in 1:modelInstance.nr_periods
+#    for u in 1:modelInstance.nr_periods
+#        if u > p || u < p-max_shift
+#            fix.(X[:,p,u], 0; force=true)
+#        end
+#    end
+#end
 
 println("Preparing objective function.")
 @objective(im, Min, 
-    sum(sum(sum(modelInstance.demand_od_in_period[o,d,p] for d in 1:modelInstance.nr_nodes) - X[o,p] *  minutes_in_period)^2 for o in 1:modelInstance.nr_nodes, p in 1:modelInstance.nr_periods)
+    sum(sum(sum(modelInstance.demand_od_in_period[o,d,uu] for d in 1:modelInstance.nr_nodes, uu in 1:u) - sum(X[o,p,uu] *  minutes_in_period for p in u:min(u+max_shift,nr_periods), uu in max(p-max_shift,1):p)) for o in 1:modelInstance.nr_nodes, u in 1:modelInstance.nr_periods)
+)
+
+println("Prepare constraint to prevent a negative dispatch.")
+@constraint(
+    im, queue[o in 1:modelInstance.nr_nodes, u in 1:modelInstance.nr_periods],
+    sum(sum(modelInstance.demand_od_in_period[o,d,u] for d in 1:modelInstance.nr_nodes) - sum(X[o,p,u] *  minutes_in_period for p in u:min(u+max_shift,nr_periods))) >= 0
 )
 
 println("Preparing capacity constraints.")
-for t in 1:minutes_in_period:modelInstance.nr_minutes 
+for t in 1:modelInstance.nr_minutes 
     for a in 1:modelInstance.nr_arcs
         @constraint(im,
-            sum(X[o,p] * modelInstance.demand_od_in_period[o,d,p]/sum(modelInstance.demand_od_in_period[o,:,p]) for (o,d,p) in modelInstance.shift[t,a] if modelInstance.demand_od_in_period[o,d,p] > 0) <=  modelInstance.capacity_arcs[a] * modelInstance.safety_factor
+            sum(X[o,p,u] * modelInstance.demand_od_in_period[o,d,u]/sum(modelInstance.demand_od_in_period[o,:,u]) for (o,d,p) in modelInstance.shift[t,a], u in max(p-max_shift,1):p if modelInstance.demand_od_in_period[o,d,u] > 0) <=  modelInstance.capacity_arcs[a] * modelInstance.safety_factor
         )
     end
 end
@@ -194,7 +210,7 @@ end
 println("Preparing capacity inflow constraints.")
 @constraint(
     im, capacity_station[o in 1:modelInstance.nr_nodes, p in 1:modelInstance.nr_periods],
-    X[o,p] <= modelInstance.max_entry_origin
+    sum(X[o,p,u] for u in max(p-max_shift,1):p) <= modelInstance.max_entry_origin
 )
 
 println("Starting optimization.")
@@ -203,7 +219,13 @@ optimize!(im)
 rem_queue_steps = zeros(Float64, nr_nodes, nr_periods)
 queue_steps = sum(modelInstance.demand_od_in_period[:,:,:], dims=2)[:,1,:]
 add_queue_steps = copy(queue_steps)
-inflow = value.(X) .* minutes_in_period
+inflow_raw = zeros(Float64,nr_nodes,nr_periods,nr_periods)
+for v in eachindex(value.(X))
+    if value.(X)[v] > 0.001
+        inflow_raw[v[1],v[2],v[3]] = value.(X)[v]
+    end
+end
+inflow = sum(inflow_raw, dims=3)[:,:,1] .* minutes_in_period
 for p in 1:nr_periods
     rem_queue_steps[:,p] = queue_steps[:,p] .- inflow[:,p]
     if p > 1
@@ -252,3 +274,5 @@ display(plot(sum(inflow,dims=1)[:], label = "Inflow"))
 display(plot!(sum(queue_steps,dims=1)[:], label = "New Queue"))
 display(plot!(sum(rem_queue_steps,dims=1)[:], label = "Remaining Queue"))
 display(plot!(sum(add_queue_steps,dims=1)[:], label = "Cummulated Queue"))
+
+test_me = inflow_raw[1,:,:]
