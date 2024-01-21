@@ -15,7 +15,7 @@ using Graphs
 using SparseArrays
 
 # parameters for the actual model
-safety = 0.7            # safety factor that limits the arc capacity
+safety = 0.95            # safety factor that limits the arc capacity
 minutes_in_period = 60  # minutes in each period (in 15 minute intervals!)
 max_enter = 200         # number of maximal entries per minute per station
 rate_closed = 100       # taxi "queue removal rate" per minute during closed metro hours
@@ -26,7 +26,7 @@ scaling = 1.0           # scaling of the metro queue (to test lower or higher de
 start_time = DateTime("2022-11-27T05:00:00.00")
 end_time = DateTime("2022-11-28T04:59:00.00")
 daterange = Date(start_time):Date(end_time)
-nr_minutes = length(start_time:Minute(1):end_time)
+nr_minutes = length(start_time:Minute(1):end_time)+1
 nr_periods = ceil(Int64,nr_minutes/minutes_in_period)
 @assert rem(minutes_in_period,15) == 0 "The length of each period has to be in 15min intervalls."
 
@@ -172,7 +172,7 @@ set_attribute(im, "presolve", "on")
 set_attribute(im, "time_limit", 120.0)
 set_attribute(im, "mip_rel_gap", 0.0)
 
-max_shift = 6
+max_shift = 2
 
 println("Preparing optimization model.")
 @variable(im, 
@@ -189,7 +189,7 @@ println("Preparing optimization model.")
 
 println("Preparing objective function.")
 @objective(im, Min, 
-    sum(sum(sum(modelInstance.demand_od_in_period[o,d,uu] for d in 1:modelInstance.nr_nodes, uu in 1:u) - sum(X[o,p,uu] *  minutes_in_period for p in u:min(u+max_shift,nr_periods), uu in max(p-max_shift,1):p)) for o in 1:modelInstance.nr_nodes, u in 1:modelInstance.nr_periods)
+    sum(sum(sum(modelInstance.demand_od_in_period[o,d,u] for d in 1:modelInstance.nr_nodes) - sum(X[o,p,u] *  minutes_in_period for p in u:min(u+max_shift,nr_periods))) for o in 1:modelInstance.nr_nodes, u in 1:modelInstance.nr_periods)
 )
 
 println("Prepare constraint to prevent a negative dispatch.")
@@ -234,35 +234,7 @@ for p in 1:nr_periods
     end
 end
 
-#=
-println("Preparing optimization model.")
-@variable(im, 
-    X[o=1:modelInstance.nr_nodes,p=1:modelInstance.nr_periods,u=max(1,p-max_shift):p] .>= 0
-)
 
-println("Preparing objective function.")
-@objective(im, Min, 
-    sum((sum(modelInstance.demand_od_in_period[o,d,u] for d in 1:modelInstance.nr_nodes, u in 1:p) - sum(X[o,pp,u] for pp in 1:p, u in 1:p))^2 for o in 1:modelInstance.nr_nodes, p in 1:modelInstance.nr_periods)
-)
-
-println("Preparing capacity constraints.")
-for t in 1:minutes_in_period:modelInstance.nr_minutes 
-    for a in 1:modelInstance.nr_arcs
-        @constraint(im,
-            sum(X[o,p,u] * modelInstance.demand_od_in_period[o,d,u]/sum(modelInstance.demand_od_in_period[o,dd,u] for dd in 1:modelInstance.nr_nodes) for (o,d,u) in modelInstance.shift[t,a], p in 1:modelInstance.nr_periods if modelInstance.demand_od_in_period[o,d,u] > 0 && u <= p && u >= p - max_shift) <=  modelInstance.capacity_arcs[a] * modelInstance.safety_factor
-        )
-    end
-end
-
-println("Preparing capacity inflow constraints.")
-@constraint(
-    im, capacity_station[o in 1:modelInstance.nr_nodes, p in 1:modelInstance.nr_periods],
-    sum(X[o,p,u] for u in 1:modelInstance.nr_periods) <= modelInstance.max_entry_origin
-)
-println("Starting optimization.")
-optimize!(im)
-
-=#
 which_node = 1
 display(plot(inflow[which_node,:], label = "Inflow"))
 display(plot!(queue_steps[which_node,:], label = "New Queue"))
