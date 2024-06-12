@@ -208,8 +208,8 @@ function build_optimization_model(modelInstance)
     #    sum(sum(modelInstance.cum_demand_od_in_period[o,d,p] for d in 1:modelInstance.nr_nodes) - X[o,p] *  minutes_in_period) >= 0
     #)
     println("Preparing capacity constraints.")
-    @constraint(im, capacity[a in 1:modelInstance.nr_arcs,t in 1:modelInstance.nr_minutes, p_shifts in 0:3; shift[a,t] != []],
-        sum(X[o,max(1,p-p_shifts)] * modelInstance.demand_od_in_period[o,d,max(1,p-p_shifts)]/sum(modelInstance.demand_od_in_period[o,:,max(1,p-p_shifts)]) for (o,d,p) in modelInstance.shift[a,t] if modelInstance.demand_od_in_period[o,d,max(1,p-p_shifts)] > 0) <= modelInstance.capacity_arcs[a] * modelInstance.safety_factor
+    @constraint(im, capacity[a in 1:modelInstance.nr_arcs,t in 1:modelInstance.nr_minutes, p_shifts in 0:2; shift[a,t] != []],
+        sum(X[o,p] * modelInstance.demand_od_in_period[o,d,max(1,p-p_shifts)]/sum(modelInstance.demand_od_in_period[o,:,max(1,p-p_shifts)]) for (o,d,p) in modelInstance.shift[a,t] if modelInstance.demand_od_in_period[o,d,max(1,p-p_shifts)] > 0) <= modelInstance.capacity_arcs[a] * modelInstance.safety_factor
     )
     #println("Preparing inflow intervall upper constraints.")
     #@constraint(
@@ -226,7 +226,7 @@ end
 
 function heuristic_adding_queues()
     demand_od_heuristic = copy(demand_od)
-    remaining_queue = copy(demand_od)
+    remaining_queue = copy(demand_od) .= 0
     inflow_raw = zeros(Float64,nr_nodes,nr_periods)
 
     for fix_period in 1:nr_periods
@@ -236,21 +236,29 @@ function heuristic_adding_queues()
 
         for o in 1:nr_nodes
             if fix_period > 1
-                for p in 1:fix_period
-                    fix(X[o,p],inflow_raw[o,p]; force = true)
+                for p in 1:fix_period-1
+                    if inflow_raw[o,p] > 0.01
+                        fix(X[o,p],inflow_raw[o,p]; force = true)
+                    else
+                        fix(X[o,p],0; force = true)
+                    end
                 end
             end
-            if fix_period < nr_periods
-                for p in fix_period+1:nr_periods
+            
+            if fix_period+ceil(Int,120/minutes_in_period) <=nr_periods
+                for p in fix_period+ceil(Int,120/minutes_in_period):nr_periods
                     fix(X[o,p],0; force = true)
                 end
             end
         end
 
         optimize!(model)
+
         for v in eachindex(value.(X))
-            if value.(X)[v] > 0.01
-                inflow_raw[v] = value.(X)[v]
+            if value.(X)[v] > 0.1
+                inflow_raw[v] = floor(value.(X)[v],digits=2)
+            else
+                inflow_raw[v] = 0.00
             end
         end
     
@@ -269,11 +277,6 @@ function heuristic_adding_queues()
             demand_od_heuristic[:,:,fix_period+1] .+= remaining_queue[:,:,fix_period]
             demand_od_heuristic[:,:,fix_period]   .= demand_fulfiled
 
-            for o in 1:nr_nodes
-                for d in 1:nr_nodes
-                    demand_od_heuristic[o,d,fix_period+1] = ceil(demand_od_heuristic[o,d,fix_period+1], digits = 2)
-                end
-            end
         end
     end
 
