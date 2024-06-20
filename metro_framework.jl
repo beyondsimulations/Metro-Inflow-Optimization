@@ -19,7 +19,6 @@ safety = 0.95           # safety factor that limits the arc capacity
 minutes_in_period = 60  # minutes in each period (in 15 minute intervals!)
 max_enter = 200         # number of maximal entries per minute per station
 scaling = 1.0           # scaling of the metro queue (to test lower or higher demand)
-max_change = 0.25       # relative max change between periods compared to max_enter
 
 # define the start- and end time of the observed time horizon
 # Make sure that the horizon contains only one shift!
@@ -32,14 +31,14 @@ periodrange = start_time:Minute(minutes_in_period):end_time
 nr_minutes = length(start_time:Minute(1):end_time)+1
 nr_periods = ceil(Int64,nr_minutes/minutes_in_period)
 @assert rem(minutes_in_period,15) == 0 "The length of each period has to be in 15min intervalls."
-@assert nr_minutes <= 1440 "The timeframe exceeds one day and soes represent more than one shift."
+@assert nr_minutes <= 1440 "The timeframe exceeds one day and does represent more than one shift."
 
 # load the data
 println("Loading data.")
 grapharcs = CSV.read("data_metro/metroarcs.csv", DataFrame)
 sort!(grapharcs, :category)
 
-function aggregate_demand()
+function load_demand()
     demand =[]
     for day in eachindex(daterange)
         if day == 1
@@ -49,6 +48,11 @@ function aggregate_demand()
         end
     end
     filter!(row -> row.datetime >= start_time && row.datetime <= end_time, demand)
+    return demand::DataFrame
+end
+
+function aggregate_demand()
+    demand = load_demand()
     period_mapping = start_time:Minute(minutes_in_period):end_time
     demand.period .= 1
     for period in eachindex(period_mapping)
@@ -196,7 +200,7 @@ function build_optimization_model(modelInstance)
     set_attribute(im, "mip_rel_gap", 0.0)
     println("Preparing optimization model.")
     @variable(im, 
-        0 .<= X[o=1:modelInstance.nr_nodes,p=1:modelInstance.nr_periods] .<= modelInstance.max_entry_origin
+        0 .<= X[o=1:modelInstance.nr_nodes,p=1:modelInstance.nr_periods] .<= modelInstance.max_entry_origin * safety
     )
     println("Preparing objective function.")
     @objective(im, Min, 
@@ -208,19 +212,9 @@ function build_optimization_model(modelInstance)
     #    sum(sum(modelInstance.cum_demand_od_in_period[o,d,p] for d in 1:modelInstance.nr_nodes) - X[o,p] *  minutes_in_period) >= 0
     #)
     println("Preparing capacity constraints.")
-    @constraint(im, capacity[a in 1:modelInstance.nr_arcs,t in 1:modelInstance.nr_minutes, p_shifts in 0:2; shift[a,t] != []],
+    @constraint(im, capacity[a in 1:modelInstance.nr_arcs,t in 1:modelInstance.nr_minutes, p_shifts in 0:ceil(Int,120/minutes_in_period); shift[a,t] != []],
         sum(X[o,p] * modelInstance.demand_od_in_period[o,d,max(1,p-p_shifts)]/sum(modelInstance.demand_od_in_period[o,:,max(1,p-p_shifts)]) for (o,d,p) in modelInstance.shift[a,t] if modelInstance.demand_od_in_period[o,d,max(1,p-p_shifts)] > 0) <= modelInstance.capacity_arcs[a] * modelInstance.safety_factor
     )
-    #println("Preparing inflow intervall upper constraints.")
-    #@constraint(
-    #    im, capacity_station_upper[o in 1:modelInstance.nr_nodes, p in 2:modelInstance.nr_periods],
-    #    X[o,p] <= X[o,p-1] + (max_change * max_enter)
-    #)
-    #println("Preparing inflow intervall lower constraints.")
-    #@constraint(
-    #    im, capacity_station_lower[o in 1:modelInstance.nr_nodes, p in 2:modelInstance.nr_periods],
-    #    X[o,p] >= X[o,p-1] - (max_change * max_enter)
-    #)
     return im,X
 end
 
@@ -245,7 +239,7 @@ function heuristic_adding_queues()
                 end
             end
             
-            if fix_period+ceil(Int,120/minutes_in_period) <=nr_periods
+            if fix_period+ceil(Int,120/minutes_in_period) <= nr_periods
                 for p in fix_period+ceil(Int,120/minutes_in_period):nr_periods
                     fix(X[o,p],0; force = true)
                 end
@@ -281,14 +275,16 @@ function heuristic_adding_queues()
     end
 
     results_queues = DataFrame(datetime = DateTime[],station=String[],allowed=Int64[],moved=Int64[],queued=Int64[])
-    results_arcs   = DataFrame(datetime = DateTime[],connection=Int64[],line=String[],utilization=Float64[])
+    results_arcs   = DataFrame(datetime = DateTime[],connection=Int64[],line=String[],utilization_aggregated=Float64[],utilization_period=Float64[])
 
-    utilization_raw = zeros(Float64,nr_arcs,nr_minutes)
+    utilization_aggregated = zeros(Float64,nr_arcs,nr_minutes)
+    utilization_period = zeros(Float64,nr_arcs,nr_minutes)
     for a in 1:nr_arcs
         for t in 1:nr_minutes
             for (o,d,p) in shift_original[a,t]
                 if demand_od_heuristic[o,d,p] > 0
-                    utilization_raw[a,t] += sum(inflow_raw[o,p] * demand_od_heuristic[o,d,p]/sum(demand_od_heuristic[o,:,p]))
+                    utilization_aggregated[a,t] += sum(inflow_raw[o,p] * demand_od_heuristic[o,d,p]/sum(demand_od_heuristic[o,:,p]))
+                    utilization_period[a,t] += sum(inflow_raw[o,p] * demand_od[o,d,p]/sum(demand_od[o,:,p]))
                 end
             end
         end
@@ -313,7 +309,8 @@ function heuristic_adding_queues()
                     datetime = (start_time:Minute(1):end_time)[t],
                     connection=a,
                     line=metroarcs[a].category,
-                    utilization=utilization_raw[a,t]/metroarcs[a].capacity
+                    utilization_aggregated=utilization_aggregated[a,t]/metroarcs[a].capacity,
+                    utilization_period=utilization_period[a,t]/metroarcs[a].capacity
                 )
             )
         end
@@ -386,7 +383,7 @@ function plot_optimization!(results_queues,results_arcs)
     anim = @animate for dt in steprange
         begin
             new_plot = bar(
-                get_group(gp_results_arcs, dt).utilization,
+                get_group(gp_results_arcs, dt).utilization_aggregated,
                 group = get_group(gp_results_arcs, dt).line,
                 size = (1920, 1080),
                 title="Theoretical Metroarc Usage at timestep $dt",
@@ -399,7 +396,173 @@ function plot_optimization!(results_queues,results_arcs)
             hline!([safety],label="Restriction",linewidth=2,colour=:grey60,)
         end
     end
-    gif(anim, "visuals/utilization_fps04.gif", fps = 4)
+    gif(anim, "visuals/utilization_aggregated_fps04.gif", fps = 4)
+
+    anim = @animate for dt in steprange
+        begin
+            new_plot = bar(
+                get_group(gp_results_arcs, dt).utilization_period,
+                group = get_group(gp_results_arcs, dt).line,
+                size = (1920, 1080),
+                title="Theoretical Metroarc Usage at timestep $dt",
+                ylims=(0,1.5),
+                ylabel = "Arc Utilization",
+                colour=[:goldenrod1 :aquamarine3 :seashell2 :crimson],
+                legend=:bottomright,
+                margin=15mm,
+            )
+            hline!([safety],label="Restriction",linewidth=2,colour=:grey60,)
+        end
+    end
+    gif(anim, "visuals/utilization_period_fps04.gif", fps = 4)
 end
 
 plot_optimization!(queues,arcs)
+
+CSV.write("results/queues_new.csv", queues)
+CSV.write("results/arcs_new.csv", arcs)
+
+################
+
+function create_od_queue!(real_od_queue,daterange,minutes_in_period)
+
+    timesteps = start_time:Minute(1):end_time
+    demand = load_demand()
+    timestep_id = Dict(timesteps[i] => i for i in eachindex(timesteps))
+    for data in eachrow(demand)
+        for minutestep in data.datetime:Minute(1):data.datetime+Minute(14)
+            real_od_queue[d_node_id[data.origin],d_node_id[data.destination],timestep_id[minutestep]] = (data.value * scaling)/15
+        end
+    end
+
+end
+
+# Simulation
+function simulate_metro(queues,nodeid,nr_minutes,daterange,grapharcs,kind)
+
+    real_arc_use = zeros(Float64,nr_minutes,nr_arcs)
+    real_queue_use = zeros(Float64,nr_minutes,nr_nodes)
+    real_od_queue = zeros(Float64,nr_nodes,nr_nodes,nr_minutes)
+
+    ## load all queues into a tensor
+    create_od_queue!(real_od_queue,daterange,minutes_in_period)
+
+    ## determine the final queue at each station
+    real_station_queue = DataFrame(transpose(sum(real_od_queue,dims=2)[:,1,:]),nodes)
+    r_s_q = DataFrame(transpose(sum(real_od_queue,dims=2)[:,1,:]),nodes)
+
+    ## prepare the optimized entry per datetime
+    optimized_entry = unstack(select(queues,[:datetime,:station,:allowed]),:station,:allowed)
+
+    ## preallocate the state of each queue
+    queue_state = fill(1,length(nodes))
+
+    ## start the flow through the network
+    for origin in eachindex(nodes)
+
+        for minute in 1:size(real_arc_use,1)-1
+            ## determine the number of people allowed to enter in the minute at station
+            if r_s_q[queue_state[origin],origin] > 0
+
+                if kind == "bound"
+                    moved_minute = min(
+                            optimized_entry[div(minute,nr_minutes)+1,origin+1],
+                            sum(real_station_queue[queue_state[origin]:div(minute,nr_minutes)+1,origin])
+                        )
+                elseif kind == "unbound"
+                    moved_minute = min(r_s_q[queue_state[origin],origin],max_enter)
+                end
+
+                
+                if !(minimum(closed) <= Hour(optimized_entry[div(minute,nr_minutes)+1,1]) <= maximum(closed))
+                    ## dispatch the ratio according to each destination
+                    for destination in eachindex(nodes)
+                        previous = previous_nodes[origin,destination]
+                        current_destination = destination
+                        destination_time = minute + distance[origin,destination] + 1
+                        if real_od_queue[origin,destination,queue_state[origin]] > 0
+                            moving_to_destination = (real_od_queue[origin,destination,queue_state[origin]]/r_s_q[queue_state[origin],origin]) * moved_minute
+                            while previous != 0
+                                start_time = floor(Int64,destination_time - grapharcs.traveltime[arcid[(previous,current_destination)]])
+                                if start_time <= size(real_arc_use,1)
+                                    real_arc_use[start_time,arcid[(previous,current_destination)]] += moving_to_destination
+                                end
+                                current_destination = previous
+                                previous = previous_nodes[origin,current_destination]
+                                destination_time = start_time
+                            end
+                        end
+                    end
+                end
+
+                ## remove the number of moved people from queue
+                real_station_queue[queue_state[origin],origin] -= moved_minute
+            end
+
+            ## change to the next qeue, if queue of timestep is empty
+            if real_station_queue[queue_state[origin],origin] <= 0 && queue_state[origin] < div(minute,nr_minutes)+1
+                queue_state[origin] += 1
+                real_station_queue[queue_state[origin],origin] += real_station_queue[queue_state[origin]-1,origin]
+                real_station_queue[queue_state[origin]-1,origin] = 0
+            end
+            if queue_state[origin] > div(minute,nr_minutes)+1
+                error("Queue state out of bounds for $origin")
+            end
+            real_queue_use[minute,origin] = sum(real_station_queue[queue_state[origin]:div(minute,nr_minutes)+1,origin])
+        end
+    end
+
+    for arc in axes(grapharcs,1)
+        for minute in axes(real_arc_use,1)
+            if real_arc_use[minute,arc]>0
+                real_arc_use[minute,arc] = real_arc_use[minute,arc] / grapharcs.capacity[arc]
+            end
+        end
+    end
+
+    detailed_time = minimum(queues.datetime):Minute(1):maximum(queues.datetime)+Minute(nr_minutes-1)
+    anim = @animate for dt in 1:round(Int64,nr_minutes/5):size(real_arc_use,1)-1
+        begin
+            new_plot = bar(
+                vec(sum(real_arc_use[dt:(dt+round(Int64,nr_minutes/5)-1),:],dims=1)./round(Int64,nr_minutes/5)),
+                group = grapharcs.category,
+                size = (1920, 1080),
+                title="Real Metroarc Utilization at timestep $(detailed_time[dt])",
+                ylims=(0,1.5),
+                ylabel = "Arc Utilization",
+                colour=[:goldenrod1 :aquamarine3 :seashell2 :crimson],
+                legend=:bottomright,
+                margin=15mm,
+            )
+            hline!([safety],label="Restriction",linewidth=4,colour=:grey60,)
+            hline!([1.0],label="Full Capacity",linewidth=4,colour=:firebrick,)
+        end
+    end
+    gif(anim, "visuals/utilization_real_fps20_$kind.gif", fps = 20)
+
+    if kind == "unbound"
+        anim = @animate for dt in 1:round(Int64,nr_minutes/5):size(real_arc_use,1)-1
+            begin
+                new_plot = bar(
+                    vec(sum(real_arc_use[dt:(dt+round(Int64,nr_minutes/5)-1),:],dims=1)./round(Int64,nr_minutes/5)),
+                    group = grapharcs.category,
+                    size = (1920, 1080),
+                    title="Real Metroarc Utilization at timestep $(detailed_time[dt])",
+                    ylabel = "Arc Utilization",
+                    ylims=(0,maximum(real_arc_use)*1.2),
+                    colour=[:goldenrod1 :aquamarine3 :seashell2 :crimson],
+                    legend=:bottomright,
+                    margin=15mm,
+                )
+                hline!([safety],label="Restriction",linewidth=4,colour=:grey60,)
+                hline!([1.0],label="Full Capacity",linewidth=4,colour=:firebrick,)
+            end
+        end
+        gif(anim, "visuals/utilization_real_fps20_$(kind)_nolim.gif", fps = 20)
+    end
+
+    plot(real_arc_use[:,3])
+end
+
+simulate_metro(queues,nodeid,nr_minutes,daterange,grapharcs,"bound")
+simulate_metro(queues,nodeid,nr_minutes,daterange,grapharcs,"unbound")

@@ -15,7 +15,7 @@ using Graphs
 using SparseArrays
 
 # parameters for the actual model
-safety = 0.95           # safety factor that limits the arc capacity
+safety = 0.90           # safety factor that limits the arc capacity
 minutes_in_period = 60  # minutes in each period (in 15 minute intervals!)
 max_enter = 200         # number of maximal entries per minute per station
 scaling = 1.0           # scaling of the metro queue (to test lower or higher demand)
