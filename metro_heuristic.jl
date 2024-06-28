@@ -1,92 +1,151 @@
-function heuristic_adding_queues()
+function heuristic_adding_queues(im)
     # Initialization of variables
-    demand_od_heuristic = copy(demand_od)  # Initialize a new variable to store the aggregated demand data
-    remaining_queue = copy(demand_od) .= 0  # Initialize a new variable to store the remaining queue data
-    inflow_raw = zeros(Float64, nr_nodes, nr_periods)  # Initialize an array to store the values of the X variable
-    optimization_duration = zeros(Float64, nr_periods) # Initialize optimization duration vector
+    remaining_queue = copy(im.demand_od_in_period) # Initialize a new variable to store the remaining queue data
+    inflow_raw = zeros(Float64, im.nr_nodes, im.nr_periods) .= im.min_entry_origin  # Initialize an array to store the values of the X variable
+    optimization_duration = zeros(Float64, im.nr_periods) # Initialize optimization duration vector
+    queue_period_age = zeros(Int64,im.nr_nodes,im.nr_periods) .= 0 # Computes the age of each queue per period
+    save_queue = zeros(Int64,nr_nodes,im.nr_periods) .= 1 # Saves the queue for the output
 
-    for fix_period in 1:nr_periods
+    stats = DataFrame(
+        period = Int64[],
+        new_demand = Float64[],
+        in_queue = Float64[],
+        moved_demand = Float64[],
+    )
+
+    for fix_period in 1:im.nr_periods
+
         println("Running period ", fix_period)
-        instance = build_model_instance(demand_od_heuristic,demand_od)
+        im.cum_demand_od_in_period[:,:,fix_period] .= sum(remaining_queue[:,:,1:fix_period],dims=3)
 
-        model,X = build_restricted_optimization_model(instance,past_minutes,minutes_in_period,fix_period)
+        println(sum(sum(remaining_queue[:,:,1:fix_period],dims=3)))
 
         for o in 1:nr_nodes
+            for queue_period in 1:fix_period
+                if sum(remaining_queue[o,:,queue_period]) >= 1
+                    queue_period_age[o,fix_period] = fix_period - queue_period
+                    break
+                end
+            end
+        end
+
+        println("Queue Age")
+        println(queue_period_age[:,fix_period])
+        println("Queue Length")
+        println(round.(Int64,sum(im.cum_demand_od_in_period[:,:,fix_period],dims=2)))
+        println("Total Queue Length")
+        println(round.(Int64,sum(im.cum_demand_od_in_period[:,:,fix_period])))
+
+        model,X = build_restricted_optimization_model(im,fix_period,queue_period_age,inflow_raw)
+
+        for o in 1:im.nr_nodes
             if fix_period > 1
                 for p in 1:fix_period-1
-                    if inflow_raw[o,p] > 0.01
+                    if inflow_raw[o,p] > 0.1
                         fix(X[o,p],inflow_raw[o,p]; force = true)
                     else
                         fix(X[o,p],0; force = true)
                     end
                 end
             end
-            
-            if fix_period+ceil(Int,past_minutes/minutes_in_period) <= nr_periods
-                for p in fix_period+ceil(Int,past_minutes/minutes_in_period):nr_periods
-                    fix(X[o,p],0; force = true)
+        end
+
+        if im.closed_period[fix_period] == false
+
+            optimization_duration[fix_period] = @elapsed optimize!(model)
+
+            for o in 1:im.nr_nodes
+                for p in 1:im.nr_periods
+                    if value.(X)[o,p] > 0.001
+                        inflow_raw[o,p] = value.(X)[o,p]
+                    else
+                        inflow_raw[o,p] = 0.00
+                    end
+                end
+            end
+
+        else
+
+            inflow_raw[:,fix_period] .= 0
+        end
+
+        
+        demand_fulfiled = inflow_raw[:,fix_period] .* im.minutes_in_period 
+        println("Dispatch")
+        println(round.(demand_fulfiled))
+        println("Total Dispatch")
+        println(sum(demand_fulfiled))
+
+        for o in 1:im.nr_nodes 
+            for p in 1:fix_period
+                current_ratio = (remaining_queue[o,:,p]/sum(remaining_queue[o,:,p]))
+                current_ratio .= ifelse.(isnan.(current_ratio), 0, current_ratio)
+
+                while sum(remaining_queue[o,:,p]) >= 1 && demand_fulfiled[o] >= 1
+                    remaining_queue[o,:,p] .-=  im.minutes_in_period .* current_ratio
+                    demand_fulfiled[o] -= im.minutes_in_period
+                end
+
+                if sum(remaining_queue[o,:,p]) <= 1
+                    remaining_queue[o,:,p] .= 0
+                end
+
+                if demand_fulfiled[o] <= 1
+                    demand_fulfiled[o] = 0
+                end
+
+                if demand_fulfiled[o] == 0
+                    break
                 end
             end
         end
-
-        optimization_duration[fix_period] = @elapsed optimize!(model)
-
-        for v in eachindex(value.(X))
-            if value.(X)[v] > 0.1
-                inflow_raw[v] = floor(value.(X)[v],digits=2)
-            else
-                inflow_raw[v] = 0.00
-            end
+        for o in 1:im.nr_nodes
+            save_queue[o,fix_period] = round(Int64,sum(remaining_queue[o,:,1:fix_period]))
         end
-    
-        demand_fulfiled = zeros(Float64,nr_nodes,nr_nodes)
-        for o in 1:nr_nodes
-            for d in 1:nr_nodes
-                if demand_od_heuristic[o,d,fix_period] > 0
-                    demand_fulfiled[o,d] = minutes_in_period * inflow_raw[o,fix_period] * (demand_od_heuristic[o,d,fix_period]/sum(demand_od_heuristic[o,:,fix_period]))
-                end
-            end
-        end
-        remaining_queue[:,:,fix_period] .= demand_od_heuristic[:,:,fix_period] .- demand_fulfiled
-
-        if fix_period < nr_periods
-
-            demand_od_heuristic[:,:,fix_period+1] .+= round.(remaining_queue[:,:,fix_period],digits=2)
-            demand_od_heuristic[:,:,fix_period]   .= demand_fulfiled
-
-        end
+        push!(stats,(
+            period = fix_period,
+            new_demand = sum(im.demand_od_in_period[:,:,fix_period]),
+            in_queue = sum(save_queue[:,fix_period]),
+            moved_demand = sum(inflow_raw[:,fix_period] .* minutes_in_period),
+            )
+        )
     end
 
+    plot(stats.period,stats.new_demand,label="new demand")
+    plot!(stats.period,stats.in_queue,label="in_queue")
+    display(plot!(stats.period,stats.moved_demand,label="moved",title="Optimization"))
+
+    display(plot(transpose(save_queue),title="Queue Length", label=""))
+    display(plot(transpose(queue_period_age),title="Waiting", label=""))
+    
     results_queues = DataFrame(datetime = DateTime[],station=String[],allowed=Int64[],moved=Int64[],queued=Int64[])
     results_arcs   = DataFrame(datetime = DateTime[],connection=Int64[],line=String[],utilization_aggregated=Float64[],utilization_period=Float64[])
 
-    utilization_aggregated = zeros(Float64,nr_arcs,nr_minutes)
-    utilization_period = zeros(Float64,nr_arcs,nr_minutes)
-    for a in 1:nr_arcs
-        for t in 1:nr_minutes
+    utilization_aggregated = zeros(Float64,im.nr_arcs,im.nr_minutes)
+    utilization_period = zeros(Float64,im.nr_arcs,im.nr_minutes)
+    for a in 1:im.nr_arcs
+        for t in 1:im.nr_minutes
             for (o,d,p) in shift_original[a,t]
-                if demand_od_heuristic[o,d,p] > 0
-                    utilization_aggregated[a,t] += sum(inflow_raw[o,p] * demand_od_heuristic[o,d,p]/sum(demand_od_heuristic[o,:,p]))
-                    utilization_period[a,t] += sum(inflow_raw[o,p] * demand_od[o,d,p]/sum(demand_od[o,:,p]))
+                if im.cum_demand_od_in_period[o,d,p] > 0
+                    utilization_aggregated[a,t] += sum(inflow_raw[o,p] * im.cum_demand_od_in_period[o,d,p]/sum(im.cum_demand_od_in_period[o,:,p]))
+                    utilization_period[a,t] += sum(inflow_raw[o,p] * im.demand_od_in_period[o,d,p]/sum(im.demand_od_in_period[o,:,p]))
                 end
             end
         end
     end
 
-    remaining_queue = sum(remaining_queue,dims=2)[:,1,:]
-
-    for p in 1:nr_periods-1
+    for p in 1:nr_periods
         for o in 1:nr_nodes
             push!(results_queues,(
                 datetime = periodrange[p],
                 station=nodes[o],
                 allowed=round(inflow_raw[o,p]),
                 moved=round(inflow_raw[o,p]),
-                queued=round(remaining_queue[o,p])))
+                queued=round(save_queue[o,p])))
         end
     end
 
-    for t in 1:nr_minutes-1
+    for t in 1:length(start_time:Minute(1):end_time)
         for a in 1:nr_arcs
             push!(results_arcs,(
                     datetime = (start_time:Minute(1):end_time)[t],
@@ -102,5 +161,5 @@ function heuristic_adding_queues()
     sort!(results_queues,[:datetime,:station])
     sort!(results_arcs,[:datetime,:line,:connection])
 
-    return results_queues, results_arcs, optimization_duration
+    return results_queues, results_arcs, optimization_duration, queue_period_age
 end

@@ -13,6 +13,7 @@ using Dates
 using Measures
 using Graphs
 using Statistics
+using Gurobi
 
 include("metro_functions.jl")
 include("metro_model.jl")
@@ -21,37 +22,55 @@ include("metro_simulation.jl")
 include("metro_visuals.jl")
 
 # Parameters for the actual model
-safety = 0.90           # safety factor that limits the arc capacity
-minutes_in_period = 15  # minutes in each period (in 15 minute intervals!)
-max_enter = 180         # number of maximal entries per minute per station
-scaling = 1.0           # scaling of the metro queue (to test lower or higher demand)
-past_minutes = 300      # timeframe to consider from the past during the optimization
+set_safety = [0.9]                # safety factor that limits the arc capacity
+set_max_enter = [200]             # number of maximal entries per minute per station
+set_min_enter = [3]               # min number of people allowed to enter
+set_scaling = [1.0]               # scaling of the metro queue (to test lower or higher demand)
+set_past_minutes = [60]           # timeframe to consider from the past during the optimization
+set_kind_opt = ["regular"]        # "regular","weight","linear","linwei"
+set_kind_queue = ["shift_per"]    # "lag_static","shift_per","shift_cum"
+
+# Define static simulation data
+kind_sim = "bound"                # "bound","inflow","unbound"
+minutes_in_period = 60            # minutes in each period (in 15 minute intervals!)
 
 # Define the start- and end time of the observed time horizon
 # Make sure that the horizon contains only one shift!
-start_time = DateTime("2022-11-28T05:00:00.00")
-end_time = DateTime("2022-11-29T02:59:00.00")
+start_time = DateTime("2022-11-27T00:00:00.00")
+end_time = DateTime("2022-11-27T23:59:00.00")
 
 struct MetroInstance
+    kind_opt::String
+    kind_queue::String
     nr_nodes::Int64                                     # Overall number of nodes
     nr_arcs::Int64                                      # Overall number of arcs
     nr_periods::Int64                                   # Overall number of periods
     nr_minutes::Int64                                   # Overall number of minutes
+    past_minutes::Int64
+    minutes_in_period::Int64
     capacity_arcs::Vector{Int64}                        # Capacity of each arc
     safety_factor::Float64                              # Safety factor for the arc_capacity
+    min_entry_origin::Int64                             # Minimal number of people allowed to enter from outside
     max_entry_origin::Int64                             # Maximal number of people allowed to enter from outside
     cum_demand_od_in_period::Array{Float64,3}           # Array with the cummulated demand from o to d for each period
     demand_od_in_period::Array{Float64,3}               # Array with the demand from o to d for each period
     shift::Matrix{Vector{Tuple{Int64, Int64, Int64}}}   # Array with the timelag of entry and utilization
+    scaling::Float64                                    # scaling of the metro queue (to test lower or higher demand)
+    closed_period::Vector{Bool}                         # defines the periods with a closure of the metro
 end
 
 # Input validation and datetime preparation
 daterange = Date(start_time):Date(end_time)
 periodrange = start_time:Minute(minutes_in_period):end_time
-nr_minutes = length(start_time:Minute(1):end_time)+1
-nr_periods = ceil(Int64,nr_minutes/minutes_in_period)
+nr_minutes = length(start_time:Minute(1):end_time)+ 120
+nr_periods = ceil(Int64,(nr_minutes-120)/minutes_in_period)
+closed_period = zeros(Bool,nr_periods)
+for period in eachindex(periodrange)
+    if hour(periodrange[period]) == 3 || hour(periodrange[period]) == 4
+        closed_period[period] = true
+    end
+end
 @assert rem(minutes_in_period,15) == 0 "The length of each period has to be in 15 min intervalls."
-@assert nr_minutes <= 1440 "The timeframe exceeds one day and does represent more than one shift."
 
 # Load data of the metroarcs
 println("Loading data.")
@@ -75,7 +94,7 @@ for arc in axes(grapharcs,1)
         grapharcs.capacity[arc],
         ceil(Int64,grapharcs.traveltime[arc])
         )
-    )
+    ) 
 end
 
 # Prepare the graph related hash tables
@@ -98,30 +117,73 @@ end
 
 # Prepare the time-shift in the metro data
 println("Preparing shifting data.")
-shift, shift_original, shift_start_end = compute_shift()
+shift, shift_original, shift_start_end, longest_path = compute_shift()
+println("Longest path is $longest_path.")
 
-# Start of the iterative allocation
-queues, arcs, opt_duration = heuristic_adding_queues()
-plot_optimization!(arcs)
+for safety in set_safety  
+    for min_enter in set_min_enter
+        for max_enter in set_max_enter
+            for scaling in set_scaling
+                for past_minutes in set_past_minutes
+                    for kind_opt in set_kind_opt
+                        for kind_queue in set_kind_queue
+                            println("Start: safety $safety, mip $minutes_in_period, pm $past_minutes, $kind_opt, $kind_sim, $kind_queue")
 
-# Save the results from the heuristic
-CSV.write("results/queues_new_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).csv", queues)
-CSV.write("results/arcs_new_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).csv", arcs)
+                            # Create a MetroInstance object with the following parameters:
+                            # * kind_opt: 
+                            # * kind_queue: 
+                            # * nr_nodes: number of nodes in the network (i.e., metro stations)
+                            # * nr_arcs: number of arcs between nodes in the network
+                            # * nr_periods: number of time periods to consider in the problem
+                            # * nr_minutes: number of minutes per period
+                            # * past_minutes: timeframe of previous minutes considered during the optimization
+                            # * getproperty.(metroarcs, :capacity): list of capacities for each arc 
+                            # * safety: ratio of max. arc utilization
+                            # * min_enter: minimum number of people that can enter a node at any minute
+                            # * max_enter: maximum number of people that can enter a node at any minute
+                            # * cum_demand_od: cummulated demand from origin to destination per period
+                            # * demand_od: demand from origin to destination per period
+                            # * shift: shift data that maps minutes and periods and arcs
+                            # * scaling: test higher and lower demands by multiplication
 
-# Start the simulation unbound
-println("Start simulation bound.")
-sim_queues,sim_arcs = simulate_metro(queues,nr_minutes,grapharcs,"bound")
-CSV.write("results/sim_queues_new_bound_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).csv", sim_queues)
-plot_simulation!(sim_queues,sim_arcs,"bound")
+                            modelInstance = MetroInstance(
+                                kind_opt,
+                                kind_queue,
+                                nr_nodes,
+                                nr_arcs,
+                                nr_periods,
+                                nr_minutes,
+                                past_minutes,
+                                minutes_in_period,
+                                getproperty.(metroarcs, :capacity),
+                                safety,
+                                min_enter,
+                                max_enter,
+                                demand_od,
+                                demand_od,
+                                shift,
+                                scaling,
+                                closed_period,
+                            )
 
-# Start the simulation in unbound mode
-#println("Start simulation inflowbound.")
-#sim_queues,sim_arcs = simulate_metro(queues,nr_minutes,grapharcs,"inflow")
-#CSV.write("results/sim_arcs_new_inflowbound_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).csv", sim_arcs)
-#plot_simulation!(sim_queues,sim_arcs,"inflow")
+                            # Start of the iterative allocation
+                            queues, arcs, opt_duration, queue_period_age = heuristic_adding_queues(modelInstance)
+                            #plot_optimization!(arcs)
 
-# Start the simulation in unbound mode
-#println("Start simulation unbound.")
-#sim_queues,sim_arcs = simulate_metro(queues,nr_minutes,grapharcs,"unbound")
-#CSV.write("results/sim_arcs_new_unbound_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).csv", sim_arcs)
-#plot_simulation!(sim_queues,sim_arcs,"unbound")
+                            # Save the results from the heuristic
+                            CSV.write("results/queues_new_$(kind_opt)_$(kind_sim)_$(kind_queue)_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).csv", queues)
+                            CSV.write("results/arcs_new_$(kind_opt)_$(kind_sim)_$(kind_queue)_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).csv", arcs)
+
+                            # Start the simulation unbound
+                            println("Start simulation $kind_sim.")
+                            sim_queues,sim_arcs = simulate_metro(modelInstance,queues,grapharcs,kind_sim,queue_period_age)
+                            CSV.write("results/sim_queues_new_$(kind_opt)_$(kind_sim)_$(kind_queue)_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).csv", sim_queues)
+                            #plot_simulation!(sim_queues,sim_arcs,kind_sim)
+                            #sim_queues,sim_arcs = simulate_metro(queues,nr_minutes,grapharcs,"unbound")
+                        end
+                    end
+                end
+            end
+        end
+    end
+end

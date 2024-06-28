@@ -16,7 +16,8 @@ function load_demand()
     end
     
     # Filter the demand data to include only the data within the specified time range (start_time and end_time)
-    filter!(row -> row.datetime >= start_time && row.datetime <= end_time, demand)
+    filter!(row -> row.datetime >= start_time, demand)
+    filter!(row -> row.datetime <= end_time, demand)
     
     return demand::DataFrame
 end
@@ -27,18 +28,14 @@ function aggregate_demand()
     demand = load_demand()
     
     # Create a mapping from periods to date ranges
-    period_mapping = start_time:Minute(minutes_in_period):end_time
+    period_mapping = start_time:Minute(minutes_in_period):end_time+Minute(10)
+    timesteps = start_time:Minute(1):end_time
+    dict_periods = Dict(timesteps[x] => divrem(x,60)[1]+1 for x in eachindex(timesteps))
     
     # Assign each row in the demand DataFrame to a particular period based on its datetime value
-    demand.period .= 1
-    for period in eachindex(period_mapping)
-        for row in eachrow(demand)
-            if period == 1 && row.datetime <= period_mapping[period]
-                row.period = period
-            elseif period > 1 && row.datetime > period_mapping[period-1] && row.datetime <= period_mapping[period]
-                row.period = period
-            end
-        end
+    demand.period .= 0
+    for row in eachrow(demand)
+        row.period = dict_periods[row.datetime]
     end
     
     # Group the demand DataFrame by origin, destination, and period
@@ -60,7 +57,7 @@ function compute_shift()
         distance_matrix[d_node_id[arc.origin],d_node_id[arc.destination]] = ceil(Int64,arc.traveltime)
     end
 
-   
+    longest_path = 0
     shift_original = [Tuple{Int64,Int64,Int64}[] for _ in 1:nr_arcs, _ in 1:nr_minutes]
     shift_start_end = [Tuple{Int64,Int64}[] for _ in 1:nr_nodes, _ in 1:nr_nodes]
     for origin in 1:nr_nodes # origin at which people are allowed into the metro
@@ -80,6 +77,7 @@ function compute_shift()
                 end
             end
         end
+        longest_path = max(maximum(all_distances),longest_path)
         for period in 1:nr_periods # period in which people are allowed into the metro
             for destination in 1:nr_nodes # destination that the people allowed at the origin want to reach
                 if origin != destination # skips cases where no travel is necessary
@@ -117,5 +115,5 @@ function compute_shift()
         end
     end
 
-    return shift, shift_original, shift_start_end
+    return shift, shift_original, shift_start_end, longest_path
 end

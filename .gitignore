@@ -25,3 +25,5 @@ Manifest.toml
 
 # MacOS Files
 .DS_Store
+visuals
+results

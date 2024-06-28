@@ -12,16 +12,17 @@ function plot_optimization!(results_arcs)
                 group = get_group(gp_results_arcs, dt).line,
                 size = (1920, 1080),
                 title="Real Metroarc Usage at timestep $dt",
-                ylims=(0,1.5),
+                ylims=(0,2),
                 ylabel = "Arc Utilization",
                 colour=[:goldenrod1 :aquamarine3 :seashell2 :crimson],
                 legend=:bottomright,
                 margin=25mm,
+                xformatter=_->"",
             )
-            hline!([safety],label="Restriction",linewidth=2,colour=:grey60,)
+            hline!([safety],label="Capacity",linewidth=2,colour=:grey60,)
         end
     end
-    gif(anim, "visuals/opt_utilization_fps30_aggregated_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).gif", fps = 30)
+    gif(anim, "visuals/opt_utilization_fps30_aggregated_$(kind_opt)_$(kind_queue)_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).gif", fps = 30)
 
     anim = @animate for dt in timesteps
         begin
@@ -30,19 +31,20 @@ function plot_optimization!(results_arcs)
                 group = get_group(gp_results_arcs, dt).line,
                 size = (1920, 1080),
                 title="Real Metroarc Usage at timestep $dt",
-                ylims=(0,1.5),
+                ylims=(0,2),
                 ylabel = "Arc Utilization",
                 colour=[:goldenrod1 :aquamarine3 :seashell2 :crimson],
                 legend=:bottomright,
                 margin=25mm,
+                xformatter=_->"",
             )
-            hline!([safety],label="Restriction",linewidth=2,colour=:grey60,)
+            hline!([safety],label="Capacity",linewidth=2,colour=:grey60,)
         end
     end
-    gif(anim, "visuals/opt_utilization_fps30_period_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).gif", fps = 30)
+    gif(anim, "visuals/opt_utilization_fps30_period_$(kind_opt)_$(kind_queue)_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).gif", fps = 30)
 end
 
-function plot_simulation!(sim_queues,sim_arcs,kind)
+function plot_simulation!(sim_queues,sim_arcs,kind_sim)
     
     timesteps = unique(sim_arcs.datetime)
     gp_results_queues = groupby(sim_queues,:datetime)
@@ -55,7 +57,7 @@ function plot_simulation!(sim_queues,sim_arcs,kind)
                 get_group(gp_results_queues, dt).queued,
                 size = (1920, 1080),
                 title="Queue at timestep $dt",
-                ylims=(0,30000),
+                ylims=(0,50000),
                 label="People in Queue",
                 legend=:topright,
                 colour=:steelblue2,
@@ -66,7 +68,7 @@ function plot_simulation!(sim_queues,sim_arcs,kind)
             )
         end
     end
-    gif(anim, "visuals/sim_queues_fp30_$(kind)_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).gif", fps = 30)
+    gif(anim, "visuals/sim_queues_fp30_$(kind_opt)_$(kind_sim)_$(kind_queue)_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).gif", fps = 30)
 
     anim = @animate for dt in timesteps
         begin
@@ -85,7 +87,7 @@ function plot_simulation!(sim_queues,sim_arcs,kind)
             )
         end
     end
-    gif(anim, "visuals/sim_entry_fps30_$(kind)_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).gif", fps = 30)
+    gif(anim, "visuals/sim_entry_fps30_$(kind_opt)_$(kind_sim)_$(kind_queue)_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).gif", fps = 30)
 
     anim = @animate for dt in timesteps
         begin
@@ -94,14 +96,15 @@ function plot_simulation!(sim_queues,sim_arcs,kind)
                 group = get_group(gp_results_arcs, dt).line,
                 size = (1920, 1080),
                 title="Real Metroarc Usage at timestep $dt",
-                ylims=(0,1.5),
+                ylims=(0,2),
                 ylabel = "Arc Utilization",
                 colour=[:goldenrod1 :aquamarine3 :seashell2 :crimson],
                 legend=:bottomright,
                 margin=25mm,
+                xformatter=_->"",
             )
-            hline!([safety],label="Restriction",linewidth=2,colour=:grey60,)
+            hline!([safety],label="Capacity",linewidth=2,colour=:grey60,)
         end
     end
-    gif(anim, "visuals/sim_utilization_fps30_$(kind)_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).gif", fps = 30)
+    gif(anim, "visuals/sim_utilization_fps30_$(kind_opt)_$(kind_sim)_$(kind_queue)_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).gif", fps = 30)
 end
