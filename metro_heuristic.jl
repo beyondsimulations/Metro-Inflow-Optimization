@@ -13,10 +13,16 @@ function heuristic_adding_queues(im)
         moved_demand = Float64[],
     )
 
+    infeasible_solutions = 0
+
     for fix_period in 1:im.nr_periods
 
         println("Running period ", fix_period)
         im.cum_demand_od_in_period[:,:,fix_period] .= sum(remaining_queue[:,:,1:fix_period],dims=3)
+
+        # Prepare the upper and lower bound of the observed time slice
+        lower_period::Int64 = max(1,fix_period - floor((60+im.minutes_in_period)/im.minutes_in_period))
+        upper_period::Int64 = min(fix_period + ceil((60+im.minutes_in_period)/im.minutes_in_period)+1,im.nr_periods)
 
         println(sum(sum(remaining_queue[:,:,1:fix_period],dims=3)))
 
@@ -40,8 +46,8 @@ function heuristic_adding_queues(im)
 
         for o in 1:im.nr_nodes
             if fix_period > 1
-                for p in 1:fix_period-1
-                    if inflow_raw[o,p] > 0.1
+                for p in lower_period:fix_period-1
+                    if inflow_raw[o,p] > 0.0001
                         fix(X[o,p],inflow_raw[o,p]; force = true)
                     else
                         fix(X[o,p],0; force = true)
@@ -54,9 +60,13 @@ function heuristic_adding_queues(im)
 
             optimization_duration[fix_period] = @elapsed optimize!(model)
 
+            if is_solved_and_feasible(model) == false
+                infeasible_solutions += 1
+            end
+
             for o in 1:im.nr_nodes
-                for p in 1:im.nr_periods
-                    if value.(X)[o,p] > 0.001
+                for p in fix_period:upper_period
+                    if value.(X)[o,p] > 0.0001
                         inflow_raw[o,p] = value.(X)[o,p]
                     else
                         inflow_raw[o,p] = 0.00
@@ -67,6 +77,7 @@ function heuristic_adding_queues(im)
         else
 
             inflow_raw[:,fix_period] .= 0
+            
         end
 
         
@@ -99,9 +110,15 @@ function heuristic_adding_queues(im)
                 end
             end
         end
+
+        if im.closed_period[fix_period] == true
+            remaining_queue[:,:,1:fix_period] .= 0
+        end
         for o in 1:im.nr_nodes
             save_queue[o,fix_period] = round(Int64,sum(remaining_queue[o,:,1:fix_period]))
         end
+
+
         push!(stats,(
             period = fix_period,
             new_demand = sum(im.demand_od_in_period[:,:,fix_period]),
@@ -161,5 +178,5 @@ function heuristic_adding_queues(im)
     sort!(results_queues,[:datetime,:station])
     sort!(results_arcs,[:datetime,:line,:connection])
 
-    return results_queues, results_arcs, optimization_duration, queue_period_age
+    return results_queues, results_arcs, optimization_duration, queue_period_age, infeasible_solutions
 end

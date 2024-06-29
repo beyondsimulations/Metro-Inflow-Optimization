@@ -22,22 +22,22 @@ include("metro_simulation.jl")
 include("metro_visuals.jl")
 
 # Parameters for the actual model
-set_safety = [0.9]                # safety factor that limits the arc capacity
-set_max_enter = [200]             # number of maximal entries per minute per station
-set_min_enter = [3]               # min number of people allowed to enter
-set_scaling = [1.0]               # scaling of the metro queue (to test lower or higher demand)
-set_past_minutes = [60]           # timeframe to consider from the past during the optimization
-set_kind_opt = ["regular"]        # "regular","weight","linear","linwei"
-set_kind_queue = ["shift_per"]    # "lag_static","shift_per","shift_cum"
+set_safety = [0.8,0.9,1.0]                          # safety factor that limits the arc capacity
+set_max_enter = [200]                               # number of maximal entries per minute per station
+set_min_enter = [5]                                 # min number of people allowed to enter
+set_scaling = [1.0]                                 # scaling of the metro queue (to test lower or higher demand)
+set_past_minutes = [60,120,180,240,300]             # timeframe to consider from the past during the optimization
+set_kind_opt = ["regular","weight"]                 # "regular","weight","linear","linwei"
+set_kind_queue = ["shift_per","lag_static"]         # "lag_static","shift_per","shift_cum"
 
 # Define static simulation data
-kind_sim = "bound"                # "bound","inflow","unbound"
-minutes_in_period = 60            # minutes in each period (in 15 minute intervals!)
+const kind_sim = "bound"                # "bound","inflow","unbound"
+const minutes_in_period = 60            # minutes in each period (in 15 minute intervals!)
 
 # Define the start- and end time of the observed time horizon
 # Make sure that the horizon contains only one shift!
-start_time = DateTime("2022-11-27T00:00:00.00")
-end_time = DateTime("2022-11-27T23:59:00.00")
+const start_time = DateTime("2022-11-27T00:00:00.00")
+const end_time = DateTime("2022-11-30T23:59:00.00")
 
 struct MetroInstance
     kind_opt::String
@@ -60,10 +60,10 @@ struct MetroInstance
 end
 
 # Input validation and datetime preparation
-daterange = Date(start_time):Date(end_time)
-periodrange = start_time:Minute(minutes_in_period):end_time
-nr_minutes = length(start_time:Minute(1):end_time)+ 120
-nr_periods = ceil(Int64,(nr_minutes-120)/minutes_in_period)
+const daterange = Date(start_time):Date(end_time)
+const periodrange = start_time:Minute(minutes_in_period):end_time
+const nr_minutes = length(start_time:Minute(1):end_time)+ 120
+const nr_periods = ceil(Int64,(nr_minutes-120)/minutes_in_period)
 closed_period = zeros(Bool,nr_periods)
 for period in eachindex(periodrange)
     if hour(periodrange[period]) == 3 || hour(periodrange[period]) == 4
@@ -99,12 +99,12 @@ end
 
 # Prepare the graph related hash tables
 println("Preparing graph data.")
-nodes = sort(unique(vcat(getproperty.(metroarcs, :origin),getproperty.(metroarcs, :destination))))
-nr_nodes = length(nodes)
-nr_arcs = size(grapharcs,1)
-d_node_id = Dict([nodes[i] => i for i in eachindex(nodes)])
-d_arc_id = Dict((d_node_id[grapharcs.origin[i]],d_node_id[grapharcs.destination[i]]) => i for i in axes(grapharcs,1))
-d_id_arc = Dict(i => (d_node_id[grapharcs.origin[i]],d_node_id[grapharcs.destination[i]]) for i in axes(grapharcs,1))
+const nodes = sort(unique(vcat(getproperty.(metroarcs, :origin),getproperty.(metroarcs, :destination))))
+const nr_nodes = length(nodes)
+const nr_arcs = size(grapharcs,1)
+const d_node_id = Dict([nodes[i] => i for i in eachindex(nodes)])
+const d_arc_id = Dict((d_node_id[grapharcs.origin[i]],d_node_id[grapharcs.destination[i]]) => i for i in axes(grapharcs,1))
+const d_id_arc = Dict(i => (d_node_id[grapharcs.origin[i]],d_node_id[grapharcs.destination[i]]) for i in axes(grapharcs,1))
 
 # Load and prepare the demand data
 println("Preparing demand data.")
@@ -159,15 +159,15 @@ for safety in set_safety
                                 safety,
                                 min_enter,
                                 max_enter,
-                                demand_od,
-                                demand_od,
+                                copy(demand_od),
+                                copy(demand_od),
                                 shift,
                                 scaling,
                                 closed_period,
                             )
 
                             # Start of the iterative allocation
-                            queues, arcs, opt_duration, queue_period_age = heuristic_adding_queues(modelInstance)
+                            queues, arcs, opt_duration, queue_period_age, infeasible_solutions = heuristic_adding_queues(modelInstance)
                             #plot_optimization!(arcs)
 
                             # Save the results from the heuristic
@@ -176,7 +176,7 @@ for safety in set_safety
 
                             # Start the simulation unbound
                             println("Start simulation $kind_sim.")
-                            sim_queues,sim_arcs = simulate_metro(modelInstance,queues,grapharcs,kind_sim,queue_period_age)
+                            sim_queues,sim_arcs = simulate_metro(modelInstance,queues,opt_duration,grapharcs,kind_sim,queue_period_age, infeasible_solutions)
                             CSV.write("results/sim_queues_new_$(kind_opt)_$(kind_sim)_$(kind_queue)_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).csv", sim_queues)
                             #plot_simulation!(sim_queues,sim_arcs,kind_sim)
                             #sim_queues,sim_arcs = simulate_metro(queues,nr_minutes,grapharcs,"unbound")

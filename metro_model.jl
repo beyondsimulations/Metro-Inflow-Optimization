@@ -36,15 +36,15 @@ function build_restricted_optimization_model(modelInstance,current_period,queue_
     set_attribute(im, "time_limit", 120.0)
     set_attribute(im, "mip_rel_gap", 0.0)
 
-    println("Preparing optimization model.")
-    @variable(im, 
-    modelInstance.min_entry_origin .<= X[o=1:modelInstance.nr_nodes,p=1:modelInstance.nr_periods] .<= modelInstance.max_entry_origin * modelInstance.safety_factor
-    )
-
     # Prepare the upper and lower bound of the observed time slice
     lower_period::Int64 = max(1,current_period - floor((60+modelInstance.minutes_in_period)/modelInstance.minutes_in_period))
     upper_period::Int64 = min(current_period + ceil((60+modelInstance.minutes_in_period)/modelInstance.minutes_in_period)+1,modelInstance.nr_periods)
     current_minute::Int64 = ceil(modelInstance.minutes_in_period * current_period)
+
+    println("Preparing optimization model.")
+    @variable(im, 
+        0 .<= X[o=1:modelInstance.nr_nodes,p=lower_period:upper_period] .<= modelInstance.max_entry_origin * modelInstance.safety_factor
+    )
 
     if modelInstance.kind_opt == "regular"
         println("Preparing regular objective function.")
@@ -102,7 +102,9 @@ function build_restricted_optimization_model(modelInstance,current_period,queue_
                                 if p < current_period
                                     arcweight += ceil(inflow_raw[o,p] * modelInstance.demand_od_in_period[o,d,min(current_period,p-queue_period_age[o,p]+p_shifts,modelInstance.nr_periods)]/sum(modelInstance.demand_od_in_period[o,:,min(current_period,p-queue_period_age[o,p]+p_shifts,modelInstance.nr_periods)]),digits=5)
                                 else
-                                    arcweight += ceil(min_enter * modelInstance.demand_od_in_period[o,d,min(current_period,p-queue_period_age[o,p]+p_shifts,modelInstance.nr_periods)]/sum(modelInstance.demand_od_in_period[o,:,min(current_period,p-queue_period_age[o,p]+p_shifts,modelInstance.nr_periods)]),digits=5)
+                                    if sum(modelInstance.demand_od_in_period[o,:,p]) > 0
+                                        arcweight += ceil(modelInstance.min_entry_origin * modelInstance.demand_od_in_period[o,d,min(current_period,p-queue_period_age[o,p]+p_shifts,modelInstance.nr_periods)]/sum(modelInstance.demand_od_in_period[o,:,min(current_period,p-queue_period_age[o,p]+p_shifts,modelInstance.nr_periods)]),digits=5)
+                                    end
                                 end
                             end
                         end
@@ -119,9 +121,14 @@ function build_restricted_optimization_model(modelInstance,current_period,queue_
             sum(X[o,p] * modelInstance.demand_od_in_period[o,d,min(current_period,p-queue_period_age[o,p]+p_shifts,modelInstance.nr_periods)]/sum(modelInstance.demand_od_in_period[o,:,min(current_period,p-queue_period_age[o,p]+p_shifts,modelInstance.nr_periods)]) for (o,d,p) in modelInstance.shift[a,t] if modelInstance.demand_od_in_period[o,d,min(current_period,p-queue_period_age[o,p]+p_shifts,modelInstance.nr_periods)] > 0) <= adjusted_capacity_arcs[t,a]
         )
     end
+
+    println("Restrict dispatch increase.")
+    @constraint(im, min_dispatch[p in current_period:upper_period, o in 1:modelInstance.nr_nodes; sum(modelInstance.demand_od_in_period[o,:,p]) > 0],
+        X[o,p] >= modelInstance.min_entry_origin
+        )
     
     println("Restrict dispatch increase.")
-    @constraint(im, max_increase[p in 2:modelInstance.nr_periods, o in 1:modelInstance.nr_nodes; sum(modelInstance.demand_od_in_period[o,:,p]) > 0],
+    @constraint(im, max_increase[p in max(2,current_period):upper_period, o in 1:modelInstance.nr_nodes; sum(modelInstance.demand_od_in_period[o,:,p]) > 0],
         X[o,p] - X[o,p-1] <= modelInstance.max_entry_origin/2
         )
 

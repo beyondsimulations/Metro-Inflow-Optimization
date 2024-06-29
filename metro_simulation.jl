@@ -18,7 +18,7 @@ function create_entry_list!(im,real_allowed_entry,queues)
     end
 end
 
-function simulate_metro(im,queues,grapharcs,kind_sim,queue_period_age)
+function simulate_metro(im,queues,opt_duration,grapharcs,kind_sim,queue_period_age,infeasible_solutions)
 
     real_arc_use = zeros(Float64,im.nr_minutes,im.nr_arcs)
     real_queue_use = zeros(Float64,im.nr_minutes,im.nr_nodes)
@@ -41,7 +41,7 @@ function simulate_metro(im,queues,grapharcs,kind_sim,queue_period_age)
     ## start the flow through the network
     for minute in 1:size(real_arc_use,1)
 
-        new_demand = sum(real_od_queue[minute,:,:]) * im.minutes_in_period
+        new_demand = sum(real_od_queue[minute,:,:])
         moved_demand = 0
 
         for origin in eachindex(nodes)
@@ -88,10 +88,14 @@ function simulate_metro(im,queues,grapharcs,kind_sim,queue_period_age)
                 end
             end
             real_queue_use[minute,origin] = sum(real_od_queue[1:minute,origin,:])
+
+            if all(i->i==0,real_allowed_entry[minute,:]) && infeasible_solutions == 0
+                real_od_queue[1:minute,:,:] .= 0
+            end
         end
 
         in_queue = sum(real_queue_use[minute,:])
-        moved_demand = moved_demand * im.minutes_in_period
+        moved_demand = moved_demand
 
         push!(stats,(
             minute = minute,
@@ -103,8 +107,9 @@ function simulate_metro(im,queues,grapharcs,kind_sim,queue_period_age)
     end
 
     plot(stats.minute,stats.new_demand,label="new demand")
-    plot!(stats.minute,stats.in_queue,label="queued")
-    display(plot!(stats.minute,stats.moved_demand,label="moved",title="Simulation"))
+    display(plot!(stats.minute,stats.moved_demand,label="moved",title="Simulation - A"))
+    display(plot!(stats.minute,stats.in_queue,label="queued",title="Simulation - B"))
+  
 
     for arc in axes(grapharcs,1)
         for minute in axes(real_arc_use,1)
@@ -154,6 +159,7 @@ function simulate_metro(im,queues,grapharcs,kind_sim,queue_period_age)
             kind_optimization=String[],
             kind_simulation=String[],
             kind_queue=String[],
+            infeasible=Int64[],
             avg_duration=Float64[],
             total_duration=Float64[],
             avg_queue=Float64[],
@@ -178,16 +184,17 @@ function simulate_metro(im,queues,grapharcs,kind_sim,queue_period_age)
 
     push!(logfile, (
         timestamp = now(),
-        safety = safety,
+        safety = im.safety_factor,
         intervall = string(start_time) * " to " * string(end_time),
-        period_length = minutes_in_period,
-        past_minutes = past_minutes,
-        max_enter=max_enter,
-        min_enter=min_enter,
-        scaling=scaling,
-        kind_optimization=kind_opt,
+        period_length = im.minutes_in_period,
+        past_minutes = im.past_minutes,
+        max_enter= im.min_entry_origin,
+        min_enter= im.max_entry_origin,
+        scaling=im.scaling,
+        kind_optimization=im.kind_opt,
         kind_simulation=kind_sim,
-        kind_queue=kind_queue,
+        kind_queue=im.kind_queue,
+        infeasible=infeasible_solutions,
         avg_duration = sum(opt_duration)/length(opt_duration),
         total_duration =  sum(opt_duration),
         avg_queue = sum(sim_queues.queued)/nrow(sim_queues),
