@@ -15,8 +15,9 @@ function heuristic_adding_queues(im)
 
     infeasible_solutions = 0
 
-    for fix_period in 1:im.nr_periods
-
+    @showprogress for fix_period in 1:im.nr_periods
+        
+        println()
         println("Running period ", fix_period)
         im.cum_demand_od_in_period[:,:,fix_period] .= sum(remaining_queue[:,:,1:fix_period],dims=3)
 

@@ -39,7 +39,7 @@ function simulate_metro(im,queues,opt_duration,grapharcs,kind_sim,queue_period_a
     )
 
     ## start the flow through the network
-    for minute in 1:size(real_arc_use,1)
+    @showprogress for minute in 1:size(real_arc_use,1)
 
         new_demand = sum(real_od_queue[minute,:,:])
         moved_demand = 0
@@ -58,8 +58,6 @@ function simulate_metro(im,queues,opt_duration,grapharcs,kind_sim,queue_period_a
 
             end
 
-            moved_demand += moved_minute
-
             ## dispatch the ratio according to each destination
             if moved_minute > 0
                 for queue_minute in 1:minute
@@ -67,6 +65,7 @@ function simulate_metro(im,queues,opt_duration,grapharcs,kind_sim,queue_period_a
                         queue_length = sum(real_od_queue[queue_minute,origin,:])
                         all_inflow = min(moved_minute,queue_length)
                         split_flow = (real_od_queue[queue_minute,origin,:]/queue_length) .* all_inflow
+                        moved_demand += all_inflow
                         for destination in 1:im.nr_nodes
                             if split_flow[destination] > 0
                                 for movement in shift_start_end[origin,destination]
@@ -94,13 +93,10 @@ function simulate_metro(im,queues,opt_duration,grapharcs,kind_sim,queue_period_a
             end
         end
 
-        in_queue = sum(real_queue_use[minute,:])
-        moved_demand = moved_demand
-
         push!(stats,(
             minute = minute,
             new_demand = new_demand,
-            in_queue = in_queue,
+            in_queue = sum(real_queue_use[minute,:]),
             moved_demand = moved_demand,
             )
         )
@@ -113,7 +109,7 @@ function simulate_metro(im,queues,opt_duration,grapharcs,kind_sim,queue_period_a
 
     for arc in axes(grapharcs,1)
         for minute in axes(real_arc_use,1)
-            if real_arc_use[minute,arc] > 0
+            if real_arc_use[minute,arc] > 0 && grapharcs.capacity[arc] > 0
                 real_arc_use[minute,arc] = real_arc_use[minute,arc] / grapharcs.capacity[arc]
             end
         end
@@ -166,6 +162,8 @@ function simulate_metro(im,queues,opt_duration,grapharcs,kind_sim,queue_period_a
             end_queue=Float64[],
             avg_queue_age=Float64[],
             end_queue_age=Float64[],
+            total_demand=Float64[],
+            people_moved=Float64[],
             avg_utilization=Float64[],
             max_utilization=Float64[],
             exceeded_minutes=Float64[],
@@ -181,6 +179,9 @@ function simulate_metro(im,queues,opt_duration,grapharcs,kind_sim,queue_period_a
             
             )
     end
+
+    ex = length(filter(x -> x > 1, sim_arcs.utilization)) == 0 ? [0] : filter(x -> x > 1, sim_arcs.utilization)
+    sf = length(filter(x -> x > im.safety_factor, sim_arcs.utilization)) == 0 ? [0] : filter(x -> x > im.safety_factor, sim_arcs.utilization)
 
     push!(logfile, (
         timestamp = now(),
@@ -201,18 +202,20 @@ function simulate_metro(im,queues,opt_duration,grapharcs,kind_sim,queue_period_a
         end_queue = sum(real_queue_use[end,:]),
         avg_queue_age=(sum(queue_period_age)/(size(queue_period_age,1)*size(queue_period_age,2)))*im.minutes_in_period,
         end_queue_age=(sum(queue_period_age[end,:])/(size(queue_period_age,2)))*im.minutes_in_period,
+        total_demand=sum(stats.new_demand),
+        people_moved=sum(stats.moved_demand),
         avg_utilization = sum(sim_arcs.utilization)/nrow(sim_arcs),
         max_utilization = maximum(sim_arcs.utilization),
         exceeded_minutes = length(filter(x -> x > 1, sim_arcs.utilization)),
         exceeded_mean = mean(filter(x -> x > 1, sim_arcs.utilization)),
-        exceeded_median = quantile(filter(x -> x > 1, sim_arcs.utilization),0.5),
-        exceeded_080quant = quantile(filter(x -> x > 1, sim_arcs.utilization),0.80),
-        exceeded_090quant = quantile(filter(x -> x > 1, sim_arcs.utilization),0.90),
+        exceeded_median = quantile(ex,0.5),
+        exceeded_080quant = quantile(ex,0.80),
+        exceeded_090quant = quantile(ex,0.90),
         safety_minutes = length(filter(x -> x > im.safety_factor, sim_arcs.utilization)),
         safety_mean = mean(filter(x -> x >  im.safety_factor, sim_arcs.utilization)),
-        safety_median = quantile(filter(x -> x > im.safety_factor, sim_arcs.utilization),0.5),
-        safety_080quant = quantile(filter(x -> x > im.safety_factor, sim_arcs.utilization),0.80),
-        safety_090quant = quantile(filter(x -> x > im.safety_factor, sim_arcs.utilization),0.90),
+        safety_median = quantile(sf,0.5),
+        safety_080quant = quantile(sf,0.80),
+        safety_090quant = quantile(sf,0.90),
     ))
 
     CSV.write("logfile.csv",logfile)

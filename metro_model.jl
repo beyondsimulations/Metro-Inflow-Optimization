@@ -85,6 +85,11 @@ function build_restricted_optimization_model(modelInstance,current_period,queue_
         @constraint(im, capacity_period[a in 1:modelInstance.nr_arcs,t in max(1,current_minute-(minutes_in_period)):min(current_minute+(longest_path+minutes_in_period),nr_minutes), p_shifts in 0:ceil(Int,modelInstance.past_minutes/minutes_in_period); shift[a,t] != []],
             sum(X[o,p] * modelInstance.demand_od_in_period[o,d,max(1,p-p_shifts)]/sum(modelInstance.demand_od_in_period[o,:,max(1,p-p_shifts)]) for (o,d,p) in modelInstance.shift[a,t] if modelInstance.demand_od_in_period[o,d,max(1,p-p_shifts)] > 0) <= modelInstance.capacity_arcs[a] * modelInstance.safety_factor
         )
+    elseif modelInstance.kind_queue == "shift_dyn"
+        println("Preparing capacity constraints for periodical demand.")
+        @constraint(im, capacity_period[a in 1:modelInstance.nr_arcs,t in max(1,current_minute-(minutes_in_period)):min(current_minute+(longest_path+minutes_in_period),nr_minutes), p_shifts in 0:min(maximum(queue_period_age), ceil(Int,modelInstance.past_minutes/minutes_in_period)); shift[a,t] != []],
+            sum(X[o,p] * modelInstance.demand_od_in_period[o,d,max(1,p-p_shifts)]/sum(modelInstance.demand_od_in_period[o,:,max(1,p-p_shifts)]) for (o,d,p) in modelInstance.shift[a,t] if modelInstance.demand_od_in_period[o,d,max(1,p-p_shifts)] > 0) <= modelInstance.capacity_arcs[a] * modelInstance.safety_factor
+        )
     elseif modelInstance.kind_queue == "lag_static"
         smart_intervall = ceil(Int,modelInstance.past_minutes/modelInstance.minutes_in_period)
         adjusted_capacity_arcs = zeros(Float64,modelInstance.nr_minutes,modelInstance.nr_arcs)
