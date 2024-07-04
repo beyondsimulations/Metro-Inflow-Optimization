@@ -22,7 +22,7 @@ function heuristic_adding_queues(im)
         im.cum_demand_od_in_period[:,:,fix_period] .= sum(remaining_queue[:,:,1:fix_period],dims=3)
 
         # Prepare the upper and lower bound of the observed time slice
-        lower_period::Int64 = max(1,fix_period - floor((60+im.minutes_in_period)/im.minutes_in_period))
+        lower_period::Int64 = max(1,fix_period - ceil((longest_path+im.minutes_in_period)/im.minutes_in_period))
         upper_period::Int64 = min(fix_period,im.nr_periods)
 
         println(sum(sum(remaining_queue[:,:,1:fix_period],dims=3)))

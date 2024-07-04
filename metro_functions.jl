@@ -28,9 +28,8 @@ function aggregate_demand()
     demand = load_demand()
     
     # Create a mapping from periods to date ranges
-    period_mapping = start_time:Minute(minutes_in_period):end_time+Minute(10)
     timesteps = start_time:Minute(1):end_time
-    dict_periods = Dict(timesteps[x] => divrem(x,60)[1]+1 for x in eachindex(timesteps))
+    dict_periods = Dict(timesteps[x] => divrem(x,minutes_in_period)[1]+1 for x in eachindex(timesteps))
     
     # Assign each row in the demand DataFrame to a particular period based on its datetime value
     demand.period .= 0
