@@ -24,6 +24,8 @@ function simulate_metro(im,queues,opt_duration,grapharcs,kind_sim,queue_period_a
     real_queue_use = zeros(Float64,im.nr_minutes,im.nr_nodes)
     real_od_queue = zeros(Float64,im.nr_minutes,im.nr_nodes,im.nr_nodes)
 
+    exceeded = Vector{String}
+
     ## load all queues into a tensor
     create_od_queue!(im,real_od_queue)
 
@@ -69,8 +71,8 @@ function simulate_metro(im,queues,opt_duration,grapharcs,kind_sim,queue_period_a
                         for destination in 1:im.nr_nodes
                             if split_flow[destination] > 0
                                 for movement in shift_start_end[origin,destination]
-                                    if minute+movement[2] <= size(real_arc_use,1)
-                                        real_arc_use[minute+movement[2],movement[1]] += split_flow[destination]
+                                    if minute+movement[2]-1 <= size(real_arc_use,1)
+                                        real_arc_use[minute+movement[2]-1,movement[1]] += split_flow[destination]
                                     end
                                 end
                             end

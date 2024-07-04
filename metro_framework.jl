@@ -25,11 +25,11 @@ include("metro_visuals.jl")
 # Parameters for the actual model
 set_safety = [0.8,0.9,1.0]                          # safety factor that limits the arc capacity
 set_max_enter = [200]                               # number of maximal entries per minute per station
-set_min_enter = [0,5]                               # min number of people allowed to enter
+set_min_enter = [5]                                 # min number of people allowed to enter
 set_scaling = [1.0]                                 # scaling of the metro queue (to test lower or higher demand)
 set_past_minutes = [60,120,180,240,300,360]         # timeframe to consider from the past during the optimization
 set_kind_opt = ["regular","weight"]                 # "regular","weight","linear","linwei"
-set_kind_queue = ["shift_per"]                      # "lag_static","shift_per","shift_cum","shift_dyn"
+set_kind_queue = ["lag_static","shift_per","shift_dyn","shift_cum"]   # "lag_static","shift_per","shift_cum","shift_dyn"
 
 # Define static simulation data
 const kind_sim = "bound"                # "bound","inflow","unbound"
@@ -37,8 +37,8 @@ const minutes_in_period = 60            # minutes in each period (in 15 minute i
 
 # Define the start- and end time of the observed time horizon
 # Make sure that the horizon contains only one shift!
-start_time = DateTime("2022-11-27T05:00:00.00")
-end_time = DateTime("2022-11-28T03:59:00.00")
+start_time = DateTime("2022-11-29T05:00:00.00")
+end_time = DateTime("2022-11-30T03:59:00.00")
 
 struct MetroInstance
     kind_opt::String
