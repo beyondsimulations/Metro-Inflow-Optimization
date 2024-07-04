@@ -12,57 +12,71 @@ using StatsPlots
 using Dates
 using Measures
 using Graphs
-using SparseArrays
+using Statistics
+using Gurobi
+using ProgressMeter
 
-# parameters for the actual model
-safety = 0.7            # safety factor that limits the arc capacity
-minutes_in_period = 60  # minutes in each period (in 15 minute intervals!)
-max_enter = 100         # number of maximal entries per minute per station
-rate_closed = 100       # taxi "queue removal rate" per minute during closed metro hours
-closed = Hour.(3:5)     # hours during which the metro operation is closed
-scaling = 1.0           # scaling of the metro queue (to test lower or higher demand)
+include("metro_functions.jl")
+include("metro_model.jl")
+include("metro_heuristic.jl")
+include("metro_simulation.jl")
+include("metro_visuals.jl")
 
-# datetime preparation
-start_time = DateTime("2022-11-27T05:00:00.00")
-end_time = DateTime("2022-11-28T04:59:00.00")
-daterange = Date(start_time):Date(end_time)
-nr_minutes = length(start_time:Minute(1):end_time)
-nr_periods = ceil(Int64,nr_minutes/minutes_in_period)
-@assert rem(minutes_in_period,15) == 0 "The length of each period has to be in 15min intervalls."
+# Parameters for the actual model
+set_safety = [0.8,0.9,1.0]                          # safety factor that limits the arc capacity
+set_max_enter = [200]                               # number of maximal entries per minute per station
+set_min_enter = [5]                                 # min number of people allowed to enter
+set_scaling = [1.0]                                 # scaling of the metro queue (to test lower or higher demand)
+set_past_minutes = [60,120,180,240,300,360]         # timeframe to consider from the past during the optimization
+set_kind_opt = ["weight"]                           # "regular","weight","linear","linwei"
+set_kind_queue = ["shift_per","lag_static"]         # "lag_static","shift_per","shift_cum","shift_dyn"
 
-# load the data
+# Define static simulation data
+const kind_sim = "bound"                # "bound","inflow","unbound"
+const minutes_in_period = 60            # minutes in each period (in 15 minute intervals!)
+
+# Define the start- and end time of the observed time horizon
+# Make sure that the horizon contains only one shift!
+start_time = DateTime("2022-11-29T05:00:00.00")
+end_time = DateTime("2022-11-30T04:59:00.00")
+
+struct MetroInstance
+    kind_opt::String
+    kind_queue::String
+    nr_nodes::Int64                                     # Overall number of nodes
+    nr_arcs::Int64                                      # Overall number of arcs
+    nr_periods::Int64                                   # Overall number of periods
+    nr_minutes::Int64                                   # Overall number of minutes
+    past_minutes::Int64
+    minutes_in_period::Int64
+    capacity_arcs::Vector{Int64}                        # Capacity of each arc
+    safety_factor::Float64                              # Safety factor for the arc_capacity
+    min_entry_origin::Int64                             # Minimal number of people allowed to enter from outside
+    max_entry_origin::Int64                             # Maximal number of people allowed to enter from outside
+    cum_demand_od_in_period::Array{Float64,3}           # Array with the cummulated demand from o to d for each period
+    demand_od_in_period::Array{Float64,3}               # Array with the demand from o to d for each period
+    shift::Matrix{Vector{Tuple{Int64, Int64, Int64}}}   # Array with the timelag of entry and utilization
+    scaling::Float64                                    # scaling of the metro queue (to test lower or higher demand)
+    closed_period::Vector{Bool}                         # defines the periods with a closure of the metro
+end
+
+# Input validation and datetime preparation
+const daterange = Date(start_time):Date(end_time)
+const periodrange = start_time:Minute(minutes_in_period):end_time
+const nr_minutes = length(start_time:Minute(1):end_time)+ 120
+const nr_periods = ceil(Int64,(nr_minutes-120)/minutes_in_period)
+closed_period = zeros(Bool,nr_periods)
+for period in eachindex(periodrange)
+    if hour(periodrange[period]) == 3 || hour(periodrange[period]) == 4
+        closed_period[period] = true
+    end
+end
+@assert rem(minutes_in_period,15) == 0 "The length of each period has to be in 15 min intervalls."
+
+# Load data of the metroarcs
 println("Loading data.")
 grapharcs = CSV.read("data_metro/metroarcs.csv", DataFrame)
 sort!(grapharcs, :category)
-
-function aggregate_demand()
-    demand =[]
-    for day in eachindex(daterange)
-        if day == 1
-            demand = CSV.read("data_demand/OD_$(daterange[day])v3.csv", DataFrame)
-        else
-            demand = vcat(demand, CSV.read("data_demand/OD_$(daterange[day])v3.csv", DataFrame))
-        end
-    end
-    filter!(row -> row.datetime >= start_time && row.datetime <= end_time, demand)
-    period_mapping = start_time:Minute(minutes_in_period):end_time
-    demand.period .= 1
-    for period in eachindex(period_mapping)
-        for row in eachrow(demand)
-            if period == 1 && row.datetime <= period_mapping[period]
-                row.period = period
-            elseif period > 1 && row.datetime > period_mapping[period-1] && row.datetime <= period_mapping[period]
-                row.period = period
-            end
-        end
-    end
-    demand = groupby(demand,[:origin,:destination,:period])
-    demand = combine(demand, :value => sum => :value)
-    return demand
-end
-
-println("Preparing demand data.")
-demand = aggregate_demand()
 
 struct Metroarc
     origin::String
@@ -81,52 +95,92 @@ for arc in axes(grapharcs,1)
         grapharcs.capacity[arc],
         ceil(Int64,grapharcs.traveltime[arc])
         )
-    )
+    ) 
 end
 
+# Prepare the graph related hash tables
 println("Preparing graph data.")
-# prepare the graph related hash tables
-nodes = sort(unique(vcat(getproperty.(metroarcs, :origin),getproperty.(metroarcs, :destination))))
-nr_nodes = length(nodes)
-nr_arcs = size(grapharcs,1)
-d_node_id = Dict([nodes[i] => i for i in eachindex(nodes)])
-d_arc_id = Dict((d_node_id[grapharcs.origin[i]],d_node_id[grapharcs.destination[i]]) => i for i in axes(grapharcs,1))
-d_id_arc = Dict(i => (d_node_id[grapharcs.origin[i]],d_node_id[grapharcs.destination[i]]) for i in axes(grapharcs,1))
+const nodes = sort(unique(vcat(getproperty.(metroarcs, :origin),getproperty.(metroarcs, :destination))))
+const nr_nodes = length(nodes)
+const nr_arcs = size(grapharcs,1)
+const d_node_id = Dict([nodes[i] => i for i in eachindex(nodes)])
+const d_arc_id = Dict((d_node_id[grapharcs.origin[i]],d_node_id[grapharcs.destination[i]]) => i for i in axes(grapharcs,1))
+const d_id_arc = Dict(i => (d_node_id[grapharcs.origin[i]],d_node_id[grapharcs.destination[i]]) for i in axes(grapharcs,1))
 
-# prepare the graph of the metro network
-G = DiGraph(nr_nodes)
-distance_matrix = zeros(Int64,nr_nodes,nr_nodes)
-for arc in metroarcs
-    add_edge!(G,d_node_id[arc.origin],d_node_id[arc.destination])
-    distance_matrix[d_node_id[arc.origin],d_node_id[arc.destination]] = ceil(Int64,arc.traveltime)
+# Load and prepare the demand data
+println("Preparing demand data.")
+demand = aggregate_demand()
+demand_od = zeros(Float64,nr_nodes,nr_nodes,nr_periods)
+for row in eachrow(demand)
+    demand_od[d_node_id[row.origin],d_node_id[row.destination],row.period] = row.value
 end
+@assert sum(demand_od) == sum(demand.value) "Mismatch in demand matrix."
 
+# Prepare the time-shift in the metro data
 println("Preparing shifting data.")
-shift = [Tuple{Int64,Int64,Int64}[] for _ in 1:nr_minutes, _ in 1:nr_arcs]
-for origin in 1:nr_nodes # origin at which people are allowed into the metro
-    state = dijkstra_shortest_paths(G, origin, distance_matrix; trackvertices=true)
-    all_distances = state.dists
-    all_paths = enumerate_paths(state) # holds all nodes on the path from origin to destination
-    for period in 1:nr_periods # period in which people are allowed into the metro
-        for destination in 1:nr_nodes # destination that the people allowed at the origin want to reach
-            if origin != destination # skips cases where no travel is necessary
-                stops_in_path = length(all_paths[destination]) # saves the number of stops
-                previous_stop = origin # initialize the first stop as origin of the path
-                minute_at_arc_start = (period-1) * minutes_in_period + 1 # first minute of the current period
-                start_at_origin = minute_at_arc_start # used for the assertation of the path
-                for next_node in all_paths[destination] # we now iterate over all nodes on a path
-                    if next_node != origin # we skip the first node in the path, as we need the arc
-                        for minute in minute_at_arc_start:(minute_at_arc_start+minutes_in_period-1) # access all minutes of that period
-                            if minute <= nr_minutes # make sure that we don't exeed the overall timeframe
-                                #shift[minute,d_arc_id[(previous_stop,next_node)],period,origin,destination] = true # allocate all corresponding periods
-                                push!(shift[minute,d_arc_id[(previous_stop,next_node)]],(origin,destination,period))
-                            end
-                        end
-                        minute_at_arc_start += metroarcs[d_arc_id[(previous_stop,next_node)]].traveltime # add the traveltime to the arc
-                        previous_stop = next_node # set the previous node to the current node
-                        if next_node == destination
-                            expected_distance = start_at_origin + all_distances[destination]
-                            @assert expected_distance == minute_at_arc_start "Shortest Paths: Duration computed $minute_at_arc_start, expected $expected_distance"
+shift, shift_original, shift_start_end, longest_path = compute_shift()
+println("Longest path is $longest_path.")
+
+for safety in set_safety  
+    for min_enter in set_min_enter
+        for max_enter in set_max_enter
+            for scaling in set_scaling
+                for past_minutes in set_past_minutes
+                    for kind_opt in set_kind_opt
+                        for kind_queue in set_kind_queue
+                            println("Start: safety $safety, mip $minutes_in_period, pm $past_minutes, $kind_opt, $kind_sim, $kind_queue")
+
+                            # Create a MetroInstance object with the following parameters:
+                            # * kind_opt: 
+                            # * kind_queue: 
+                            # * nr_nodes: number of nodes in the network (i.e., metro stations)
+                            # * nr_arcs: number of arcs between nodes in the network
+                            # * nr_periods: number of time periods to consider in the problem
+                            # * nr_minutes: number of minutes per period
+                            # * past_minutes: timeframe of previous minutes considered during the optimization
+                            # * getproperty.(metroarcs, :capacity): list of capacities for each arc 
+                            # * safety: ratio of max. arc utilization
+                            # * min_enter: minimum number of people that can enter a node at any minute
+                            # * max_enter: maximum number of people that can enter a node at any minute
+                            # * cum_demand_od: cummulated demand from origin to destination per period
+                            # * demand_od: demand from origin to destination per period
+                            # * shift: shift data that maps minutes and periods and arcs
+                            # * scaling: test higher and lower demands by multiplication
+
+                            modelInstance = MetroInstance(
+                                kind_opt,
+                                kind_queue,
+                                nr_nodes,
+                                nr_arcs,
+                                nr_periods,
+                                nr_minutes,
+                                past_minutes,
+                                minutes_in_period,
+                                getproperty.(metroarcs, :capacity),
+                                safety,
+                                min_enter,
+                                max_enter,
+                                copy(demand_od),
+                                copy(demand_od),
+                                shift,
+                                scaling,
+                                closed_period,
+                            )
+
+                            # Start of the iterative allocation
+                            queues, arcs, opt_duration, queue_period_age, infeasible_solutions = heuristic_adding_queues(modelInstance)
+                            #plot_optimization!(arcs)
+
+                            # Save the results from the heuristic
+                            CSV.write("results/queues_new_$(kind_opt)_$(kind_sim)_$(kind_queue)_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).csv", queues)
+                            CSV.write("results/arcs_new_$(kind_opt)_$(kind_sim)_$(kind_queue)_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).csv", arcs)
+
+                            # Start the simulation unbound
+                            println("Start simulation $kind_sim.")
+                            sim_queues,sim_arcs = simulate_metro(modelInstance,queues,opt_duration,grapharcs,kind_sim,queue_period_age, infeasible_solutions)
+                            CSV.write("results/sim_queues_new_$(kind_opt)_$(kind_sim)_$(kind_queue)_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).csv", sim_queues)
+                            #plot_simulation!(sim_queues,sim_arcs,kind_sim)
+                            #sim_queues,sim_arcs = simulate_metro(queues,nr_minutes,grapharcs,"unbound")
                         end
                     end
                 end
@@ -134,121 +188,3 @@ for origin in 1:nr_nodes # origin at which people are allowed into the metro
         end
     end
 end
-
-# prepare the demand data
-demand_od = zeros(Int64,nr_nodes,nr_nodes,nr_periods)
-for row in eachrow(demand)
-    demand_od[d_node_id[row.origin],d_node_id[row.destination],row.period] = row.value
-end
-@assert sum(demand_od) == sum(demand.value) "Mismatch in demand matrix."
-
-struct MetroInstance
-    nr_nodes::Int64                     # Overall number of nodes
-    nr_arcs::Int64                      # Overall number of arcs
-    nr_periods::Int64                   # Overall number of periods
-    nr_minutes::Int64                   # Overall number of minutes
-    capacity_arcs::Vector{Int64}        # Capacity of each arc
-    safety_factor::Float64              # Safety factor for the arc_capacity
-    max_entry_origin::Int64             # Maximal number of people allowed to enter from outside
-    demand_od_in_period::Array{Int64,3} # Array with the demand from o to d for each period
-    shift::Matrix{Vector{Tuple{Int64, Int64, Int64}}}
-end
-
-println("Preparing model instance.")
-modelInstance = MetroInstance(
-    nr_nodes,
-    nr_arcs,
-    nr_periods,
-    nr_minutes,
-    getproperty.(metroarcs, :capacity),
-    safety,
-    max_enter,
-    demand_od,
-    shift
-)
-
-im = Model(HiGHS.Optimizer)
-set_attribute(im, "presolve", "on")
-set_attribute(im, "time_limit", 120.0)
-set_attribute(im, "mip_rel_gap", 0.0)
-
-println("Preparing optimization model.")
-@variable(im, 
-    X[o=1:modelInstance.nr_nodes,p=1:modelInstance.nr_periods] .>= 0
-)
-
-println("Preparing objective function.")
-@objective(im, Min, 
-    sum(sum(sum(modelInstance.demand_od_in_period[o,d,p] for d in 1:modelInstance.nr_nodes) - X[o,p] *  minutes_in_period)^2 for o in 1:modelInstance.nr_nodes, p in 1:modelInstance.nr_periods)
-)
-
-println("Preparing capacity constraints.")
-for t in 1:minutes_in_period:modelInstance.nr_minutes 
-    for a in 1:modelInstance.nr_arcs
-        @constraint(im,
-            sum(X[o,p] * modelInstance.demand_od_in_period[o,d,p]/sum(modelInstance.demand_od_in_period[o,:,p]) for (o,d,p) in modelInstance.shift[t,a] if modelInstance.demand_od_in_period[o,d,p] > 0) <=  modelInstance.capacity_arcs[a] * modelInstance.safety_factor
-        )
-    end
-end
-
-println("Preparing capacity inflow constraints.")
-@constraint(
-    im, capacity_station[o in 1:modelInstance.nr_nodes, p in 1:modelInstance.nr_periods],
-    X[o,p] <= modelInstance.max_entry_origin
-)
-
-println("Starting optimization.")
-optimize!(im)
-
-rem_queue_steps = zeros(Float64, nr_nodes, nr_periods)
-queue_steps = sum(modelInstance.demand_od_in_period[:,:,:], dims=2)[:,1,:]
-add_queue_steps = copy(queue_steps)
-inflow = value.(X) .* minutes_in_period
-for p in 1:nr_periods
-    rem_queue_steps[:,p] = queue_steps[:,p] .- inflow[:,p]
-    if p > 1
-        rem_queue_steps[:,p] +=  rem_queue_steps[:,p-1]
-        add_queue_steps[:,p] +=  add_queue_steps[:,p-1]
-    end
-end
-
-#=
-println("Preparing optimization model.")
-@variable(im, 
-    X[o=1:modelInstance.nr_nodes,p=1:modelInstance.nr_periods,u=max(1,p-max_shift):p] .>= 0
-)
-
-println("Preparing objective function.")
-@objective(im, Min, 
-    sum((sum(modelInstance.demand_od_in_period[o,d,u] for d in 1:modelInstance.nr_nodes, u in 1:p) - sum(X[o,pp,u] for pp in 1:p, u in 1:p))^2 for o in 1:modelInstance.nr_nodes, p in 1:modelInstance.nr_periods)
-)
-
-println("Preparing capacity constraints.")
-for t in 1:minutes_in_period:modelInstance.nr_minutes 
-    for a in 1:modelInstance.nr_arcs
-        @constraint(im,
-            sum(X[o,p,u] * modelInstance.demand_od_in_period[o,d,u]/sum(modelInstance.demand_od_in_period[o,dd,u] for dd in 1:modelInstance.nr_nodes) for (o,d,u) in modelInstance.shift[t,a], p in 1:modelInstance.nr_periods if modelInstance.demand_od_in_period[o,d,u] > 0 && u <= p && u >= p - max_shift) <=  modelInstance.capacity_arcs[a] * modelInstance.safety_factor
-        )
-    end
-end
-
-println("Preparing capacity inflow constraints.")
-@constraint(
-    im, capacity_station[o in 1:modelInstance.nr_nodes, p in 1:modelInstance.nr_periods],
-    sum(X[o,p,u] for u in 1:modelInstance.nr_periods) <= modelInstance.max_entry_origin
-)
-println("Starting optimization.")
-optimize!(im)
-
-=#
-which_node = 1
-display(plot(inflow[which_node,:], label = "Inflow"))
-display(plot!(queue_steps[which_node,:], label = "New Queue"))
-display(plot!(rem_queue_steps[which_node,:], label = "Remaining Queue"))
-display(plot!(add_queue_steps[which_node,:], label = "Cummulated Queue"))
-
-
-display(plot(sum(inflow,dims=1)[:], label = "Inflow"))
-display(plot!(sum(queue_steps,dims=1)[:], label = "New Queue"))
-display(plot!(sum(rem_queue_steps,dims=1)[:], label = "Remaining Queue"))
-display(plot!(sum(add_queue_steps,dims=1)[:], label = "Cummulated Queue"))
