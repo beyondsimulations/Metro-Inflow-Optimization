@@ -45,7 +45,7 @@ function build_restricted_optimization_model(modelInstance,current_period,queue_
 
     println("Preparing optimization model.")
     @variable(im, 
-        modelInstance.min_entry_origin .<= X[o=1:modelInstance.nr_nodes,p=lower_period:upper_period] .<= modelInstance.max_entry_origin * modelInstance.safety_factor
+        0 .<= X[o=1:modelInstance.nr_nodes,p=lower_period:upper_period] .<= modelInstance.max_entry_origin * modelInstance.safety_factor
     )
 
     adjusted_cum_demand = copy(modelInstance.cum_demand_od_in_period)
@@ -63,23 +63,30 @@ function build_restricted_optimization_model(modelInstance,current_period,queue_
     elseif modelInstance.kind_opt == "weight"
         println("Preparing weighted objective function.")
         @objective(im, Min, 
-            sum((sum(adjusted_cum_demand[o,d,p] * (queue_period_age[o,p]+1) for d in 1:modelInstance.nr_nodes) - X[o,p]  * (queue_period_age[o,p]+1) *  modelInstance.minutes_in_period)^2 for o in 1:modelInstance.nr_nodes, p in current_period:upper_period)
+            sum((sum(adjusted_cum_demand[o,d,p] * (queue_period_age[o,current_period]) for d in 1:modelInstance.nr_nodes) - X[o,p]  * (queue_period_age[o,current_period]) *  modelInstance.minutes_in_period)^2 for o in 1:modelInstance.nr_nodes, p in current_period:upper_period)
         )
-    elseif modelInstance.kind_opt == "linear"
+    elseif modelInstance.kind_opt == "linwei2"
         println("Preparing linear objective function.")
         @objective(im, Min, 
-            sum((sum(adjusted_cum_demand[o,:,p]) - (X[o,p] * minutes_in_period)) for o in 1:modelInstance.nr_nodes, p in current_period:upper_period)
+            sum((sum(adjusted_cum_demand[o,:,p]) * (queue_period_age[o,p])^2 - (X[o,p] * modelInstance.minutes_in_period  * (queue_period_age[o,p])^2)) for o in 1:modelInstance.nr_nodes, p in current_period:upper_period)
         )
 
         println("Prepare constraint to prevent a negative dispatch.")
         @constraint(
             im, queue[o in 1:modelInstance.nr_nodes, p in current_period:upper_period],
-            sum(sum(adjusted_cum_demand[o,d,p] for d in 1:modelInstance.nr_nodes) - X[o,p] *  modelInstance.minutes_in_period) >= 0
+            sum(sum(adjusted_cum_demand[o,:,p]) - X[o,p] *  modelInstance.minutes_in_period) >= 0
         )
+
     elseif modelInstance.kind_opt == "linwei"
         println("Preparing linear objective function.")
         @objective(im, Min, 
-            sum((sum(adjusted_cum_demand[o,:,p]) * (queue_period_age[o,p]+1) - (X[o,p] * modelInstance.minutes_in_period  * (queue_period_age[o,p]+1))) for o in 1:modelInstance.nr_nodes, p in current_period:upper_period)
+            sum((sum(adjusted_cum_demand[o,:,p]) * (queue_period_age[o,p]) - (X[o,p] * modelInstance.minutes_in_period  * (queue_period_age[o,p]))) for o in 1:modelInstance.nr_nodes, p in current_period:upper_period)
+        )
+
+        println("Prepare constraint to prevent a negative dispatch.")
+        @constraint(
+            im, queue[o in 1:modelInstance.nr_nodes, p in current_period:upper_period],
+            sum(sum(adjusted_cum_demand[o,:,p]) - X[o,p] *  modelInstance.minutes_in_period) >= 0
         )
 
     end
@@ -112,11 +119,11 @@ function build_restricted_optimization_model(modelInstance,current_period,queue_
                     for p_shifts in 0:smart_intervall     
                         arcweight = 0.0
                         for (o,d,p) in shift[a,t]
-                            if modelInstance.demand_od_in_period[o,d,min(current_period,p-queue_period_age[o,p]+p_shifts,modelInstance.nr_periods)] > 0
+                            if modelInstance.demand_od_in_period[o,d,min(current_period,max(1,p-queue_period_age[o,p]+p_shifts),modelInstance.nr_periods)] > 0
                                 if p < current_period
-                                    arcweight += ceil(inflow_raw[o,p] * modelInstance.demand_od_in_period[o,d,min(current_period,p-queue_period_age[o,p]+p_shifts,modelInstance.nr_periods)]/sum(modelInstance.demand_od_in_period[o,:,min(current_period,p-queue_period_age[o,p]+p_shifts,modelInstance.nr_periods)]),digits=5)
-                                elseif p <= upper_period
-                                    arcweight += ceil(modelInstance.min_entry_origin * modelInstance.demand_od_in_period[o,d,min(current_period,p-queue_period_age[o,p]+p_shifts,modelInstance.nr_periods)]/sum(modelInstance.demand_od_in_period[o,:,min(current_period,p-queue_period_age[o,p]+p_shifts,modelInstance.nr_periods)]),digits=5)
+                                    arcweight += ceil(inflow_raw[o,p] * modelInstance.demand_od_in_period[o,d,min(current_period,max(1,p-queue_period_age[o,p]+p_shifts),modelInstance.nr_periods)]/sum(modelInstance.demand_od_in_period[o,:,min(current_period,max(1,p-queue_period_age[o,p]+p_shifts),modelInstance.nr_periods)]),digits=5)
+                                elseif p <= upper_period && sum(modelInstance.demand_od_in_period[o,:,p]) > 0
+                                    arcweight += ceil(modelInstance.min_entry_origin * modelInstance.demand_od_in_period[o,d,min(current_period,max(1,p-queue_period_age[o,p]+p_shifts),modelInstance.nr_periods)]/sum(modelInstance.demand_od_in_period[o,:,min(current_period,max(1,p-queue_period_age[o,p]+p_shifts),modelInstance.nr_periods)]),digits=5)
                                 end
                             end
                         end
@@ -130,10 +137,14 @@ function build_restricted_optimization_model(modelInstance,current_period,queue_
 
         println("Preparing capacity constraints for periodical demand.")
         @constraint(im, capacity_period[a in 1:modelInstance.nr_arcs,t in minute_range, p_shifts in 0:smart_intervall; shift[a,t] != []],
-            sum(X[o,p] * modelInstance.demand_od_in_period[o,d,min(current_period,p-queue_period_age[o,p]+p_shifts,modelInstance.nr_periods)]/sum(modelInstance.demand_od_in_period[o,:,min(current_period,p-queue_period_age[o,p]+p_shifts,modelInstance.nr_periods)]) for (o,d,p) in modelInstance.shift[a,t] if modelInstance.demand_od_in_period[o,d,min(current_period,p-queue_period_age[o,p] +p_shifts,modelInstance.nr_periods)] > 0 && p <= upper_period) <= adjusted_capacity_arcs[t,a]
+            sum(X[o,p] * modelInstance.demand_od_in_period[o,d,min(current_period,max(1,p-queue_period_age[o,p]+p_shifts),modelInstance.nr_periods)]/sum(modelInstance.demand_od_in_period[o,:,min(current_period,max(1,p-queue_period_age[o,p]+p_shifts),modelInstance.nr_periods)]) for (o,d,p) in modelInstance.shift[a,t] if modelInstance.demand_od_in_period[o,d,min(current_period,max(1,p-queue_period_age[o,p]+p_shifts),modelInstance.nr_periods)] > 0 && p <= upper_period) <= adjusted_capacity_arcs[t,a]
         )
     end
 
+    println("Restrict dispatch increase.")
+    @constraint(im, min_dispatch[p in current_period:upper_period, o in 1:modelInstance.nr_nodes; sum(adjusted_cum_demand[o,:,p]) > modelInstance.min_entry_origin * modelInstance.minutes_in_period],
+        X[o,p] >= modelInstance.min_entry_origin
+        )
 
     return im,X
 end

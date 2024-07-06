@@ -3,7 +3,7 @@ function heuristic_adding_queues(im)
     remaining_queue = copy(im.demand_od_in_period) # Initialize a new variable to store the remaining queue data
     inflow_raw = zeros(Float64, im.nr_nodes, im.nr_periods) .= im.min_entry_origin  # Initialize an array to store the values of the X variable
     optimization_duration = zeros(Float64, im.nr_periods) # Initialize optimization duration vector
-    queue_period_age = zeros(Int64,im.nr_nodes,im.nr_periods) .= 0 # Computes the age of each queue per period
+    queue_period_age = zeros(Int64,im.nr_nodes,im.nr_periods) .= 1 # Computes the age of each queue per period
     save_queue = zeros(Int64,nr_nodes,im.nr_periods) .= 1 # Saves the queue for the output
 
     stats = DataFrame(
