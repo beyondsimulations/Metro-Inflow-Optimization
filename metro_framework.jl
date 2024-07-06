@@ -33,7 +33,7 @@ set_kind_queue = ["lag_static"]                     # "lag_static","shift_per","
 
 # Define static simulation data
 const kind_sim = "bound"                # "bound","inflow","unbound"
-const minutes_in_period = 60            # minutes in each period (in 15 minute intervals!)
+const minutes_in_period = 30            # minutes in each period (in 15 minute intervals!)
 
 # Define the start- and end time of the observed time horizon
 # Make sure that the horizon contains only one shift!

@@ -30,7 +30,7 @@ function heuristic_adding_queues(im)
         for o in 1:nr_nodes
             for queue_period in 1:fix_period
                 if sum(remaining_queue[o,:,queue_period]) >= 1
-                    queue_period_age[o,fix_period] = fix_period - queue_period
+                    queue_period_age[o,fix_period] = max(1,fix_period - queue_period)
                     break
                 end
             end
