@@ -61,27 +61,22 @@ function heuristic_adding_queues(im)
 
             optimization_duration[fix_period] = @elapsed optimize!(model)
 
-            if is_solved_and_feasible(model) == false
-                infeasible_solutions += 1
-            end
-
-            for o in 1:im.nr_nodes
-                for p in fix_period:upper_period
-                    if value.(X)[o,p] > 0.0001
-                        inflow_raw[o,p] = value.(X)[o,p]
+            if is_solved_and_feasible(model) == true
+                for o in 1:im.nr_nodes
+                    if value.(X)[o,fix_period] > 0.0001
+                        inflow_raw[o,fix_period] = value.(X)[o,fix_period]
                     else
-                        inflow_raw[o,p] = 0.00
+                        inflow_raw[o,fix_period] = 0.00
                     end
                 end
+            else
+                infeasible_solutions += 1
+                inflow_raw[:,fix_period] .= 0
             end
-
         else
-
             inflow_raw[:,fix_period] .= 0
-            
         end
 
-        
         demand_fulfiled = inflow_raw[:,fix_period] .* im.minutes_in_period 
         println("Dispatch")
         println(round.(demand_fulfiled))
@@ -118,7 +113,6 @@ function heuristic_adding_queues(im)
         for o in 1:im.nr_nodes
             save_queue[o,fix_period] = round(Int64,sum(remaining_queue[o,:,1:fix_period]))
         end
-
 
         push!(stats,(
             period = fix_period,

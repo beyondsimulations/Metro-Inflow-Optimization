@@ -142,8 +142,8 @@ function simulate_metro(im,queues,opt_duration,grapharcs,kind_sim,queue_period_a
         end
     end
 
-    if isfile("logfile.csv")
-        logfile = CSV.read("logfile.csv", DataFrame)
+    if isfile("logfile_$(start_time)_$(minutes_in_period).csv")
+        logfile = CSV.read("logfile_$(start_time)_$(minutes_in_period).csv", DataFrame)
     else
         logfile = DataFrame(
             timestamp=DateTime[],
@@ -220,6 +220,6 @@ function simulate_metro(im,queues,opt_duration,grapharcs,kind_sim,queue_period_a
         safety_090quant = quantile(sf,0.90),
     ))
 
-    CSV.write("logfile.csv",logfile)
+    CSV.write("logfile_$(start_time)_$(minutes_in_period).csv",logfile)
     return sim_queues,sim_arcs
 end

@@ -24,16 +24,16 @@ include("metro_visuals.jl")
 
 # Parameters for the actual model
 set_safety = [0.8,0.9,1.0]                          # safety factor that limits the arc capacity
-set_max_enter = [200]                               # number of maximal entries per minute per station
-set_min_enter = [0,5,10]                            # min number of people allowed to enter
+set_max_enter = [180]                               # number of maximal entries per minute per station
+set_min_enter = [0]                                 # min number of people allowed to enter
 set_scaling = [1.0]                                 # scaling of the metro queue (to test lower or higher demand)
-set_past_minutes = [60,120,180,240,300]             # timeframe to consider from the past during the optimization
-set_kind_opt = ["linwei","linwei2"]                 # "regular","weight","linear","linwei"
-set_kind_queue = ["lag_static"]                     # "lag_static","shift_per","shift_cum","shift_dyn"
+set_past_periods = [1,2,3,4,5,6]                    # timeframe to consider from the past during the optimization
+set_kind_opt = ["linweight"]                        # "regularSqr","linweight"
+set_kind_queue = ["lag_periods","shift_periods"]    # "shift_periods","lag_periods"
 
 # Define static simulation data
-const kind_sim = "bound"                # "bound","inflow","unbound"
-const minutes_in_period = 30            # minutes in each period (in 15 minute intervals!)
+kind_sim = "bound"                # "bound","inflow","unbound"
+minutes_in_period = 60            # minutes in each period (in 15 minute intervals!)
 
 # Define the start- and end time of the observed time horizon
 # Make sure that the horizon contains only one shift!
@@ -61,13 +61,14 @@ struct MetroInstance
 end
 
 # Input validation and datetime preparation
-const daterange = Date(start_time):Date(end_time)
-const periodrange = start_time:Minute(minutes_in_period):end_time
-const nr_minutes = length(start_time:Minute(1):end_time)+ 120
-const nr_periods = ceil(Int64,(nr_minutes-120)/minutes_in_period)
+set_past_minutes = set_past_periods .* minutes_in_period
+daterange = Date(start_time):Date(end_time)
+periodrange = start_time:Minute(minutes_in_period):end_time
+nr_minutes = length(start_time:Minute(1):end_time)+ 120
+nr_periods = ceil(Int64,(nr_minutes-120)/minutes_in_period)
 closed_period = zeros(Bool,nr_periods)
 for period in eachindex(periodrange)
-    if hour(periodrange[period]) == 3 || hour(periodrange[period]) == 4
+    if hour(periodrange[period]) == 3 || hour(periodrange[period]) == 4 || hour(periodrange[period]) == 5
         closed_period[period] = true
     end
 end
@@ -100,12 +101,12 @@ end
 
 # Prepare the graph related hash tables
 println("Preparing graph data.")
-const nodes = sort(unique(vcat(getproperty.(metroarcs, :origin),getproperty.(metroarcs, :destination))))
-const nr_nodes = length(nodes)
-const nr_arcs = size(grapharcs,1)
-const d_node_id = Dict([nodes[i] => i for i in eachindex(nodes)])
-const d_arc_id = Dict((d_node_id[grapharcs.origin[i]],d_node_id[grapharcs.destination[i]]) => i for i in axes(grapharcs,1))
-const d_id_arc = Dict(i => (d_node_id[grapharcs.origin[i]],d_node_id[grapharcs.destination[i]]) for i in axes(grapharcs,1))
+nodes = sort(unique(vcat(getproperty.(metroarcs, :origin),getproperty.(metroarcs, :destination))))
+nr_nodes = length(nodes)
+nr_arcs = size(grapharcs,1)
+d_node_id = Dict([nodes[i] => i for i in eachindex(nodes)])
+d_arc_id = Dict((d_node_id[grapharcs.origin[i]],d_node_id[grapharcs.destination[i]]) => i for i in axes(grapharcs,1))
+d_id_arc = Dict(i => (d_node_id[grapharcs.origin[i]],d_node_id[grapharcs.destination[i]]) for i in axes(grapharcs,1))
 
 # Load and prepare the demand data
 println("Preparing demand data.")
@@ -121,13 +122,14 @@ println("Preparing shifting data.")
 shift, shift_original, shift_start_end, longest_path = compute_shift()
 println("Longest path is $longest_path.")
 
-for safety in set_safety  
-    for min_enter in set_min_enter
+for min_enter in set_min_enter
+    for safety in set_safety  
         for max_enter in set_max_enter
             for scaling in set_scaling
                 for past_minutes in set_past_minutes
                     for kind_opt in set_kind_opt
                         for kind_queue in set_kind_queue
+                            
                             println("Start: safety $safety, mip $minutes_in_period, pm $past_minutes, $kind_opt, $kind_sim, $kind_queue")
 
                             # Create a MetroInstance object with the following parameters:
