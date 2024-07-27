@@ -43,10 +43,10 @@ Metro_AlRayyanAlQadeem,Metro_AlShaqab,203,2.0,Green Line
 Metro_HamadIntlAirportT1,Metro_OqbaIbnNafie,85,7.0,Red Line
 Metro_AlRiffa,Metro_EducationCity,203,8.0,Green Line
 Metro_Legtaifiya,Metro_Katara,406,2.0,Red Line
-Metro_MsheirebRedAndGreenPlatformNorthBound,Metro_MsheirebGoldPlatformEastBound,150,2.0,Pedestrian Path
-Metro_MsheirebGoldPlatformEastBound,Metro_MsheirebRedAndGreenPlatformNorthBound,150,2.0,Pedestrian Path
-Metro_MsheirebRedAndGreenPlatformNorthBound,Metro_MsheirebGoldPlatformWestBound,150,2.0,Pedestrian Path
-Metro_MsheirebGoldPlatformWestBound,Metro_MsheirebRedAndGreenPlatformNorthBound,150,2.0,Pedestrian Path
+Metro_MsheirebRedAndGreenPlatformNorthBound,Metro_MsheirebGoldPlatformEastBound,150,3.0,Pedestrian Path
+Metro_MsheirebGoldPlatformEastBound,Metro_MsheirebRedAndGreenPlatformNorthBound,150,3.0,Pedestrian Path
+Metro_MsheirebRedAndGreenPlatformNorthBound,Metro_MsheirebGoldPlatformWestBound,150,3.0,Pedestrian Path
+Metro_MsheirebGoldPlatformWestBound,Metro_MsheirebRedAndGreenPlatformNorthBound,150,3.0,Pedestrian Path
 Metro_AlBiddaRedAndGreenPlatformSouthBound,Metro_AlBiddaConcourse,225,2.0,Pedestrian Path
 Metro_Legtaifiya,Metro_QatarUniversity,406,4.0,Red Line
 Metro_AlShaqab,Metro_AlRayyanAlQadeem,203,2.0,Green Line
@@ -69,9 +69,9 @@ Metro_MsheirebGoldPlatformEastBound,Metro_MsheirebConcourse,150,2.0,Pedestrian P
 Metro_MsheirebConcourse,Metro_MsheirebGoldPlatformEastBound,150,2.0,Pedestrian Path
 Metro_MsheirebGoldPlatformWestBound,Metro_MsheirebConcourse,150,2.0,Pedestrian Path
 Metro_MsheirebConcourse,Metro_MsheirebGoldPlatformWestBound,150,2.0,Pedestrian Path
-Metro_MsheirebRedAndGreenPlatformSouthBound,Metro_MsheirebGoldPlatformEastBound,150,2.0,Pedestrian Path
-Metro_MsheirebGoldPlatformEastBound,Metro_MsheirebRedAndGreenPlatformSouthBound,150,2.0,Pedestrian Path
-Metro_MsheirebRedAndGreenPlatformSouthBound,Metro_MsheirebGoldPlatformWestBound,150,2.0,Pedestrian Path
+Metro_MsheirebRedAndGreenPlatformSouthBound,Metro_MsheirebGoldPlatformEastBound,150,3.0,Pedestrian Path
+Metro_MsheirebGoldPlatformEastBound,Metro_MsheirebRedAndGreenPlatformSouthBound,150,3.0,Pedestrian Path
+Metro_MsheirebRedAndGreenPlatformSouthBound,Metro_MsheirebGoldPlatformWestBound,150,3.0,Pedestrian Path
 Metro_AlDohaAlJadeda,Metro_UmmGhuwailina,406,2.0,Red Line
 Metro_NationalMuseum,Metro_RasBuAbboud,203,3.0,Golden Line
 Metro_OqbaIbnNafie,Metro_HamadIntlAirportT1,85,7.0,Red Line
@@ -95,7 +95,7 @@ Metro_BinMahmoud,Metro_AlSadd,203,2.0,Golden Line
 Metro_Corniche,Metro_AlBiddaRedPlatformSouthBound,406,3.0,Red Line
 Metro_BinMahmoud,Metro_MsheirebGoldPlatformEastBound,203,2.0,Golden Line
 Metro_MsheirebRedAndGreenPlatformNorthBound,Metro_MsheirebConcourse,300,2.0,Pedestrian Path
-Metro_MsheirebGoldPlatformWestBound,Metro_MsheirebRedAndGreenPlatformSouthBound,150,2.0,Pedestrian Path
+Metro_MsheirebGoldPlatformWestBound,Metro_MsheirebRedAndGreenPlatformSouthBound,150,3.0,Pedestrian Path
 Metro_MsheirebGoldPlatformEastBound,Metro_SouqWaqif,203,2.0,Golden Line
 Metro_AlWaabQLM,Metro_AlSudan,203,3.0,Golden Line
 Metro_AlSudan,Metro_Joaan,203,3.0,Golden Line

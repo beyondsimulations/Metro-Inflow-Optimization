@@ -7,11 +7,11 @@ function load_demand()
     for day in eachindex(daterange)
         # If this is the first day, read the demand data from the corresponding CSV file
         if day == 1
-            demand = CSV.read("data_demand/OD_$(daterange[day])v3.csv", DataFrame)
+            demand = CSV.read("data_demand/OD_$(daterange[day]).csv", DataFrame)
         
         # Otherwise, concatenate the demand data from the previous days with the current day's data
         else
-            demand = vcat(demand, CSV.read("data_demand/OD_$(daterange[day])v3.csv", DataFrame))
+            demand = vcat(demand, CSV.read("data_demand/OD_$(daterange[day]).csv", DataFrame))
         end
     end
     
