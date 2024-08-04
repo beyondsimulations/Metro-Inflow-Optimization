@@ -221,5 +221,13 @@ function simulate_metro(im,queues,opt_duration,grapharcs,kind_sim,queue_period_a
     ))
 
     CSV.write("logfile_$(start_time)_$(minutes_in_period).csv",logfile)
+
+    CSV.write("results_queues/sim_queues_$(start_time)_$(minutes_in_period)_$(im.safety_factor),$(string(start_time) * " to " * string(end_time)),$(im.minutes_in_period),$(im.past_minutes),$(im.max_entry_origin),$(im.min_entry_origin),$(im.scaling),$(im.kind_opt),$(kind_sim),$(im.kind_queue).csv",
+        sim_queues
+        )
+        
+    CSV.write("results_arcs/sim_arcs_$(start_time)_$(minutes_in_period)_$(im.safety_factor),$(string(start_time) * " to " * string(end_time)),$(im.minutes_in_period),$(im.past_minutes),$(im.max_entry_origin),$(im.min_entry_origin),$(im.scaling),$(im.kind_opt),$(kind_sim),$(im.kind_queue).csv",
+        sim_arcs
+        )
     return sim_queues,sim_arcs
 end

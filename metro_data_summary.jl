@@ -10,6 +10,7 @@ using StatsPlots
 using Measures
 using ColorSchemes
 using Statistics
+using Colors
 
 # evaluate input demand data
 data = DataFrame()
@@ -61,13 +62,13 @@ gpd_peak.day .= Date.(gpd_peak.daycode)
     linestyle=[:dash :solid :dot],
     markershape=[:rect :star5 :xcross],
     markersize = 2,
-    linewidth = 0.5,
+    linewidth = 0.8,
     markerstrokewidth = 0,
     xrotation = 20, 
     size=(700,350),
     margin=5mm,
     fontfamily="Computer Modern",
-    palette = palette([:black, :grey], 3)
+    color = [:firebrick :cyan4 :seashell4],
     )
 savefig("visuals/transportdemand.pdf")
 
@@ -100,13 +101,13 @@ gpd_peak.day .= Date.(gpd_peak.daycode)
     linestyle=[:dash :solid :dot],
     markershape=[:rect :star5 :xcross],
     markersize = 2,
-    linewidth = 0.5,
+    linewidth = 0.8,
     markerstrokewidth = 0,
     xrotation = 20, 
     size=(700,350),
     margin=5mm,
     fontfamily="Computer Modern",
-    palette = palette([:black, :grey], 3)
+    color = [:firebrick :cyan4 :seashell4],
     )
 savefig("visuals/transportdemand$station.pdf")
 
@@ -122,6 +123,7 @@ end
 # Overall demand of each interval
 ana_util_entry_day = groupby(data, [
     :kind_simulation,
+    :min_enter, 
     :max_enter, 
     :safety,
     ]
@@ -161,3 +163,119 @@ length_periods_day = combine(length_periods_day,
 
 CSV.write("results_paper/length_periods_day.csv", length_periods_day)
 
+# Detailed Plots arc utilization
+data = DataFrame()
+dir = "results_arcs"
+for file in readdir(dir)
+    new_data = CSV.read("$dir/$(file)", DataFrame)
+    new_data.kind .= "optimized"
+    if occursin("unbound",file)
+        new_data.kind .= "baseline"
+    end
+    new_data.date .= "empty"
+    if occursin("2022-11-27T05:00:00_",file)
+        new_data.date  .= "2022-11-27"
+    end
+    if occursin("2022-11-28T05:00:00_",file)
+        new_data.date  .= "2022-11-28"
+    end
+    if occursin("2022-11-29T05:00:00_",file)
+        new_data.date  .= "2022-11-29"
+    end
+    global data = vcat(data,new_data)
+end
+
+arcutil = groupby(data,[:kind,:date,:datetime])
+arcutil = combine(arcutil, :utilization => maximum)
+arcutil.combination .= arcutil.date .* " " .* arcutil.kind
+
+arcutil.changesort .= 0
+for row in eachrow(arcutil)
+    if hour(row.datetime) <= 5
+        row.changesort = hour(row.datetime) + 24
+    else
+        row.changesort = hour(row.datetime)
+    end
+end
+sort!(arcutil,:datetime)
+sort!(arcutil,:changesort)
+arcutil.stringday .= string.(Time.(arcutil.datetime))
+filter!(row -> !(row.changesort in [28,29]), arcutil)
+
+@df arcutil plot(
+    :stringday, 
+    :utilization_maximum, 
+    group=:combination, 
+    xlabel="time", 
+    ylabel="maximal arc utilization",
+    linestyle=[:dot :solid :dot :solid :dot :solid],
+    #markershape=[:rect :star5 :xcross],
+    #markersize = 2,
+    linewidth = 1,
+    #markerstrokewidth = 0,
+    xrotation = 20, 
+    size=(700,350),
+    margin=5mm,
+    fontfamily="Computer Modern",
+    color = [:firebrick :firebrick :cyan4 :cyan4 :seashell4 :seashell4],
+    )
+savefig("visuals/arcutil.pdf")
+
+
+# Detailed Plots waiting time
+data = DataFrame()
+dir = "results_queues"
+for file in readdir(dir)
+    new_data = CSV.read("$dir/$(file)", DataFrame)
+    new_data.kind .= "optimized"
+    if occursin("unbound",file)
+        new_data.kind .= "baseline"
+    end
+    new_data.date .= "empty"
+    if occursin("2022-11-27T05:00:00_",file)
+        new_data.date  .= "2022-11-27"
+    end
+    if occursin("2022-11-28T05:00:00_",file)
+        new_data.date  .= "2022-11-28"
+    end
+    if occursin("2022-11-29T05:00:00_",file)
+        new_data.date  .= "2022-11-29"
+    end
+    global data = vcat(data,new_data)
+end
+
+queues = groupby(data,[:kind,:date,:datetime])
+queues = combine(queues, :queued => mean)
+queues.combination .= queues.date .* " " .* queues.kind
+
+queues.changesort .= 0
+for row in eachrow(queues)
+    if hour(row.datetime) <= 5
+        row.changesort = hour(row.datetime) + 24
+    else
+        row.changesort = hour(row.datetime)
+    end
+end
+sort!(queues,:datetime)
+sort!(queues,:changesort)
+queues.stringday .= string.(Time.(queues.datetime))
+filter!(row -> !(row.changesort in [28,29]), queues)
+
+@df queues plot(
+    :stringday, 
+    :queued_mean, 
+    group=:combination, 
+    xlabel="time", 
+    ylabel="maximal queue",
+    linestyle=[:dot :solid :dot :solid :dot :solid],
+    #markershape=[:rect :star5 :xcross],
+    #markersize = 2,
+    linewidth = 1,
+    #markerstrokewidth = 0,
+    xrotation = 20, 
+    size=(700,350),
+    margin=5mm,
+    fontfamily="Computer Modern",
+    color = [:firebrick :firebrick :cyan4 :cyan4 :seashell4 :seashell4],
+    )
+savefig("visuals/arcutil.pdf")
