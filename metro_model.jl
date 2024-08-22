@@ -43,17 +43,17 @@ function build_restricted_optimization_model(modelInstance,current_period,queue_
     lower_minute::Int64 = max(1,ceil(modelInstance.minutes_in_period * (current_period-1)+1))
     upper_minute::Int64 = min(ceil(modelInstance.minutes_in_period * (current_period+add_period))+longest_path,modelInstance.nr_minutes)
 
-    println("Preparing optimization model.")
-    @variable(im, 
-        modelInstance.min_entry_origin .<= X[o=1:modelInstance.nr_nodes,p=lower_period:upper_period] .<= modelInstance.max_entry_origin * modelInstance.safety_factor
-    )
-
     adjusted_cum_demand = copy(modelInstance.cum_demand_od_in_period)
     if current_period < upper_period
         for p in current_period+1:upper_period
             adjusted_cum_demand[:,:,p] .+= adjusted_cum_demand[:,:,p-1]
         end
     end
+
+    println("Preparing optimization model.")
+    @variable(im, 
+        min(sum(adjusted_cum_demand[o,:,p])/modelInstance.minutes_in_period,modelInstance.min_entry_origin) .<= X[o=1:modelInstance.nr_nodes,p=lower_period:upper_period] .<= modelInstance.max_entry_origin * modelInstance.safety_factor
+    )
 
     if modelInstance.kind_opt == "regularSqr"
         println("Preparing regular objective function.")
@@ -70,7 +70,7 @@ function build_restricted_optimization_model(modelInstance,current_period,queue_
         println("Prepare constraint to prevent a negative dispatch.")
         @constraint(
             im, queue[o in 1:modelInstance.nr_nodes, p in current_period:upper_period],
-            sum(sum(adjusted_cum_demand[o,:,p]) - X[o,p] *  modelInstance.minutes_in_period) >= - modelInstance.min_entry_origin * modelInstance.minutes_in_period
+            sum(adjusted_cum_demand[o,:,p]) - X[o,p] *  modelInstance.minutes_in_period >= 0
         )
 
     end

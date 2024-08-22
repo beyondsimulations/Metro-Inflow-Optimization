@@ -28,7 +28,7 @@ set_max_enter = [120]                           # number of maximal entries per 
 set_min_enter = [10]                              # min number of people allowed to enter
 set_scaling = [1.0]                                 # scaling of the metro queue (to test lower or higher demand)
 set_past_periods = [4]                      # timeframe to consider from the past during the optimization
-set_kind_opt = ["linweight"]                        # "regularSqr","linweight"
+set_kind_opt = ["regularSqr"]                        # "regularSqr","linweight"
 set_kind_queue = ["lag_periods"]                    # "shift_periods","lag_periods"
 
 # Define static simulation data

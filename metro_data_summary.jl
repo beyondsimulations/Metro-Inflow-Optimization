@@ -221,6 +221,36 @@ filter!(row -> !(row.changesort in [28,29]), arcutil)
     )
 savefig("visuals/arcutil.pdf")
 
+for y in 1:3
+
+    x = unique(arcutil.date)[y]
+    colorset = [:firebrick,:cyan4,:seashell4][y]
+
+    day = filter(row -> row.date == x, arcutil)
+
+    @df day plot(
+        :stringday, 
+        :utilization_maximum, 
+        group=:kind, 
+        xlabel="time", 
+        ylabel="maximal arc utilization",
+        linestyle=[:dot :solid :dot :solid :dot :solid],
+        #markershape=[:rect :star5 :xcross],
+        #markersize = 2,
+        linewidth = 1.2,
+        #markerstrokewidth = 0,
+        xrotation = 20, 
+        size=(700,280),
+        margin=5mm,
+        fontfamily="Computer Modern",
+        legend = :topleft,
+        color = colorset,
+        ylim = (0,maximum(arcutil.utilization_maximum)),
+        )
+        hline!([0.9],lw=0.5,label = "restriction", linestyle = :dash, color = :black)
+    savefig("visuals/arcutil_$x.pdf")
+end
+
 
 # Detailed Plots waiting time
 data = DataFrame()
@@ -262,20 +292,44 @@ queues.stringday .= string.(Time.(queues.datetime))
 filter!(row -> !(row.changesort in [28,29]), queues)
 
 @df queues plot(
-    :stringday, 
-    :queued_mean, 
-    group=:combination, 
-    xlabel="time", 
-    ylabel="maximal queue",
-    linestyle=[:dot :solid :dot :solid :dot :solid],
-    #markershape=[:rect :star5 :xcross],
-    #markersize = 2,
-    linewidth = 1,
-    #markerstrokewidth = 0,
-    xrotation = 20, 
-    size=(700,350),
-    margin=5mm,
-    fontfamily="Computer Modern",
-    color = [:firebrick :firebrick :cyan4 :cyan4 :seashell4 :seashell4],
-    )
-savefig("visuals/arcutil.pdf")
+        :stringday, 
+        :queued_mean, 
+        group=:combination, 
+        xlabel="time", 
+        ylabel="maximal queue",
+        linestyle=[:dot :solid :dot :solid :dot :solid],
+        #markershape=[:rect :star5 :xcross],
+        #markersize = 2,
+        linewidth = 1,
+        #markerstrokewidth = 0,
+        xrotation = 20, 
+        size=(700,350),
+        margin=5mm,
+        fontfamily="Computer Modern",
+        color = [:firebrick :firebrick :cyan4 :cyan4 :seashell4 :seashell4],
+        )
+    savefig("visuals/queues.pdf")
+
+for x in unique(queues.date)
+
+    day = filter(row -> row.date == x, queues)
+
+    @df day plot(
+        :stringday, 
+        :queued_mean, 
+        group=:kind, 
+        xlabel="time", 
+        ylabel="maximal queue",
+        linestyle=[:dot :solid :dot :solid :dot :solid],
+        #markershape=[:rect :star5 :xcross],
+        #markersize = 2,
+        linewidth = 1,
+        #markerstrokewidth = 0,
+        xrotation = 20, 
+        size=(700,350),
+        margin=5mm,
+        fontfamily="Computer Modern",
+        color = [:firebrick :firebrick :cyan4 :cyan4 :seashell4 :seashell4],
+        )
+    savefig("visuals/queues_$x.pdf")
+end
