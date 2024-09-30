@@ -140,7 +140,7 @@ ana_util_entry_day = combine(ana_util_entry_day,
 
     sort!(ana_util_entry_day,:max_enter)
 
-    CSV.write("results_paper/ana_util_entry_day.csv", ana_util_entry_day)
+    CSV.write("results/analysis_util_entry_day.csv", ana_util_entry_day)
 
 # Overall demand of each interval
 data.past_periods .= ceil.(Int, data.past_minutes ./ data.period_length)
@@ -154,18 +154,18 @@ length_periods_day = groupby(data, [
 length_periods_day = combine(length_periods_day,
     :avg_duration => mean,
     :safety_minutes => mean,
-    :exceeded_minutes => mean,
+    :exceeded_minutes => mean,      
     :max_utilization => mean,
     :avg_utilization => mean,
     :avg_queue => mean,
     :people_moved => mean,
     )
 
-CSV.write("results_paper/length_periods_day.csv", length_periods_day)
+CSV.write("results/length_periods_day.csv", length_periods_day)
 
 # Detailed Plots arc utilization
 data = DataFrame()
-dir = "results_arcs"
+dir = "results/arcs"
 for file in readdir(dir)
     new_data = CSV.read("$dir/$(file)", DataFrame)
     new_data.kind .= "optimized"

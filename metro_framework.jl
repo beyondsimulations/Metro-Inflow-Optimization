@@ -23,17 +23,17 @@ include("metro_simulation.jl")
 include("metro_visuals.jl")
 
 # Parameters for the actual model
-set_safety = [0.7,0.8,0.9,1.0]           # safety factor that limits the arc capacity
-set_max_enter = [120,240]                # number of maximal entries per minute per station
-set_min_enter = [0,10,20]                # min number of people allowed to enter
-set_scaling = [1.0]                      # scaling of the metro queue (to test lower or higher demand)
-set_past_periods = [1,2,3,4,5,6]         # timeframe to consider from the past during the optimization
-set_kind_opt = ["linweight"]             # "regularSqr","linweight"
-set_kind_queue = ["lag_periods"]         # "shift_periods","lag_periods"
+set_safety = [0.9]                        # safety factor that limits the arc capacity
+set_max_enter = [120]                     # number of maximal entries per minute per station
+set_min_enter = [20]                      # min number of people allowed to enter
+set_scaling = [1.0]                       # scaling of the metro queue (to test lower or higher demand)
+set_past_periods = [4]                    # timeframe to consider from the past during the optimization
+set_kind_opt = ["linweight"]              # "regularSqr","linweight"
+set_kind_queue = ["lag_periods"]          # "shift_periods","lag_periods"
 
 # Define static simulation data
 kind_sim = "bound"                       # "bound","inflow","unbound"
-minutes_in_period = 60                   # minutes in each period (in 15 minute intervals!)
+minutes_in_period = 30                   # minutes in each period (in 15 minute intervals!)
 
 # Define the start- and end time of the observed time horizon
 # Make sure that the horizon contains only one shift!
@@ -74,11 +74,26 @@ for period in eachindex(periodrange)
 end
 @assert rem(minutes_in_period,15) == 0 "The length of each period has to be in 15 min intervalls."
 
+# Create results directories
+if !isdir("results")
+    mkdir("results")
+end
+if !isdir("results/queues")
+    mkdir("results/queues")
+end
+if !isdir("results/arcs")
+    mkdir("results/arcs")
+end
+if !isdir("results/visuals")
+    mkdir("results/visuals")
+end
+
 # Load data of the metroarcs
 println("Loading data.")
 grapharcs = CSV.read("data_metro/metroarcs.csv", DataFrame)
 sort!(grapharcs, :category)
 
+# Create Metroarc struct
 struct Metroarc
     origin::String
     destination::String
@@ -171,17 +186,14 @@ for min_enter in set_min_enter
 
                             # Start of the iterative allocation
                             queues, arcs, opt_duration, queue_period_age, infeasible_solutions = heuristic_adding_queues(modelInstance)
-                            #plot_optimization!(arcs)
-
-                            # Save the results from the heuristic
-                            #CSV.write("results/queues_new_$(kind_opt)_$(kind_sim)_$(kind_queue)_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).csv", queues)
-                            #CSV.write("results/arcs_new_$(kind_opt)_$(kind_sim)_$(kind_queue)_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).csv", arcs)
+                            
 
                             # Start the simulation
                             println("Start simulation $kind_sim.")
                             sim_queues,sim_arcs = simulate_metro(modelInstance,queues,opt_duration,grapharcs,kind_sim,queue_period_age,infeasible_solutions)
 
                             # Plot results
+                            #plot_optimization!(arcs)
                             #plot_simulation!(sim_queues,sim_arcs,kind_sim)
                         end
                     end

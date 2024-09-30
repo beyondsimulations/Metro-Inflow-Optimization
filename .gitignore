@@ -26,5 +26,3 @@ Manifest.toml
 # MacOS Files
 .DS_Store
 results
-results_queues
-results_arcs
