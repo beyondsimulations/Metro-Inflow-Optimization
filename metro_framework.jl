@@ -16,11 +16,11 @@ using Statistics
 using Gurobi
 using ProgressMeter
 
-include("metro_functions.jl")
-include("metro_model.jl")
-include("metro_heuristic.jl")
-include("metro_simulation.jl")
-include("metro_visuals.jl")
+include("functions/metro_functions.jl")
+include("functions/metro_model.jl")
+include("functions/metro_heuristic.jl")
+include("functions/metro_simulation.jl")
+include("functions/metro_visuals.jl")
 
 # Parameters for the actual model
 set_safety = [0.9]                        # safety factor that limits the arc capacity
@@ -32,8 +32,8 @@ set_kind_opt = ["linweight"]              # "regularSqr","linweight"
 set_kind_queue = ["lag_periods"]          # "shift_periods","lag_periods"
 
 # Define static simulation data
-kind_sim = "bound"                       # "bound","inflow","unbound"
-minutes_in_period = 30                   # minutes in each period (in 15 minute intervals!)
+kind_sim = "bound"                        # "bound","inflow","unbound"
+minutes_in_period = 30                    # minutes in each period (in 15 minute intervals!)
 
 # Define the start- and end time of the observed time horizon
 # Make sure that the horizon contains only one shift!
@@ -48,7 +48,7 @@ struct MetroInstance
     nr_periods::Int64                                   # Overall number of periods
     nr_minutes::Int64                                   # Overall number of minutes
     past_minutes::Int64
-    minutes_in_period::Int64
+    minutes_in_period::Int64                            # Number of minutes in each period
     capacity_arcs::Vector{Int64}                        # Capacity of each arc
     safety_factor::Float64                              # Safety factor for the arc_capacity
     min_entry_origin::Int64                             # Minimal number of people allowed to enter from outside
@@ -111,7 +111,7 @@ for arc in axes(grapharcs,1)
         grapharcs.capacity[arc],
         ceil(Int64,grapharcs.traveltime[arc])
         )
-    ) 
+    )
 end
 
 # Prepare the graph related hash tables
@@ -138,24 +138,24 @@ shift, shift_original, shift_start_end, longest_path = compute_shift()
 println("Longest path is $longest_path.")
 
 for min_enter in set_min_enter
-    for safety in set_safety  
+    for safety in set_safety
         for max_enter in set_max_enter
             for scaling in set_scaling
                 for past_minutes in set_past_minutes
                     for kind_opt in set_kind_opt
                         for kind_queue in set_kind_queue
-                            
+
                             println("Start: safety $safety, mip $minutes_in_period, pm $past_minutes, $kind_opt, $kind_sim, $kind_queue")
 
                             # Create a MetroInstance object with the following parameters:
-                            # * kind_opt: 
-                            # * kind_queue: 
+                            # * kind_opt:
+                            # * kind_queue:
                             # * nr_nodes: number of nodes in the network (i.e., metro stations)
                             # * nr_arcs: number of arcs between nodes in the network
                             # * nr_periods: number of time periods to consider in the problem
                             # * nr_minutes: number of minutes per period
                             # * past_minutes: timeframe of previous minutes considered during the optimization
-                            # * getproperty.(metroarcs, :capacity): list of capacities for each arc 
+                            # * getproperty.(metroarcs, :capacity): list of capacities for each arc
                             # * safety: ratio of max. arc utilization
                             # * min_enter: minimum number of people that can enter a node at any minute
                             # * max_enter: maximum number of people that can enter a node at any minute
@@ -186,7 +186,7 @@ for min_enter in set_min_enter
 
                             # Start of the iterative allocation
                             queues, arcs, opt_duration, queue_period_age, infeasible_solutions = heuristic_adding_queues(modelInstance)
-                            
+
 
                             # Start the simulation
                             println("Start simulation $kind_sim.")
