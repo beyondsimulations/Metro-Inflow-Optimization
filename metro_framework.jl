@@ -1,6 +1,7 @@
 # load packages
 using Pkg
 Pkg.activate("metroflow")
+Pkg.instantiate()
 
 using CSV
 using DataFrames
@@ -23,17 +24,17 @@ include("functions/metro_simulation.jl")
 include("functions/metro_visuals.jl")
 
 # Parameters for the actual model
-set_safety = [0.9]                        # safety factor that limits the arc capacity
-set_max_enter = [120]                     # number of maximal entries per minute per station
-set_min_enter = [20]                      # min number of people allowed to enter
-set_scaling = [1.0]                       # scaling of the metro queue (to test lower or higher demand)
-set_past_periods = [4]                    # timeframe to consider from the past during the optimization
+set_safety = [0.6,0.7,0.8,0.9,1.0]        # safety factor that limits the arc capacity
+set_max_enter = [80,160,240]              # number of maximal entries per minute per station
+set_min_enter = [0,10]                    # min number of people allowed to enter
+set_scaling = [0.8,1.0,1.2]               # scaling of the metro queue (to test lower or higher demand)
+set_past_periods = [1,2,3,4,5,6]          # timeframe to consider from the past during the optimization
 set_kind_opt = ["linweight"]              # "regularSqr","linweight"
 set_kind_queue = ["lag_periods"]          # "shift_periods","lag_periods"
 
 # Define static simulation data
 kind_sim = "bound"                        # "bound","inflow","unbound"
-minutes_in_period = 30                    # minutes in each period (in 15 minute intervals!)
+minutes_in_period = 15                    # minutes in each period (in 15 minute intervals!)
 
 # Define the start- and end time of the observed time horizon
 # Make sure that the horizon contains only one shift!
