@@ -1,11 +1,11 @@
-# Load demand data from CSV files
-function load_demand()
-    ```
+"""
     load_demand()
-    Purpose: Loads passenger demand data from CSV files for the specified date range and time window.
-    Details: Reads multiple daily CSV files, combines them, and filters the data to only include entries between start_time and end_time.
-    Returns: A DataFrame containing the filtered demand data.
-    ```
+
+Purpose: Loads passenger demand data from CSV files for the specified date range and time window.
+Details: Reads multiple daily CSV files, combines them, and filters the data to only include entries between start_time and end_time.
+Returns: A DataFrame containing the filtered demand data.
+"""
+function load_demand()
     demand = []
 
     # Iterate over each day in the date range
@@ -27,14 +27,14 @@ function load_demand()
     return demand::DataFrame
 end
 
-# Aggregate demand data by origin, destination, and period
-function aggregate_demand()
-    ```
+"""
     aggregate_demand()
-    Purpose: Processes raw demand data into a summarized format grouped by origin, destination, and time period.
-    Details: Calls load_demand() to get raw data, maps each minute to a specific period, and then groups and sums demand values.
-    Returns: A DataFrame with aggregated demand values by origin, destination, and time period.
-    ```
+
+Purpose: Processes raw demand data into a summarized format grouped by origin, destination, and time period.
+Details: Calls load_demand() to get raw data, maps each minute to a specific period, and then groups and sums demand values.
+Returns: A DataFrame with aggregated demand values by origin, destination, and time period.
+"""
+function aggregate_demand()
 
     # Load the demand data for the specified time range
     demand = load_demand()
@@ -58,14 +58,14 @@ function aggregate_demand()
     return demand
 end
 
-# The function to compute the shifting data
-function compute_shift()
-    ```
+"""
     compute_shift()
-    Purpose: Maps passenger journeys across the metro network over time.
-    Details: Builds a directed graph of the metro network, calculates shortest paths between all stations, and tracks which arcs (connections) passengers would use in each minute based on their origin, destination, and entry period.
-    Returns: Four items: shift data (optimized mapping of passengers to arcs over time), original shift data (unoptimized mapping), shift_start_end (mapping of journeys by origin-destination), and the longest path length in the network.
-    ```
+
+Purpose: Maps passenger journeys across the metro network over time.
+Details: Builds a directed graph of the metro network, calculates shortest paths between all stations, and tracks which arcs (connections) passengers would use in each minute based on their origin, destination, and entry period.
+Returns: Four items: shift data (optimized mapping of passengers to arcs over time), original shift data (unoptimized mapping), shift_start_end (mapping of journeys by origin-destination), and the longest path length in the network.
+"""
+function compute_shift()
     # Prepare the graph of the metro network
     G = DiGraph(nr_nodes)
     distance_matrix = zeros(Int64, nr_nodes, nr_nodes)

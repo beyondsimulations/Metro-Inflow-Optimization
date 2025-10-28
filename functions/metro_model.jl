@@ -1,16 +1,16 @@
-# Function to build the optimization model
-function build_optimization_model(modelInstance)
-    ```
+"""
     build_optimization_model(modelInstance)
-    Purpose: Creates a mathematical optimization model to determine optimal passenger inflow rates across the metro network.
-    Details: Constructs a JuMP optimization model that:
-    1. Sets variables X[o,p] representing inflow rates at each origin station o for each period p
-    2. Creates an objective function minimizing the difference between passenger demand and allowed inflow
-    3. Adds capacity constraints to ensure passenger flows don't exceed arc capacities
-    4. Configures the solver (HiGHS) with time limits and optimality gap parameters
 
-    Returns: Two items: the optimization model object and the decision variables X
-    ```
+Purpose: Creates a mathematical optimization model to determine optimal passenger inflow rates across the metro network.
+Details: Constructs a JuMP optimization model that:
+1. Sets variables X[o,p] representing inflow rates at each origin station o for each period p
+2. Creates an objective function minimizing the difference between passenger demand and allowed inflow
+3. Adds capacity constraints to ensure passenger flows don't exceed arc capacities
+4. Configures the solver (HiGHS) with time limits and optimality gap parameters
+
+Returns: Two items: the optimization model object and the decision variables X
+"""
+function build_optimization_model(modelInstance)
 
     # Initialize optimization model object
     im = Model(HiGHS.Optimizer)
@@ -39,22 +39,21 @@ function build_optimization_model(modelInstance)
 end
 
 # Function to build the restricted optimization model that only consideres a slice of the overall periods
-function build_restricted_optimization_model(modelInstance, current_period, queue_period_age, inflow_raw)
-    ```
+"""
     build_restricted_optimization_model(modelInstance, current_period, queue_period_age, inflow_raw)
-    Purpose: Creates a time-restricted optimization model focusing on a specific period and its temporal neighborhood.
-    Details: Similar to build_optimization_model() but with several key differences:
-    1. Considers only a slice of the time horizon centered around the current period
-    2. Handles cumulative demand specifically for the restricted time window
-    3. Supports different objective function types ("regularSqr" for squared differences or "linweight" for queue-age weighted linear difference)
-    4. Implements two different approaches to manage queues:
-       - "shift_periods": Uses time-shifted demand based on fixed periods
-       - "lag_periods": Adjusts demand based on how long passengers have been waiting
 
-    The function accounts for passenger flows from previous periods when calculating remaining capacity.
+Purpose: Creates a time-restricted optimization model focusing on a specific period and its temporal neighborhood.
+Details: Similar to build_optimization_model() but with several key differences:
+1. Considers only a slice of the time horizon centered around the current period
+2. Handles cumulative demand specifically for the restricted time window
+3. Supports different objective function types ("regularSqr" for squared differences or "linweight" for queue-age weighted linear difference)
+4. Implements two different approaches to manage queues:
+   - "shift_periods": Uses time-shifted demand based on fixed periods
+   - "lag_periods": Adjusts demand based on how long passengers have been waiting
 
-    Returns: Two items: the restricted optimization model object and the decision variables X
-    ```
+Returns: Two items: the restricted optimization model object and the decision variables X
+"""
+function build_restricted_optimization_model(modelInstance, current_period, queue_period_age, inflow_raw)
     # Initialize optimization model object
     im = Model(HiGHS.Optimizer)
 

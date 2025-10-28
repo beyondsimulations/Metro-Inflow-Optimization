@@ -1,7 +1,6 @@
 # load packages
 using Pkg
 Pkg.activate("metroflow")
-Pkg.instantiate()
 
 using CSV
 using DataFrames

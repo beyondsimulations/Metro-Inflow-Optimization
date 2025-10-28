@@ -1,9 +1,10 @@
-function create_od_queue!(im, real_od_queue)
-    ```
+"""
     create_od_queue!(im, real_od_queue)
-    Purpose: Initializes a tensor that tracks passenger demand by time, origin, and destination.
-    Details: Loads raw demand data and distributes it across 15-minute intervals to create a minute-by-minute representation of passenger demand between all station pairs.
-    ```
+
+Purpose: Initializes a tensor that tracks passenger demand by time, origin, and destination.
+Details: Loads raw demand data and distributes it across 15-minute intervals to create a minute-by-minute representation of passenger demand between all station pairs.
+"""
+function create_od_queue!(im, real_od_queue)
     demand = load_demand()
     timesteps = start_time:Minute(1):end_time
     timestep_id = Dict(timesteps[i] => i for i in eachindex(timesteps))
@@ -15,12 +16,13 @@ function create_od_queue!(im, real_od_queue)
 
 end
 
-function create_entry_list!(im, real_allowed_entry, queues)
-    ```
+"""
     create_entry_list!(im, real_allowed_entry, queues)
-    Purpose: Populates a matrix with the number of passengers allowed to enter at each station during each minute.
-    Details: Converts period-level entry allowances into minute-level values, ensuring the allowed entries are consistent across each period's minutes.
-    ```
+
+Purpose: Populates a matrix with the number of passengers allowed to enter at each station during each minute.
+Details: Converts period-level entry allowances into minute-level values, ensuring the allowed entries are consistent across each period's minutes.
+"""
+function create_entry_list!(im, real_allowed_entry, queues)
     timesteps = start_time:Minute(1):end_time
     timestep_id = Dict(timesteps[i] => i for i in eachindex(timesteps))
     for entry in eachrow(queues)
@@ -28,29 +30,30 @@ function create_entry_list!(im, real_allowed_entry, queues)
     end
 end
 
-function simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_period_age, infeasible_solutions)
-    ```
+"""
     simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_period_age, infeasible_solutions)
-    Purpose: Simulates passenger flow through the metro network given entry constraints and demand patterns.
-    Details: Performs a minute-by-minute simulation that:
-    1. Processes new passenger demand
-    2. Implements station entry controls based on the optimization results
-    3. Traces passenger movements through the network along their routes
-    4. Tracks queue buildups at stations
-    5. Calculates utilization levels of each connection
 
-    The function supports three simulation modes:
-    - "bound": Limits entries based on optimization results
-    - "inflow": Limits entries based on maximum station capacity
-    - "unbound": Allows all waiting passengers to enter
+Purpose: Simulates passenger flow through the metro network given entry constraints and demand patterns.
+Details: Performs a minute-by-minute simulation that:
+1. Processes new passenger demand
+2. Implements station entry controls based on the optimization results
+3. Traces passenger movements through the network along their routes
+4. Tracks queue buildups at stations
+5. Calculates utilization levels of each connection
 
-    The function also:
-    - Visualizes simulation results with plots
-    - Calculates performance metrics (queue lengths, utilization rates, etc.)
-    - Logs detailed statistics to CSV files for further analysis
+The function supports three simulation modes:
+- "bound": Limits entries based on optimization results
+- "inflow": Limits entries based on maximum station capacity
+- "unbound": Allows all waiting passengers to enter
 
-    Returns: Two DataFrames with simulation results - station queue information and arc utilization data
-    ```
+The function also:
+- Visualizes simulation results with plots
+- Calculates performance metrics (queue lengths, utilization rates, etc.)
+- Logs detailed statistics to CSV files for further analysis
+
+Returns: Two DataFrames with simulation results - station queue information and arc utilization data
+"""
+function simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_period_age, infeasible_solutions)
     real_arc_use = zeros(Float64, im.nr_minutes, im.nr_arcs)
     real_queue_use = zeros(Float64, im.nr_minutes, im.nr_nodes)
     real_od_queue = zeros(Float64, im.nr_minutes, im.nr_nodes, im.nr_nodes)

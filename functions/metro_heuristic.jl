@@ -1,24 +1,25 @@
-function heuristic_adding_queues(im)
-    ```
+"""
     heuristic_adding_queues(im)
-    Purpose: Implements a time-based heuristic to optimize passenger inflow across metro stations while managing queues.
-    Details: Works period by period to:
-    1. Track remaining passenger queues at each origin station
-    2. Build and solve an optimization model for each time period
-    3. Determine how many passengers can enter the system from each station
-    4. Allocate available capacity to waiting passengers based on their destinations
-    5. Track queue lengths and waiting times
-    6. Calculate network utilization metrics
 
-    The function maintains a running queue of passengers who couldn't enter in previous periods and prioritizes them in subsequent periods.
+Purpose: Implements a time-based heuristic to optimize passenger inflow across metro stations while managing queues.
+Details: Works period by period to:
+1. Track remaining passenger queues at each origin station
+2. Build and solve an optimization model for each time period
+3. Determine how many passengers can enter the system from each station
+4. Allocate available capacity to waiting passengers based on their destinations
+5. Track queue lengths and waiting times
+6. Calculate network utilization metrics
 
-    Returns: Five items:
-    - results_queues: DataFrame of station-level statistics (allowed entries, moved passengers, queue length)
-    - results_arcs: DataFrame of connection-level utilization metrics
-    - optimization_duration: Time taken to solve each period's optimization model
-    - queue_period_age: Matrix tracking how long passengers have been waiting at each station
-    - infeasible_solutions: Count of periods where no feasible solution was found
-    ```
+The function maintains a running queue of passengers who couldn't enter in previous periods and prioritizes them in subsequent periods.
+
+Returns: Five items:
+- results_queues: DataFrame of station-level statistics (allowed entries, moved passengers, queue length)
+- results_arcs: DataFrame of connection-level utilization metrics
+- optimization_duration: Time taken to solve each period's optimization model
+- queue_period_age: Matrix tracking how long passengers have been waiting at each station
+- infeasible_solutions: Count of periods where no feasible solution was found
+"""
+function heuristic_adding_queues(im)
     # Initialization of variables
     remaining_queue = copy(im.demand_od_in_period) # Initialize a new variable to store the remaining queue data
     inflow_raw = zeros(Float64, im.nr_nodes, im.nr_periods) .= im.min_entry_origin  # Initialize an array to store the values of the X variable

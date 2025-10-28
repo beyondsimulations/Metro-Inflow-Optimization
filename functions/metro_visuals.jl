@@ -1,18 +1,19 @@
-function plot_optimization!(results_arcs)
-    ```
+"""
     plot_optimization!(results_arcs)
-    Purpose: Creates animated visualizations of arc utilization from optimization results.
-    Details: Generates two animated GIFs showing:
-    1. Aggregated utilization: How the overall utilization of metro connections evolves over time
-    2. Period utilization: How the utilization within specific time periods changes
 
-    The function:
-    - Groups arc data by timestamp
-    - For each timestamp, creates a bar chart showing utilization levels
-    - Color-codes bars by metro line
-    - Includes a horizontal line showing capacity/safety threshold
-    - Saves the animations as GIF files with appropriate naming conventions
-    ```
+Purpose: Creates animated visualizations of arc utilization from optimization results.
+Details: Generates two animated GIFs showing:
+1. Aggregated utilization: How the overall utilization of metro connections evolves over time
+2. Period utilization: How the utilization within specific time periods changes
+
+The function:
+- Groups arc data by timestamp
+- For each timestamp, creates a bar chart showing utilization levels
+- Color-codes bars by metro line
+- Includes a horizontal line showing capacity/safety threshold
+- Saves the animations as GIF files with appropriate naming conventions
+"""
+function plot_optimization!(results_arcs)
     Plots.scalefontsizes()
     Plots.scalefontsizes(2.2)
     timesteps = unique(results_arcs.datetime)
@@ -58,23 +59,24 @@ function plot_optimization!(results_arcs)
     gif(anim, "visuals/opt_utilization_fps30_period_$(kind_opt)_$(kind_queue)_mip-$(minutes_in_period)_pam-$(past_minutes)-$(start_time).gif", fps=30)
 end
 
-function plot_simulation!(sim_queues, sim_arcs, kind_sim)
-    ```
+"""
     plot_simulation!(sim_queues, sim_arcs, kind_sim)
-    Purpose: Creates animated visualizations of simulation results.
-    Details: Generates three different animated GIFs:
-    1. Queue lengths: Shows how passenger queues at each station evolve over time
-    2. Entry allowances: Shows how many passengers are allowed to enter each station per minute
-    3. Arc utilization: Shows how the utilization of metro connections changes over time
 
-    The function:
-    - Groups data by timestamp
-    - For each timestamp, creates appropriate bar charts with color coding
-    - Adds titles, legends, and formatting to make visualizations clear
-    - Saves the animations as GIF files with names that include configuration parameters
+Purpose: Creates animated visualizations of simulation results.
+Details: Generates three different animated GIFs:
+1. Queue lengths: Shows how passenger queues at each station evolve over time
+2. Entry allowances: Shows how many passengers are allowed to enter each station per minute
+3. Arc utilization: Shows how the utilization of metro connections changes over time
 
-    These visualizations help analyze how passenger flows, queues, and network utilization evolve throughout the simulation period under different optimization strategies.
-    ```
+The function:
+- Groups data by timestamp
+- For each timestamp, creates appropriate bar charts with color coding
+- Adds titles, legends, and formatting to make visualizations clear
+- Saves the animations as GIF files with names that include configuration parameters
+
+These visualizations help analyze how passenger flows, queues, and network utilization evolve throughout the simulation period under different optimization strategies.
+"""
+function plot_simulation!(sim_queues, sim_arcs, kind_sim)
     timesteps = unique(sim_arcs.datetime)
     gp_results_queues = groupby(sim_queues, :datetime)
     gp_results_arcs = groupby(sim_arcs, :datetime)
