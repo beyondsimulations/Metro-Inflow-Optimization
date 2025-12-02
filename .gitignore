@@ -26,3 +26,4 @@ Manifest.toml
 # MacOS Files
 .DS_Store
 results
+data_public
