@@ -8,8 +8,8 @@ set -e  # Exit on any error
 # Define multiple time periods to analyze
 # Each element should be in format "start_time,end_time"
 TIME_PERIODS=(
-    "2022-11-27T05:00:00.00,2022-11-28T04:59:00.00"
-    "2022-11-28T05:00:00.00,2022-11-29T04:59:00.00"
+    #"2022-11-27T05:00:00.00,2022-11-28T04:59:00.00"
+    #"2022-11-28T05:00:00.00,2022-11-29T04:59:00.00"
     "2022-11-29T05:00:00.00,2022-11-30T04:59:00.00"
 )
 
