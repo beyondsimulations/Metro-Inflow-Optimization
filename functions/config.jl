@@ -27,6 +27,16 @@ struct RegionConfig
     interval_minutes::Int
     closed_hours::Vector{Int}
     date_format::String
+
+    # Optimization parameters
+    safety_factors::Vector{Float64}
+    min_enter::Vector{Int}
+    max_enter::Vector{Int}
+    scaling_factors::Vector{Float64}
+    past_periods::Vector{Int}
+    minutes_in_period::Vector{Int}
+    kind_opt::Vector{String}
+    kind_queue::Vector{String}
 end
 
 """
@@ -57,6 +67,11 @@ function load_config(config_path::String)::RegionConfig
     region = toml["region"]
     paths = toml["paths"]
     time = toml["time"]
+    opt = get(toml, "optimization", Dict())
+
+    # Default optimization parameters (for backward compatibility)
+    base_interval = time["interval_minutes"]
+    default_minutes = [base_interval * i for i in 1:4 if base_interval * i <= 60]
 
     return RegionConfig(
         # Region
@@ -70,7 +85,16 @@ function load_config(config_path::String)::RegionConfig
         # Time
         time["interval_minutes"],
         convert(Vector{Int}, time["closed_hours"]),
-        time["date_format"]
+        time["date_format"],
+        # Optimization (with defaults)
+        convert(Vector{Float64}, get(opt, "safety_factors", [0.9])),
+        convert(Vector{Int}, get(opt, "min_enter", [0])),
+        convert(Vector{Int}, get(opt, "max_enter", [120])),
+        convert(Vector{Float64}, get(opt, "scaling_factors", [1.0])),
+        convert(Vector{Int}, get(opt, "past_periods", [4])),
+        convert(Vector{Int}, get(opt, "minutes_in_period", default_minutes)),
+        convert(Vector{String}, get(opt, "kind_opt", ["linweight"])),
+        convert(Vector{String}, get(opt, "kind_queue", ["shift_periods"]))
     )
 end
 

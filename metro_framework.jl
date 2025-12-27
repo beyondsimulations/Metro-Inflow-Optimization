@@ -27,36 +27,50 @@ include("functions/metro_visuals.jl")
 # =============================================================================
 # CONFIGURATION - Edit these settings for quick testing
 # =============================================================================
-CONFIG_FILE = "config/doha.toml"      # Options: "config/doha.toml", "config/shanghai.toml"
+CONFIG_FILE = "config/shanghai.toml"  # Options: "config/doha.toml", "config/shanghai.toml"
 
 # Load region configuration
 config = load_config(CONFIG_FILE)
 println("Loaded configuration: $(config.display_name)")
 
-# Parameters for the actual model
-set_safety = [0.6,0.7,0.8,0.9,1.0]        # safety factor that limits the arc capacity
-set_max_enter = [80,160,240]              # number of maximal entries per minute per station
-set_min_enter = [0,10]                    # min number of people allowed to enter
-set_scaling = [0.8,1.0,1.2]               # scaling of the metro queue (to test lower or higher demand)
-set_past_periods = [1,2,3,4,5,6]          # timeframe to consider from the past during the optimization
-set_kind_opt = ["linweight"]              # "regularSqr","linweight"
-set_kind_queue = ["lag_periods"]          # "shift_periods","lag_periods"
+# Parameters from config file (reproducible per region)
+set_safety = config.safety_factors        # safety factor that limits the arc capacity
+set_max_enter = config.max_enter          # number of maximal entries per minute per station
+set_min_enter = config.min_enter          # min number of people allowed to enter
+set_scaling = config.scaling_factors      # scaling of the metro queue (to test lower or higher demand)
+set_past_periods = config.past_periods    # timeframe to consider from the past during the optimization
+set_kind_opt = config.kind_opt            # "regularSqr","linweight"
+set_kind_queue = config.kind_queue        # "shift_periods","lag_periods"
+
+println("\nOptimization parameters from config:")
+println("  safety_factors: $set_safety")
+println("  min_enter: $set_min_enter")
+println("  max_enter: $set_max_enter")
+println("  scaling_factors: $set_scaling")
+println("  past_periods: $set_past_periods")
+println("  kind_opt: $set_kind_opt")
+println("  kind_queue: $set_kind_queue")
 
 # Define static simulation data
 kind_sim = "bound"                        # "bound","inflow","unbound"
-minutes_in_period = 15                    # minutes in each period (must be multiple of config.interval_minutes)
+minutes_in_period = config.minutes_in_period[1]  # Use first value from config
 
 # Define the start- and end time of the observed time horizon
 # Make sure that the horizon contains only one shift!
 # Doha dates: 2022-11-27 to 2022-11-30
-# Shanghai dates: 2017-05-08 to 2017-05-14 (after running transform_od.jl)
-start_time = DateTime("2022-11-29T05:00:00.00")
-end_time = DateTime("2022-11-30T04:59:00.00")
+# Shanghai dates: 2017-05-15 to 2017-05-21 (after running transform_od.jl)
+start_time = DateTime("2017-05-15T05:00:00.00")
+end_time = DateTime("2017-05-16T04:59:00.00")
 
 # Validate minutes_in_period
 if rem(minutes_in_period, config.interval_minutes) != 0
     error("minutes_in_period ($minutes_in_period) must be a multiple of $(config.interval_minutes) for $(config.display_name)")
 end
+
+println("\nTime settings:")
+println("  minutes_in_period: $minutes_in_period")
+println("  start_time: $start_time")
+println("  end_time: $end_time")
 
 struct MetroInstance
     kind_opt::String

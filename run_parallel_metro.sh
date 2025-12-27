@@ -7,25 +7,25 @@ set -e  # Exit on any error
 
 # Region configuration file (change this for different regions)
 # Options: config/doha.toml, config/shanghai.toml
-CONFIG="config/doha.toml"
+CONFIG="config/shanghai.toml"
 
 # Define multiple time periods to analyze
 # Each element should be in format "start_time,end_time"
-# Doha example dates:
-TIME_PERIODS=(
-    #"2022-11-27T05:00:00.00,2022-11-28T04:59:00.00"
-    #"2022-11-28T05:00:00.00,2022-11-29T04:59:00.00"
-    "2022-11-29T05:00:00.00,2022-11-30T04:59:00.00"
-)
-# Shanghai example dates (after running transform_od.jl):
+# Doha dates:
 # TIME_PERIODS=(
-#     "2017-05-08T05:00:00.00,2017-05-09T04:59:00.00"
+#     "2022-11-27T05:00:00.00,2022-11-28T04:59:00.00"
+#     "2022-11-28T05:00:00.00,2022-11-29T04:59:00.00"
+#     "2022-11-29T05:00:00.00,2022-11-30T04:59:00.00"
 # )
+# Shanghai dates (after running transform_od.jl):
+TIME_PERIODS=(
+    "2017-05-15T05:00:00.00,2017-05-16T04:59:00.00"
+)
 
 # Array of minutes_in_period values to test (you can modify this list)
 # For Doha (15-min intervals): use multiples of 15
 # For Shanghai (10-min intervals): use multiples of 10
-MINUTES_VALUES=(15 30 45 60)
+MINUTES_VALUES=(10 20 30 40 50 60)
 
 # Base session name
 SESSION_BASE="metro_framework"

@@ -14,3 +14,14 @@ od_file_pattern = "OD_{date}.csv"
 interval_minutes = 15           # Doha data has 15-minute resolution
 closed_hours = [3, 4, 5]        # Metro closed during these hours
 date_format = "yyyy-mm-dd"
+
+[optimization]
+# Parameter ranges for grid search
+safety_factors = [0.6, 0.7, 0.8, 0.9, 1.0]  # α: arc capacity safety factor
+min_enter = [0, 10]                          # c_o^min: minimum entries per minute
+max_enter = [80, 160, 240]                   # c_o^max: maximum entries per minute
+scaling_factors = [0.8, 1.0, 1.2]            # demand scaling factors
+past_periods = [1, 2, 3, 4, 5, 6]            # s̄: number of past periods
+minutes_in_period = [15, 30, 45, 60]         # m: optimization period lengths
+kind_opt = ["linweight"]       # optimization objective types
+kind_queue = ["lag_periods"]  # queue handling methods
