@@ -1,46 +1,128 @@
-# Metro Inflow Problem
+# Metro Inflow Optimization
 
-This repository contains the code associated with an upcoming research paper on controlling the inflow into metro systems while preventing overcrowding.
+This repository contains the code for optimizing passenger inflow into metro systems to prevent overcrowding. It supports multiple regions through a TOML-based configuration system.
 
-## Project Overview
+## Supported Regions
 
-The primary objective of this project is to optimize metro inflow by balancing passenger flows in urban rail transport systems. The repository is structured as follows:
+| Region | Interval | Data Period | Data Availability |
+|--------|----------|-------------|-------------------|
+| Doha Metro | 15 min | Nov 27-30, 2022 | Not included (confidential) |
+| Shanghai Metro | 10 min | May-Aug 2017 | Publicly available |
 
-### Directory Structure
+**Note**: Doha Metro data cannot be provided due to confidentiality agreements. The framework supports Doha but users must supply their own data.
 
-- **`metro_framework.jl`**: Main framework file that sets up the environment and includes other necessary files.
-- **`metro_functions.jl`**: Utility functions for data loading and processing.
-- **`metro_model.jl`**: Defines the optimization model for the metro system.
-- **`metro_heuristic.jl`**: Implements algorithms for solving the optimization problem.
-- **`metro_simulation.jl`**: Simulates the metro system based on the optimization results.
-- **`metro_visuals.jl`**: Generates visualizations of the results.
-- **`metro_data_summary.jl`**: Summarizes and analyzes the input data and results for the research paper.
-- **`data_demand/`**: Directory containing demand data files.
-- **`data_metro/`**: Directory containing metro system data files.
-- **`results`**: Directory for storing optimization results with queues.
-- **`results_paper/`**: Directory for storing optimization results we aim to publish in our paper.
-- **`visuals/`**: Directory for storing generated visualizations.
+## Quick Start
 
-## Configuration
+### Prerequisites
 
-You can customize various parameters in the `metro_framework.jl` file to tailor the optimization and simulation to your needs:
+- Julia 1.9+
+- Required packages (see `metroflow/Project.toml`)
 
-- **`set_safety`**: Safety factor limiting the arc capacity.
-- **`set_max_enter`**: Maximum number of people allowed to enter from outside.
-- **`set_min_enter`**: Minimum number of people allowed to enter.
-- **`set_scaling`**: Scaling of the metro queue to test lower or higher demand.
-- **`set_past_periods`**: Timeframe to consider from the past during the optimization.
-- **`set_kind_opt`**: Kind of optimization ("regularSqr", "linweight").
-- **`set_kind_queue`**: Kind of queue ("shift_periods", "lag_periods").
-- **`kind_sim`**: Kind of simulation ("bound", "inflow", "unbound").
-- **`minutes_in_period`**: Minutes in each period (in 15-minute intervals).
-- **`start_time`**: Start time of the observed time horizon.
-- **`end_time`**: End time of the observed time horizon.
+### Running the Framework
 
-## Results
+```bash
+# Doha (default)
+julia metro_framework_parallel.jl 15 '2022-11-29T05:00:00' '2022-11-30T04:59:00'
 
-The results of the optimization and simulation will be saved in the `results/` directory. Visualizations will be generated and stored in the `visuals/` directory.
+# Shanghai
+julia metro_framework_parallel.jl --config config/shanghai.toml 10 '2017-05-15T05:00:00' '2017-05-16T04:59:00'
+```
+
+## Directory Structure
+
+```
+├── config/                      # Region configuration files
+│   ├── doha.toml
+│   └── shanghai.toml
+├── data_public/
+│   ├── Doha/                    # Doha Metro data
+│   │   ├── metroarcs_doha.csv
+│   │   ├── stations_doha.csv
+│   │   └── OD_*.csv
+│   └── Shanghai/                # Shanghai Metro data
+│       ├── README.md            # Detailed preprocessing docs
+│       ├── stationInfo.csv      # Station data (included, with fixes)
+│       ├── station_lines_2017.csv
+│       ├── stations_shanghai.csv    # Generated
+│       ├── metroarcs_shanghai.csv   # Generated
+│       └── OD_*.csv                 # Generated
+├── functions/                   # Core Julia modules
+│   ├── config.jl                # Configuration loading
+│   ├── metro_functions.jl       # Data loading utilities
+│   ├── metro_model.jl           # Optimization models
+│   ├── metro_heuristic.jl       # Heuristic algorithms
+│   └── metro_simulation.jl      # Simulation logic
+├── results/                     # Output directory
+├── metroflow/                   # Julia project environment
+├── metro_framework.jl           # Simple framework (single-threaded)
+└── metro_framework_parallel.jl  # Parallel framework (recommended)
+```
+
+## Shanghai Data Setup
+
+The Shanghai data requires preprocessing. Station data files are included with corrections; OD flow files must be downloaded separately.
+
+### 1. Download OD Data
+
+Download from the [original dataset](https://www.nature.com/articles/s41597-025-05416-8):
+- `metroData_ODFlow.csv` (11 GB)
+- `metroData_InOutFlow.csv` (217 MB)
+
+Place in `data_public/Shanghai/`.
+
+### 2. Build Network
+
+```bash
+cd data_public/Shanghai
+julia --project=../../metroflow build_metroarcs.jl
+```
+
+This generates:
+- `stations_shanghai.csv` - Expanded network nodes
+- `metroarcs_shanghai.csv` - Network arcs with capacities
+
+### 3. Visualize Network (optional)
+
+```bash
+julia --project=../../metroflow plot_network.jl
+```
+
+Opens an interactive HTML plot for data verification.
+
+### 4. Transform OD Data
+
+```bash
+julia --project=../../metroflow transform_od.jl 2017-05-15 2017-05-21
+```
+
+See `data_public/Shanghai/README.md` for detailed documentation.
+
+## Configuration Parameters
+
+Edit config files in `config/` or pass via command line:
+
+| Parameter | Description |
+|-----------|-------------|
+| `set_safety` | Safety factor limiting arc capacity |
+| `set_max_enter` | Maximum passengers allowed to enter |
+| `set_min_enter` | Minimum passengers allowed to enter |
+| `set_scaling` | Demand scaling factor |
+| `minutes_in_period` | Optimization period length (must be multiple of interval) |
+
+## Output
+
+Results are saved with region prefix:
+- `results/logfile_{region}_*.csv` - Aggregated summary
+- `results/queues/sim_queues_{region}_*.csv` - Queue data
+- `results/arcs/sim_arcs_{region}_*.csv` - Arc utilization
 
 ## License
 
 This project is licensed under the MIT License.
+
+## Citation
+
+If you use this code, please cite our upcoming research paper on metro inflow optimization.
+
+For the Shanghai OD data, please cite:
+> https://www.nature.com/articles/s41597-025-05416-8
