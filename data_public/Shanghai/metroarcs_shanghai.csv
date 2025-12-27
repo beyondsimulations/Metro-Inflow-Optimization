@@ -1,0 +1,1167 @@
+origin,destination,capacity,traveltime,category
+Metro_BaoanHighway,Metro_WestYouyiRoad,1246,1,Line 1
+Metro_BaoanHighway,Metro_GongfuXincun,1246,2,Line 1
+Metro_CaobaoRoad_L01,Metro_ShanghaiSouthRailwayStation_L01,1246,2,Line 1
+Metro_CaobaoRoad_L01,Metro_ShanghaiIndoorStadium_L01,1246,1,Line 1
+Metro_ChangshuRoad_L01,Metro_SouthShaanxiRoad_L01,1246,1,Line 1
+Metro_ChangshuRoad_L01,Metro_HengshanRoad,1246,1,Line 1
+Metro_FujinRoad,Metro_WestYouyiRoad,1246,1,Line 1
+Metro_GongfuXincun,Metro_BaoanHighway,1246,2,Line 1
+Metro_GongfuXincun,Metro_HulanRoad,1246,2,Line 1
+Metro_GongkangRoad,Metro_PengpuXincun,1246,1,Line 1
+Metro_GongkangRoad,Metro_TongheXincun,1246,1,Line 1
+Metro_HanzhongRoad_L01,Metro_ShanghaiRailwayStation_L01,1246,1,Line 1
+Metro_HanzhongRoad_L01,Metro_XinzhaRoad,1246,1,Line 1
+Metro_HengshanRoad,Metro_Xujiahui_L01,1246,2,Line 1
+Metro_HengshanRoad,Metro_ChangshuRoad_L01,1246,1,Line 1
+Metro_HulanRoad,Metro_TongheXincun,1246,1,Line 1
+Metro_HulanRoad,Metro_GongfuXincun,1246,2,Line 1
+Metro_JinjiangAmusementPark,Metro_LianhuaRoad,1246,2,Line 1
+Metro_JinjiangAmusementPark,Metro_ShanghaiSouthRailwayStation_L01,1246,2,Line 1
+Metro_LianhuaRoad,Metro_Waihuanlu,1246,1,Line 1
+Metro_LianhuaRoad,Metro_JinjiangAmusementPark,1246,2,Line 1
+Metro_PengpuXincun,Metro_WenshuiRoad,1246,2,Line 1
+Metro_PengpuXincun,Metro_GongkangRoad,1246,1,Line 1
+Metro_PeoplesSquare_L01,Metro_SouthHuangpiRoad,1246,1,Line 1
+Metro_PeoplesSquare_L01,Metro_XinzhaRoad,1246,1,Line 1
+Metro_ShanghaiCircusCity,Metro_YanchangRoad,1246,1,Line 1
+Metro_ShanghaiCircusCity,Metro_WenshuiRoad,1246,1,Line 1
+Metro_ShanghaiIndoorStadium_L01,Metro_Xujiahui_L01,1246,1,Line 1
+Metro_ShanghaiIndoorStadium_L01,Metro_CaobaoRoad_L01,1246,1,Line 1
+Metro_ShanghaiRailwayStation_L01,Metro_ZhongshanNorthRoad,1246,1,Line 1
+Metro_ShanghaiRailwayStation_L01,Metro_HanzhongRoad_L01,1246,1,Line 1
+Metro_ShanghaiSouthRailwayStation_L01,Metro_JinjiangAmusementPark,1246,2,Line 1
+Metro_ShanghaiSouthRailwayStation_L01,Metro_CaobaoRoad_L01,1246,2,Line 1
+Metro_SouthHuangpiRoad,Metro_SouthShaanxiRoad_L01,1246,1,Line 1
+Metro_SouthHuangpiRoad,Metro_PeoplesSquare_L01,1246,1,Line 1
+Metro_SouthShaanxiRoad_L01,Metro_ChangshuRoad_L01,1246,1,Line 1
+Metro_SouthShaanxiRoad_L01,Metro_SouthHuangpiRoad,1246,1,Line 1
+Metro_TongheXincun,Metro_GongkangRoad,1246,1,Line 1
+Metro_TongheXincun,Metro_HulanRoad,1246,1,Line 1
+Metro_Waihuanlu,Metro_LianhuaRoad,1246,1,Line 1
+Metro_Waihuanlu,Metro_Xinzhuang_L01,1246,1,Line 1
+Metro_WenshuiRoad,Metro_ShanghaiCircusCity,1246,1,Line 1
+Metro_WenshuiRoad,Metro_PengpuXincun,1246,2,Line 1
+Metro_WestYouyiRoad,Metro_BaoanHighway,1246,1,Line 1
+Metro_WestYouyiRoad,Metro_FujinRoad,1246,1,Line 1
+Metro_XinzhaRoad,Metro_PeoplesSquare_L01,1246,1,Line 1
+Metro_XinzhaRoad,Metro_HanzhongRoad_L01,1246,1,Line 1
+Metro_Xinzhuang_L01,Metro_Waihuanlu,1246,1,Line 1
+Metro_Xujiahui_L01,Metro_ShanghaiIndoorStadium_L01,1246,1,Line 1
+Metro_Xujiahui_L01,Metro_HengshanRoad,1246,2,Line 1
+Metro_YanchangRoad,Metro_ShanghaiCircusCity,1246,1,Line 1
+Metro_YanchangRoad,Metro_ZhongshanNorthRoad,1246,1,Line 1
+Metro_ZhongshanNorthRoad,Metro_YanchangRoad,1246,1,Line 1
+Metro_ZhongshanNorthRoad,Metro_ShanghaiRailwayStation_L01,1246,1,Line 1
+Metro_EastNanjingRoad_L10,Metro_TiantongRoad_L10,791,1,Line 10
+Metro_EastNanjingRoad_L10,Metro_YuyuanGarden,791,1,Line 10
+Metro_EastYingaoRoad,Metro_SanmenRoad,791,1,Line 10
+Metro_EastYingaoRoad,Metro_NewJiangwanCity,791,1,Line 10
+Metro_GuoquanRoad,Metro_Wujiaochang,791,1,Line 10
+Metro_GuoquanRoad,Metro_TongjiUniversity,791,1,Line 10
+Metro_HailunRoad_L10,Metro_NorthSichuanRoad,791,1,Line 10
+Metro_HailunRoad_L10,Metro_YoudianXincun,791,1,Line 10
+Metro_HangzhongRoad,Metro_ZitengRoad,791,1,Line 10
+Metro_HongqiaoRailwayStation_L10,Metro_HongqiaoTerminal2_L10,791,1,Line 10
+Metro_HongqiaoRoad_L10,Metro_SongyuanRoad_L10,791,1,Line 10
+Metro_HongqiaoRoad_L10,Metro_JiaotongUniversity_L10,791,1,Line 10
+Metro_HongqiaoTerminal1,Metro_ShanghaiZoo,791,2,Line 10
+Metro_HongqiaoTerminal1,Metro_HongqiaoTerminal2_L10,791,2,Line 10
+Metro_HongqiaoTerminal2_L10,Metro_HongqiaoTerminal1,791,2,Line 10
+Metro_HongqiaoTerminal2_L10,Metro_HongqiaoRailwayStation_L10,791,1,Line 10
+Metro_JiangwanStadium,Metro_Wujiaochang,791,1,Line 10
+Metro_JiangwanStadium,Metro_SanmenRoad,791,1,Line 10
+Metro_JiaotongUniversity_L10,Metro_ShanghaiLibrary,791,1,Line 10
+Metro_JiaotongUniversity_L10,Metro_HongqiaoRoad_L10,791,1,Line 10
+Metro_Laoximen_L10,Metro_Xintiandi_L10,791,1,Line 10
+Metro_Laoximen_L10,Metro_YuyuanGarden,791,1,Line 10
+Metro_LongbaiXincun,Metro_ZitengRoad,791,1,Line 10
+Metro_LongbaiXincun,Metro_LongxiRoad,791,2,Line 10
+Metro_LongxiRoad,Metro_ShanghaiZoo,791,1,Line 10
+Metro_LongxiRoad,Metro_ShuichengRoad,791,1,Line 10
+Metro_LongxiRoad,Metro_LongbaiXincun,791,2,Line 10
+Metro_NewJiangwanCity,Metro_EastYingaoRoad,791,1,Line 10
+Metro_NorthSichuanRoad,Metro_TiantongRoad_L10,791,1,Line 10
+Metro_NorthSichuanRoad,Metro_HailunRoad_L10,791,1,Line 10
+Metro_SanmenRoad,Metro_JiangwanStadium,791,1,Line 10
+Metro_SanmenRoad,Metro_EastYingaoRoad,791,1,Line 10
+Metro_ShanghaiLibrary,Metro_SouthShaanxiRoad_L10,791,2,Line 10
+Metro_ShanghaiLibrary,Metro_JiaotongUniversity_L10,791,1,Line 10
+Metro_ShanghaiZoo,Metro_HongqiaoTerminal1,791,2,Line 10
+Metro_ShanghaiZoo,Metro_LongxiRoad,791,1,Line 10
+Metro_ShuichengRoad,Metro_LongxiRoad,791,1,Line 10
+Metro_ShuichengRoad,Metro_YiliRoad,791,1,Line 10
+Metro_SipingRoad_L10,Metro_YoudianXincun,791,1,Line 10
+Metro_SipingRoad_L10,Metro_TongjiUniversity,791,1,Line 10
+Metro_SongyuanRoad_L10,Metro_HongqiaoRoad_L10,791,1,Line 10
+Metro_SongyuanRoad_L10,Metro_YiliRoad,791,1,Line 10
+Metro_SouthShaanxiRoad_L10,Metro_Xintiandi_L10,791,1,Line 10
+Metro_SouthShaanxiRoad_L10,Metro_ShanghaiLibrary,791,2,Line 10
+Metro_TiantongRoad_L10,Metro_NorthSichuanRoad,791,1,Line 10
+Metro_TiantongRoad_L10,Metro_EastNanjingRoad_L10,791,1,Line 10
+Metro_TongjiUniversity,Metro_SipingRoad_L10,791,1,Line 10
+Metro_TongjiUniversity,Metro_GuoquanRoad,791,1,Line 10
+Metro_Wujiaochang,Metro_JiangwanStadium,791,1,Line 10
+Metro_Wujiaochang,Metro_GuoquanRoad,791,1,Line 10
+Metro_Xintiandi_L10,Metro_SouthShaanxiRoad_L10,791,1,Line 10
+Metro_Xintiandi_L10,Metro_Laoximen_L10,791,1,Line 10
+Metro_YiliRoad,Metro_SongyuanRoad_L10,791,1,Line 10
+Metro_YiliRoad,Metro_ShuichengRoad,791,1,Line 10
+Metro_YoudianXincun,Metro_SipingRoad_L10,791,1,Line 10
+Metro_YoudianXincun,Metro_HailunRoad_L10,791,1,Line 10
+Metro_YuyuanGarden,Metro_Laoximen_L10,791,1,Line 10
+Metro_YuyuanGarden,Metro_EastNanjingRoad_L10,791,1,Line 10
+Metro_ZitengRoad,Metro_HangzhongRoad,791,1,Line 10
+Metro_ZitengRoad,Metro_LongbaiXincun,791,1,Line 10
+Metro_Anting,Metro_ZhaofengRoad,1102,1,Line 11
+Metro_Anting,Metro_ShanghaiAutomobileCity,1102,2,Line 11
+Metro_BaiyinRoad,Metro_WestJiading,1102,3,Line 11
+Metro_BaiyinRoad,Metro_JiadingNewCity,1102,2,Line 11
+Metro_CaoyangRoad_L11,Metro_FengqiaoRoad,1102,1,Line 11
+Metro_CaoyangRoad_L11,Metro_LongdeRoad_L11,1102,1,Line 11
+Metro_DisneyResort,Metro_KangxinHighway,1102,4,Line 11
+Metro_EastChangjiRoad,Metro_ShanghaiCircuit,1102,4,Line 11
+Metro_EastChangjiRoad,Metro_ShanghaiAutomobileCity,1102,2,Line 11
+Metro_EastSanlin,Metro_Sanlin,1102,1,Line 11
+Metro_EastSanlin,Metro_PusanRoad,1102,2,Line 11
+Metro_FengqiaoRoad,Metro_CaoyangRoad_L11,1102,1,Line 11
+Metro_FengqiaoRoad,Metro_Zhenru,1102,1,Line 11
+Metro_GuangmingRoad,Metro_Huaqiao,1102,1,Line 11
+Metro_GuangmingRoad,Metro_ZhaofengRoad,1102,3,Line 11
+Metro_Huaqiao,Metro_GuangmingRoad,1102,1,Line 11
+Metro_JiadingNewCity,Metro_BaiyinRoad,1102,2,Line 11
+Metro_JiadingNewCity,Metro_Malu,1102,2,Line 11
+Metro_JiadingNewCity,Metro_ShanghaiCircuit,1102,2,Line 11
+Metro_JiangsuRoad_L11,Metro_LongdeRoad_L11,1102,1,Line 11
+Metro_JiangsuRoad_L11,Metro_JiaotongUniversity_L11,1102,2,Line 11
+Metro_JiaotongUniversity_L11,Metro_Xujiahui_L11,1102,1,Line 11
+Metro_JiaotongUniversity_L11,Metro_JiangsuRoad_L11,1102,2,Line 11
+Metro_KangxinHighway,Metro_XiuyanRoad,1102,2,Line 11
+Metro_KangxinHighway,Metro_DisneyResort,1102,4,Line 11
+Metro_Liziyuan,Metro_QilianshanRoad,1102,1,Line 11
+Metro_Liziyuan,Metro_ShanghaiWestRailwayStation,1102,1,Line 11
+Metro_LongdeRoad_L11,Metro_JiangsuRoad_L11,1102,1,Line 11
+Metro_LongdeRoad_L11,Metro_CaoyangRoad_L11,1102,1,Line 11
+Metro_Longhua_L11,Metro_YunjinRoad,1102,1,Line 11
+Metro_Longhua_L11,Metro_ShanghaiSwimmingCenter,1102,1,Line 11
+Metro_LongyaoRoad_L11,Metro_YunjinRoad,1102,1,Line 11
+Metro_LongyaoRoad_L11,Metro_OrientalSportsCenter_L11,1102,2,Line 11
+Metro_LuoshanRoad_L11,Metro_XiuyanRoad,1102,2,Line 11
+Metro_LuoshanRoad_L11,Metro_Yuqiao,1102,2,Line 11
+Metro_Malu,Metro_JiadingNewCity,1102,2,Line 11
+Metro_Malu,Metro_Nanxiang,1102,4,Line 11
+Metro_Nanxiang,Metro_TaopuXincun,1102,3,Line 11
+Metro_Nanxiang,Metro_Malu,1102,4,Line 11
+Metro_NorthJiading,Metro_WestJiading,1102,2,Line 11
+Metro_OrientalSportsCenter_L11,Metro_LongyaoRoad_L11,1102,2,Line 11
+Metro_OrientalSportsCenter_L11,Metro_Sanlin,1102,3,Line 11
+Metro_PusanRoad,Metro_EastSanlin,1102,2,Line 11
+Metro_PusanRoad,Metro_Yuqiao,1102,3,Line 11
+Metro_QilianshanRoad,Metro_WuweiRoad,1102,1,Line 11
+Metro_QilianshanRoad,Metro_Liziyuan,1102,1,Line 11
+Metro_Sanlin,Metro_OrientalSportsCenter_L11,1102,3,Line 11
+Metro_Sanlin,Metro_EastSanlin,1102,1,Line 11
+Metro_ShanghaiAutomobileCity,Metro_Anting,1102,2,Line 11
+Metro_ShanghaiAutomobileCity,Metro_EastChangjiRoad,1102,2,Line 11
+Metro_ShanghaiCircuit,Metro_EastChangjiRoad,1102,4,Line 11
+Metro_ShanghaiCircuit,Metro_JiadingNewCity,1102,2,Line 11
+Metro_ShanghaiSwimmingCenter,Metro_Xujiahui_L11,1102,1,Line 11
+Metro_ShanghaiSwimmingCenter,Metro_Longhua_L11,1102,1,Line 11
+Metro_ShanghaiWestRailwayStation,Metro_Liziyuan,1102,1,Line 11
+Metro_ShanghaiWestRailwayStation,Metro_Zhenru,1102,1,Line 11
+Metro_TaopuXincun,Metro_Nanxiang,1102,3,Line 11
+Metro_TaopuXincun,Metro_WuweiRoad,1102,2,Line 11
+Metro_WestJiading,Metro_NorthJiading,1102,2,Line 11
+Metro_WestJiading,Metro_BaiyinRoad,1102,3,Line 11
+Metro_WuweiRoad,Metro_TaopuXincun,1102,2,Line 11
+Metro_WuweiRoad,Metro_QilianshanRoad,1102,1,Line 11
+Metro_XiuyanRoad,Metro_LuoshanRoad_L11,1102,2,Line 11
+Metro_XiuyanRoad,Metro_KangxinHighway,1102,2,Line 11
+Metro_Xujiahui_L11,Metro_JiaotongUniversity_L11,1102,1,Line 11
+Metro_Xujiahui_L11,Metro_ShanghaiSwimmingCenter,1102,1,Line 11
+Metro_YunjinRoad,Metro_LongyaoRoad_L11,1102,1,Line 11
+Metro_YunjinRoad,Metro_Longhua_L11,1102,1,Line 11
+Metro_Yuqiao,Metro_LuoshanRoad_L11,1102,2,Line 11
+Metro_Yuqiao,Metro_PusanRoad,1102,3,Line 11
+Metro_ZhaofengRoad,Metro_GuangmingRoad,1102,3,Line 11
+Metro_ZhaofengRoad,Metro_Anting,1102,1,Line 11
+Metro_Zhenru,Metro_FengqiaoRoad,1102,1,Line 11
+Metro_Zhenru,Metro_ShanghaiWestRailwayStation,1102,1,Line 11
+Metro_AiguoRoad,Metro_LongchangRoad,1049,1,Line 12
+Metro_AiguoRoad,Metro_FuxingIsland,1049,1,Line 12
+Metro_CaobaoRoad_L12,Metro_LongcaoRoad_L12,1049,1,Line 12
+Metro_CaobaoRoad_L12,Metro_GuilinPark,1049,1,Line 12
+Metro_DalianRoad_L12,Metro_JiangpuPark,1049,1,Line 12
+Metro_DalianRoad_L12,Metro_Tilanqiao,1049,1,Line 12
+Metro_DamuqiaoRoad_L12,Metro_JiashanRoad_L12,1049,1,Line 12
+Metro_DamuqiaoRoad_L12,Metro_LonghuaMiddleRoad_L12,1049,1,Line 12
+Metro_DonglanRoad,Metro_HongmeiRoad,1049,1,Line 12
+Metro_DonglanRoad,Metro_GudaiRoad,1049,2,Line 12
+Metro_DongluRoad,Metro_JufengRoad_L12,1049,1,Line 12
+Metro_DongluRoad,Metro_FuxingIsland,1049,2,Line 12
+Metro_FuxingIsland,Metro_AiguoRoad,1049,1,Line 12
+Metro_FuxingIsland,Metro_DongluRoad,1049,2,Line 12
+Metro_GudaiRoad,Metro_HongxinRoad,1049,1,Line 12
+Metro_GudaiRoad,Metro_DonglanRoad,1049,2,Line 12
+Metro_GuilinPark,Metro_HongcaoRoad,1049,1,Line 12
+Metro_GuilinPark,Metro_CaobaoRoad_L12,1049,1,Line 12
+Metro_HanzhongRoad_L12,Metro_QufuRoad_L12,1049,1,Line 12
+Metro_HanzhongRoad_L12,Metro_WestNanjingRoad_L12,1049,1,Line 12
+Metro_HongcaoRoad,Metro_HongmeiRoad,1049,1,Line 12
+Metro_HongcaoRoad,Metro_GuilinPark,1049,1,Line 12
+Metro_HongmeiRoad,Metro_HongcaoRoad,1049,1,Line 12
+Metro_HongmeiRoad,Metro_DonglanRoad,1049,1,Line 12
+Metro_HongxinRoad,Metro_QixinRoad,1049,2,Line 12
+Metro_HongxinRoad,Metro_GudaiRoad,1049,1,Line 12
+Metro_InternationalCruiseTerminal,Metro_TiantongRoad_L12,1049,2,Line 12
+Metro_InternationalCruiseTerminal,Metro_Tilanqiao,1049,1,Line 12
+Metro_JiangpuPark,Metro_DalianRoad_L12,1049,1,Line 12
+Metro_JiangpuPark,Metro_NingguoRoad,1049,1,Line 12
+Metro_JiashanRoad_L12,Metro_SouthShaanxiRoad_L12,1049,2,Line 12
+Metro_JiashanRoad_L12,Metro_DamuqiaoRoad_L12,1049,1,Line 12
+Metro_JinhaiRoad,Metro_ShenjiangRoad,1049,2,Line 12
+Metro_JinjingRoad,Metro_NorthYanggaoRoad,1049,1,Line 12
+Metro_JinjingRoad,Metro_ShenjiangRoad,1049,1,Line 12
+Metro_JufengRoad_L12,Metro_NorthYanggaoRoad,1049,1,Line 12
+Metro_JufengRoad_L12,Metro_DongluRoad,1049,1,Line 12
+Metro_LongcaoRoad_L12,Metro_Longhua_L12,1049,1,Line 12
+Metro_LongcaoRoad_L12,Metro_CaobaoRoad_L12,1049,1,Line 12
+Metro_LongchangRoad,Metro_NingguoRoad,1049,1,Line 12
+Metro_LongchangRoad,Metro_AiguoRoad,1049,1,Line 12
+Metro_LonghuaMiddleRoad_L12,Metro_Longhua_L12,1049,1,Line 12
+Metro_LonghuaMiddleRoad_L12,Metro_DamuqiaoRoad_L12,1049,1,Line 12
+Metro_Longhua_L12,Metro_LongcaoRoad_L12,1049,1,Line 12
+Metro_Longhua_L12,Metro_LonghuaMiddleRoad_L12,1049,1,Line 12
+Metro_NingguoRoad,Metro_JiangpuPark,1049,1,Line 12
+Metro_NingguoRoad,Metro_LongchangRoad,1049,1,Line 12
+Metro_NorthYanggaoRoad,Metro_JinjingRoad,1049,1,Line 12
+Metro_NorthYanggaoRoad,Metro_JufengRoad_L12,1049,1,Line 12
+Metro_QixinRoad,Metro_HongxinRoad,1049,2,Line 12
+Metro_QufuRoad_L12,Metro_TiantongRoad_L12,1049,1,Line 12
+Metro_QufuRoad_L12,Metro_HanzhongRoad_L12,1049,1,Line 12
+Metro_ShenjiangRoad,Metro_JinjingRoad,1049,1,Line 12
+Metro_ShenjiangRoad,Metro_JinhaiRoad,1049,2,Line 12
+Metro_SouthShaanxiRoad_L12,Metro_JiashanRoad_L12,1049,2,Line 12
+Metro_SouthShaanxiRoad_L12,Metro_WestNanjingRoad_L12,1049,1,Line 12
+Metro_TiantongRoad_L12,Metro_QufuRoad_L12,1049,1,Line 12
+Metro_TiantongRoad_L12,Metro_InternationalCruiseTerminal,1049,2,Line 12
+Metro_Tilanqiao,Metro_DalianRoad_L12,1049,1,Line 12
+Metro_Tilanqiao,Metro_InternationalCruiseTerminal,1049,1,Line 12
+Metro_WestNanjingRoad_L12,Metro_HanzhongRoad_L12,1049,1,Line 12
+Metro_WestNanjingRoad_L12,Metro_SouthShaanxiRoad_L12,1049,1,Line 12
+Metro_ChangshouRoad_L13,Metro_WuningRoad,500,1,Line 13
+Metro_ChangshouRoad_L13,Metro_JiangningRoad,500,1,Line 13
+Metro_DaduheRoad,Metro_JinshajiangRoad_L13,500,2,Line 13
+Metro_DaduheRoad,Metro_ZhenbeiRoad,500,1,Line 13
+Metro_ExpoAvenue,Metro_WorldExpoMuseum,500,2,Line 13
+Metro_Fengzhuang,Metro_WestJinshajiangRoad,500,2,Line 13
+Metro_Fengzhuang,Metro_SouthQilianshanRoad,500,1,Line 13
+Metro_HanzhongRoad_L13,Metro_JiangningRoad,500,1,Line 13
+Metro_HanzhongRoad_L13,Metro_ShanghaiNaturalHistoryMuseum,500,1,Line 13
+Metro_JiangningRoad,Metro_ChangshouRoad_L13,500,1,Line 13
+Metro_JiangningRoad,Metro_HanzhongRoad_L13,500,1,Line 13
+Metro_JinshajiangRoad_L13,Metro_LongdeRoad_L13,500,1,Line 13
+Metro_JinshajiangRoad_L13,Metro_DaduheRoad,500,2,Line 13
+Metro_JinyunRoad,Metro_WestJinshajiangRoad,500,1,Line 13
+Metro_LongdeRoad_L13,Metro_JinshajiangRoad_L13,500,1,Line 13
+Metro_LongdeRoad_L13,Metro_WuningRoad,500,1,Line 13
+Metro_MadangRoad_L13,Metro_WorldExpoMuseum,500,1,Line 13
+Metro_MadangRoad_L13,Metro_Xintiandi_L13,500,1,Line 13
+Metro_ShanghaiNaturalHistoryMuseum,Metro_WestNanjingRoad_L13,500,1,Line 13
+Metro_ShanghaiNaturalHistoryMuseum,Metro_HanzhongRoad_L13,500,1,Line 13
+Metro_SouthQilianshanRoad,Metro_Fengzhuang,500,1,Line 13
+Metro_SouthQilianshanRoad,Metro_ZhenbeiRoad,500,1,Line 13
+Metro_WestJinshajiangRoad,Metro_JinyunRoad,500,1,Line 13
+Metro_WestJinshajiangRoad,Metro_Fengzhuang,500,2,Line 13
+Metro_WestNanjingRoad_L13,Metro_ShanghaiNaturalHistoryMuseum,500,1,Line 13
+Metro_WestNanjingRoad_L13,Metro_Xintiandi_L13,500,2,Line 13
+Metro_WorldExpoMuseum,Metro_ExpoAvenue,500,2,Line 13
+Metro_WorldExpoMuseum,Metro_MadangRoad_L13,500,1,Line 13
+Metro_WuningRoad,Metro_LongdeRoad_L13,500,1,Line 13
+Metro_WuningRoad,Metro_ChangshouRoad_L13,500,1,Line 13
+Metro_Xintiandi_L13,Metro_MadangRoad_L13,500,1,Line 13
+Metro_Xintiandi_L13,Metro_WestNanjingRoad_L13,500,2,Line 13
+Metro_ZhenbeiRoad,Metro_SouthQilianshanRoad,500,1,Line 13
+Metro_ZhenbeiRoad,Metro_DaduheRoad,500,1,Line 13
+Metro_DishuiLake,Metro_LingangAvenue,744,2,Line 16
+Metro_EastZhoupu,Metro_HeshaHangcheng,744,3,Line 16
+Metro_EastZhoupu,Metro_LuoshanRoad_L16,744,4,Line 16
+Metro_HangtouEast,Metro_HeshaHangcheng,744,2,Line 16
+Metro_HangtouEast,Metro_Xinchang,744,3,Line 16
+Metro_HeshaHangcheng,Metro_EastZhoupu,744,3,Line 16
+Metro_HeshaHangcheng,Metro_HangtouEast,744,2,Line 16
+Metro_Huinan,Metro_ShanghaiWildAnimalPark,744,5,Line 16
+Metro_Huinan,Metro_HuinanEast,744,4,Line 16
+Metro_HuinanEast,Metro_Huinan,744,4,Line 16
+Metro_HuinanEast,Metro_Shuyuan,744,7,Line 16
+Metro_LingangAvenue,Metro_DishuiLake,744,2,Line 16
+Metro_LingangAvenue,Metro_Shuyuan,744,6,Line 16
+Metro_LongyangRoad_L16,Metro_MiddleHuaxiaRoad,744,3,Line 16
+Metro_LuoshanRoad_L16,Metro_EastZhoupu,744,4,Line 16
+Metro_LuoshanRoad_L16,Metro_MiddleHuaxiaRoad,744,2,Line 16
+Metro_MiddleHuaxiaRoad,Metro_LuoshanRoad_L16,744,2,Line 16
+Metro_MiddleHuaxiaRoad,Metro_LongyangRoad_L16,744,3,Line 16
+Metro_ShanghaiWildAnimalPark,Metro_Xinchang,744,4,Line 16
+Metro_ShanghaiWildAnimalPark,Metro_Huinan,744,5,Line 16
+Metro_Shuyuan,Metro_LingangAvenue,744,6,Line 16
+Metro_Shuyuan,Metro_HuinanEast,744,7,Line 16
+Metro_Xinchang,Metro_HangtouEast,744,3,Line 16
+Metro_Xinchang,Metro_ShanghaiWildAnimalPark,744,4,Line 16
+Metro_Beixinjing,Metro_SonghongRoad,1524,1,Line 2
+Metro_Beixinjing,Metro_WeiningRoad,1524,1,Line 2
+Metro_CenturyAvenue_L02,Metro_DongchangRoad,1524,1,Line 2
+Metro_CenturyAvenue_L02,Metro_ShanghaiScienceandTechnologyMuseum,1524,2,Line 2
+Metro_CenturyPark,Metro_ShanghaiScienceandTechnologyMuseum,1524,1,Line 2
+Metro_CenturyPark,Metro_LongyangRoad_L02,1524,1,Line 2
+Metro_ChuangxinCentralRoad,Metro_Tangzhen,1524,2,Line 2
+Metro_ChuangxinCentralRoad,Metro_EastHuaxiaRoad,1524,2,Line 2
+Metro_Chuansha,Metro_EastHuaxiaRoad,1524,2,Line 2
+Metro_Chuansha,Metro_LingkongRoad,1524,2,Line 2
+Metro_DongchangRoad,Metro_CenturyAvenue_L02,1524,1,Line 2
+Metro_DongchangRoad,Metro_Lujiazui,1524,1,Line 2
+Metro_EastHuaxiaRoad,Metro_ChuangxinCentralRoad,1524,2,Line 2
+Metro_EastHuaxiaRoad,Metro_Chuansha,1524,2,Line 2
+Metro_EastNanjingRoad_L02,Metro_PeoplesSquare_L02,1524,1,Line 2
+Metro_EastNanjingRoad_L02,Metro_Lujiazui,1524,2,Line 2
+Metro_EastXujing,Metro_HongqiaoRailwayStation_L02,1524,2,Line 2
+Metro_GuanglanRoad,Metro_Tangzhen,1524,3,Line 2
+Metro_GuanglanRoad,Metro_JinkeRoad,1524,2,Line 2
+Metro_Haitian3rdRoad,Metro_YuandongAvenue,1524,4,Line 2
+Metro_Haitian3rdRoad,Metro_PudongInternationalAirport,1524,2,Line 2
+Metro_HongqiaoRailwayStation_L02,Metro_EastXujing,1524,2,Line 2
+Metro_HongqiaoRailwayStation_L02,Metro_HongqiaoTerminal2_L02,1524,1,Line 2
+Metro_HongqiaoTerminal2_L02,Metro_SonghongRoad,1524,3,Line 2
+Metro_HongqiaoTerminal2_L02,Metro_HongqiaoRailwayStation_L02,1524,1,Line 2
+Metro_JiangsuRoad_L02,Metro_JinganTemple_L02,1524,1,Line 2
+Metro_JiangsuRoad_L02,Metro_ZhongshanPark_L02,1524,1,Line 2
+Metro_JinganTemple_L02,Metro_WestNanjingRoad_L02,1524,1,Line 2
+Metro_JinganTemple_L02,Metro_JiangsuRoad_L02,1524,1,Line 2
+Metro_JinkeRoad,Metro_ZhangjiangHiTechPark,1524,1,Line 2
+Metro_JinkeRoad,Metro_GuanglanRoad,1524,2,Line 2
+Metro_LingkongRoad,Metro_Chuansha,1524,2,Line 2
+Metro_LingkongRoad,Metro_YuandongAvenue,1524,3,Line 2
+Metro_LongyangRoad_L02,Metro_CenturyPark,1524,1,Line 2
+Metro_LongyangRoad_L02,Metro_ZhangjiangHiTechPark,1524,3,Line 2
+Metro_LoushanguanRoad,Metro_ZhongshanPark_L02,1524,1,Line 2
+Metro_LoushanguanRoad,Metro_WeiningRoad,1524,2,Line 2
+Metro_Lujiazui,Metro_DongchangRoad,1524,1,Line 2
+Metro_Lujiazui,Metro_EastNanjingRoad_L02,1524,2,Line 2
+Metro_PeoplesSquare_L02,Metro_EastNanjingRoad_L02,1524,1,Line 2
+Metro_PeoplesSquare_L02,Metro_WestNanjingRoad_L02,1524,1,Line 2
+Metro_PudongInternationalAirport,Metro_Haitian3rdRoad,1524,2,Line 2
+Metro_ShanghaiScienceandTechnologyMuseum,Metro_CenturyAvenue_L02,1524,2,Line 2
+Metro_ShanghaiScienceandTechnologyMuseum,Metro_CenturyPark,1524,1,Line 2
+Metro_SonghongRoad,Metro_HongqiaoTerminal2_L02,1524,3,Line 2
+Metro_SonghongRoad,Metro_Beixinjing,1524,1,Line 2
+Metro_Tangzhen,Metro_ChuangxinCentralRoad,1524,2,Line 2
+Metro_Tangzhen,Metro_GuanglanRoad,1524,3,Line 2
+Metro_WeiningRoad,Metro_LoushanguanRoad,1524,2,Line 2
+Metro_WeiningRoad,Metro_Beixinjing,1524,1,Line 2
+Metro_WestNanjingRoad_L02,Metro_PeoplesSquare_L02,1524,1,Line 2
+Metro_WestNanjingRoad_L02,Metro_JinganTemple_L02,1524,1,Line 2
+Metro_YuandongAvenue,Metro_LingkongRoad,1524,3,Line 2
+Metro_YuandongAvenue,Metro_Haitian3rdRoad,1524,4,Line 2
+Metro_ZhangjiangHiTechPark,Metro_LongyangRoad_L02,1524,3,Line 2
+Metro_ZhangjiangHiTechPark,Metro_JinkeRoad,1524,1,Line 2
+Metro_ZhongshanPark_L02,Metro_LoushanguanRoad,1524,1,Line 2
+Metro_ZhongshanPark_L02,Metro_JiangsuRoad_L02,1524,1,Line 2
+Metro_BaoshanRoad_L03,Metro_ShanghaiRailwayStation_L03,794,2,Line 3
+Metro_BaoshanRoad_L03,Metro_DongbaoxingRoad,794,1,Line 3
+Metro_BaoyangRoad,Metro_YouyiRoad,794,1,Line 3
+Metro_BaoyangRoad,Metro_ShuichanRoad,794,2,Line 3
+Metro_CaoxiRoad,Metro_LongcaoRoad_L03,794,1,Line 3
+Metro_CaoxiRoad,Metro_YishanRoad_L03,794,1,Line 3
+Metro_CaoyangRoad_L03,Metro_ZhenpingRoad_L03,794,1,Line 3
+Metro_CaoyangRoad_L03,Metro_JinshajiangRoad_L03,794,1,Line 3
+Metro_ChifengRoad,Metro_Dabaishu,794,1,Line 3
+Metro_ChifengRoad,Metro_HongkouFootballStadium_L03,794,1,Line 3
+Metro_Dabaishu,Metro_JiangwanTown,794,2,Line 3
+Metro_Dabaishu,Metro_ChifengRoad,794,1,Line 3
+Metro_DongbaoxingRoad,Metro_HongkouFootballStadium_L03,794,1,Line 3
+Metro_DongbaoxingRoad,Metro_BaoshanRoad_L03,794,1,Line 3
+Metro_HongkouFootballStadium_L03,Metro_DongbaoxingRoad,794,1,Line 3
+Metro_HongkouFootballStadium_L03,Metro_ChifengRoad,794,1,Line 3
+Metro_HongqiaoRoad_L03,Metro_YishanRoad_L03,794,1,Line 3
+Metro_HongqiaoRoad_L03,Metro_WestYananRoad_L03,794,1,Line 3
+Metro_JiangwanTown,Metro_Dabaishu,794,2,Line 3
+Metro_JiangwanTown,Metro_WestYingaoRoad,794,2,Line 3
+Metro_JinshajiangRoad_L03,Metro_ZhongshanPark_L03,794,2,Line 3
+Metro_JinshajiangRoad_L03,Metro_CaoyangRoad_L03,794,1,Line 3
+Metro_LongcaoRoad_L03,Metro_ShilongRoad,794,1,Line 3
+Metro_LongcaoRoad_L03,Metro_CaoxiRoad,794,1,Line 3
+Metro_NorthJiangyangRoad,Metro_TieliRoad,794,2,Line 3
+Metro_ShanghaiRailwayStation_L03,Metro_ZhongtanRoad_L03,794,2,Line 3
+Metro_ShanghaiRailwayStation_L03,Metro_BaoshanRoad_L03,794,2,Line 3
+Metro_ShanghaiSouthRailwayStation_L03,Metro_ShilongRoad,794,1,Line 3
+Metro_ShilongRoad,Metro_LongcaoRoad_L03,794,1,Line 3
+Metro_ShilongRoad,Metro_ShanghaiSouthRailwayStation_L03,794,1,Line 3
+Metro_ShuichanRoad,Metro_BaoyangRoad,794,2,Line 3
+Metro_ShuichanRoad,Metro_SongbinRoad,794,1,Line 3
+Metro_SongbinRoad,Metro_Zhanghuabang,794,1,Line 3
+Metro_SongbinRoad,Metro_ShuichanRoad,794,1,Line 3
+Metro_SongfaRoad,Metro_SouthChangjiangRoad,794,2,Line 3
+Metro_SongfaRoad,Metro_Zhanghuabang,794,1,Line 3
+Metro_SouthChangjiangRoad,Metro_WestYingaoRoad,794,1,Line 3
+Metro_SouthChangjiangRoad,Metro_SongfaRoad,794,2,Line 3
+Metro_TieliRoad,Metro_YouyiRoad,794,1,Line 3
+Metro_TieliRoad,Metro_NorthJiangyangRoad,794,2,Line 3
+Metro_WestYananRoad_L03,Metro_ZhongshanPark_L03,794,1,Line 3
+Metro_WestYananRoad_L03,Metro_HongqiaoRoad_L03,794,1,Line 3
+Metro_WestYingaoRoad,Metro_JiangwanTown,794,2,Line 3
+Metro_WestYingaoRoad,Metro_SouthChangjiangRoad,794,1,Line 3
+Metro_YishanRoad_L03,Metro_CaoxiRoad,794,1,Line 3
+Metro_YishanRoad_L03,Metro_HongqiaoRoad_L03,794,1,Line 3
+Metro_YouyiRoad,Metro_BaoyangRoad,794,1,Line 3
+Metro_YouyiRoad,Metro_TieliRoad,794,1,Line 3
+Metro_Zhanghuabang,Metro_SongfaRoad,794,1,Line 3
+Metro_Zhanghuabang,Metro_SongbinRoad,794,1,Line 3
+Metro_ZhenpingRoad_L03,Metro_ZhongtanRoad_L03,794,1,Line 3
+Metro_ZhenpingRoad_L03,Metro_CaoyangRoad_L03,794,1,Line 3
+Metro_ZhongshanPark_L03,Metro_WestYananRoad_L03,794,1,Line 3
+Metro_ZhongshanPark_L03,Metro_JinshajiangRoad_L03,794,2,Line 3
+Metro_ZhongtanRoad_L03,Metro_ZhenpingRoad_L03,794,1,Line 3
+Metro_ZhongtanRoad_L03,Metro_ShanghaiRailwayStation_L03,794,2,Line 3
+Metro_BaoshanRoad_L04,Metro_ShanghaiRailwayStation_L04,844,2,Line 4
+Metro_BaoshanRoad_L04,Metro_HailunRoad_L04,844,1,Line 4
+Metro_CaoyangRoad_L04,Metro_ZhenpingRoad_L04,844,1,Line 4
+Metro_CaoyangRoad_L04,Metro_JinshajiangRoad_L04,844,1,Line 4
+Metro_CenturyAvenue_L04,Metro_PudongAvenue,844,1,Line 4
+Metro_CenturyAvenue_L04,Metro_PudianRoad_L04,844,1,Line 4
+Metro_DalianRoad_L04,Metro_LingpingRoad,844,1,Line 4
+Metro_DalianRoad_L04,Metro_YangshupuRoad,844,1,Line 4
+Metro_DamuqiaoRoad_L04,Metro_DonganRoad_L04,844,1,Line 4
+Metro_DamuqiaoRoad_L04,Metro_LubanRoad,844,1,Line 4
+Metro_DonganRoad_L04,Metro_ShanghaiStadium,844,1,Line 4
+Metro_DonganRoad_L04,Metro_DamuqiaoRoad_L04,844,1,Line 4
+Metro_HailunRoad_L04,Metro_LingpingRoad,844,1,Line 4
+Metro_HailunRoad_L04,Metro_BaoshanRoad_L04,844,1,Line 4
+Metro_HongqiaoRoad_L04,Metro_YishanRoad_L04,844,1,Line 4
+Metro_HongqiaoRoad_L04,Metro_WestYananRoad_L04,844,1,Line 4
+Metro_JinshajiangRoad_L04,Metro_ZhongshanPark_L04,844,2,Line 4
+Metro_JinshajiangRoad_L04,Metro_CaoyangRoad_L04,844,1,Line 4
+Metro_LancunRoad_L04,Metro_PudianRoad_L04,844,1,Line 4
+Metro_LancunRoad_L04,Metro_Tangqiao,844,1,Line 4
+Metro_LingpingRoad,Metro_DalianRoad_L04,844,1,Line 4
+Metro_LingpingRoad,Metro_HailunRoad_L04,844,1,Line 4
+Metro_LubanRoad,Metro_SouthXizangRoad_L04,844,1,Line 4
+Metro_LubanRoad,Metro_DamuqiaoRoad_L04,844,1,Line 4
+Metro_NanpuBridge,Metro_SouthXizangRoad_L04,844,1,Line 4
+Metro_NanpuBridge,Metro_Tangqiao,844,2,Line 4
+Metro_PudianRoad_L04,Metro_CenturyAvenue_L04,844,1,Line 4
+Metro_PudianRoad_L04,Metro_LancunRoad_L04,844,1,Line 4
+Metro_PudongAvenue,Metro_CenturyAvenue_L04,844,1,Line 4
+Metro_PudongAvenue,Metro_YangshupuRoad,844,1,Line 4
+Metro_ShanghaiIndoorStadium_L04,Metro_ShanghaiStadium,844,1,Line 4
+Metro_ShanghaiIndoorStadium_L04,Metro_YishanRoad_L04,844,1,Line 4
+Metro_ShanghaiRailwayStation_L04,Metro_ZhongtanRoad_L04,844,2,Line 4
+Metro_ShanghaiRailwayStation_L04,Metro_BaoshanRoad_L04,844,2,Line 4
+Metro_ShanghaiStadium,Metro_DonganRoad_L04,844,1,Line 4
+Metro_ShanghaiStadium,Metro_ShanghaiIndoorStadium_L04,844,1,Line 4
+Metro_SouthXizangRoad_L04,Metro_NanpuBridge,844,1,Line 4
+Metro_SouthXizangRoad_L04,Metro_LubanRoad,844,1,Line 4
+Metro_Tangqiao,Metro_NanpuBridge,844,2,Line 4
+Metro_Tangqiao,Metro_LancunRoad_L04,844,1,Line 4
+Metro_WestYananRoad_L04,Metro_ZhongshanPark_L04,844,1,Line 4
+Metro_WestYananRoad_L04,Metro_HongqiaoRoad_L04,844,1,Line 4
+Metro_YangshupuRoad,Metro_DalianRoad_L04,844,1,Line 4
+Metro_YangshupuRoad,Metro_PudongAvenue,844,1,Line 4
+Metro_YishanRoad_L04,Metro_ShanghaiIndoorStadium_L04,844,1,Line 4
+Metro_YishanRoad_L04,Metro_HongqiaoRoad_L04,844,1,Line 4
+Metro_ZhenpingRoad_L04,Metro_ZhongtanRoad_L04,844,1,Line 4
+Metro_ZhenpingRoad_L04,Metro_CaoyangRoad_L04,844,1,Line 4
+Metro_ZhongshanPark_L04,Metro_WestYananRoad_L04,844,1,Line 4
+Metro_ZhongshanPark_L04,Metro_JinshajiangRoad_L04,844,2,Line 4
+Metro_ZhongtanRoad_L04,Metro_ZhenpingRoad_L04,844,1,Line 4
+Metro_ZhongtanRoad_L04,Metro_ShanghaiRailwayStation_L04,844,2,Line 4
+Metro_Beiqiao,Metro_JianchuanRoad,620,2,Line 5
+Metro_Beiqiao,Metro_Zhuanqiao,620,2,Line 5
+Metro_ChunshenRoad,Metro_Xinzhuang_L05,620,1,Line 5
+Metro_ChunshenRoad,Metro_YinduRoad,620,1,Line 5
+Metro_DongchuanRoad,Metro_JianchuanRoad,620,1,Line 5
+Metro_DongchuanRoad,Metro_JingpingRoad,620,1,Line 5
+Metro_HuaningRoad,Metro_WenjingRoad,620,1,Line 5
+Metro_HuaningRoad,Metro_JingpingRoad,620,1,Line 5
+Metro_JianchuanRoad,Metro_Beiqiao,620,2,Line 5
+Metro_JianchuanRoad,Metro_DongchuanRoad,620,1,Line 5
+Metro_JingpingRoad,Metro_DongchuanRoad,620,1,Line 5
+Metro_JingpingRoad,Metro_HuaningRoad,620,1,Line 5
+Metro_MinhangDevelopmentZone,Metro_WenjingRoad,620,1,Line 5
+Metro_WenjingRoad,Metro_MinhangDevelopmentZone,620,1,Line 5
+Metro_WenjingRoad,Metro_HuaningRoad,620,1,Line 5
+Metro_Xinzhuang_L05,Metro_ChunshenRoad,620,1,Line 5
+Metro_YinduRoad,Metro_ChunshenRoad,620,1,Line 5
+Metro_YinduRoad,Metro_Zhuanqiao,620,2,Line 5
+Metro_BeiyangjingRoad,Metro_MinshengRoad,956,1,Line 6
+Metro_BeiyangjingRoad,Metro_DepingRoad,956,1,Line 6
+Metro_BoxingRoad,Metro_WulianRoad,956,1,Line 6
+Metro_BoxingRoad,Metro_JinqiaoRoad,956,1,Line 6
+Metro_CenturyAvenue_L06,Metro_PudianRoad_L06,956,1,Line 6
+Metro_CenturyAvenue_L06,Metro_YuanshenSportsCenter,956,1,Line 6
+Metro_DepingRoad,Metro_BeiyangjingRoad,956,1,Line 6
+Metro_DepingRoad,Metro_YunshanRoad,956,1,Line 6
+Metro_DongjingRoad,Metro_WuzhouAvenue,956,1,Line 6
+Metro_DongjingRoad,Metro_JufengRoad_L06,956,1,Line 6
+Metro_DongmingRoad,Metro_GaoqingRoad,956,1,Line 6
+Metro_DongmingRoad,Metro_WestGaokeRoad_L06,956,1,Line 6
+Metro_GangchengRoad_L06,Metro_NorthWaigaoqiaoFreeTradeZoneStation,956,1,Line 6
+Metro_GaoqingRoad,Metro_WestHuaxiaRoad,956,1,Line 6
+Metro_GaoqingRoad,Metro_DongmingRoad,956,1,Line 6
+Metro_HangjinRoad,Metro_SouthWaigaoqiaoFreeTradeZoneStation,956,2,Line 6
+Metro_HangjinRoad,Metro_NorthWaigaoqiaoFreeTradeZoneStation,956,1,Line 6
+Metro_JinqiaoRoad,Metro_YunshanRoad,956,1,Line 6
+Metro_JinqiaoRoad,Metro_BoxingRoad,956,1,Line 6
+Metro_JufengRoad_L06,Metro_WulianRoad,956,1,Line 6
+Metro_JufengRoad_L06,Metro_DongjingRoad,956,1,Line 6
+Metro_LancunRoad_L06,Metro_PudianRoad_L06,956,1,Line 6
+Metro_LancunRoad_L06,Metro_ShanghaiChildrensMedicalCenter,956,1,Line 6
+Metro_LinyiXincun,Metro_ShanghaiChildrensMedicalCenter,956,1,Line 6
+Metro_LinyiXincun,Metro_WestGaokeRoad_L06,956,1,Line 6
+Metro_LongyaoRoad_L06,Metro_OrientalSportsCenter_L06,956,2,Line 6
+Metro_MinshengRoad,Metro_YuanshenSportsCenter,956,1,Line 6
+Metro_MinshengRoad,Metro_BeiyangjingRoad,956,1,Line 6
+Metro_NorthWaigaoqiaoFreeTradeZoneStation,Metro_GangchengRoad_L06,956,1,Line 6
+Metro_NorthWaigaoqiaoFreeTradeZoneStation,Metro_HangjinRoad,956,1,Line 6
+Metro_OrientalSportsCenter_L06,Metro_LongyaoRoad_L06,956,2,Line 6
+Metro_OrientalSportsCenter_L06,Metro_SouthLingyanRoad,956,1,Line 6
+Metro_PudianRoad_L06,Metro_CenturyAvenue_L06,956,1,Line 6
+Metro_PudianRoad_L06,Metro_LancunRoad_L06,956,1,Line 6
+Metro_ShanghaiChildrensMedicalCenter,Metro_LinyiXincun,956,1,Line 6
+Metro_ShanghaiChildrensMedicalCenter,Metro_LancunRoad_L06,956,1,Line 6
+Metro_ShangnanRoad,Metro_WestHuaxiaRoad,956,1,Line 6
+Metro_ShangnanRoad,Metro_SouthLingyanRoad,956,1,Line 6
+Metro_SouthLingyanRoad,Metro_OrientalSportsCenter_L06,956,1,Line 6
+Metro_SouthLingyanRoad,Metro_ShangnanRoad,956,1,Line 6
+Metro_SouthWaigaoqiaoFreeTradeZoneStation,Metro_ZhouhaiRoad,956,2,Line 6
+Metro_SouthWaigaoqiaoFreeTradeZoneStation,Metro_HangjinRoad,956,2,Line 6
+Metro_WestGaokeRoad_L06,Metro_DongmingRoad,956,1,Line 6
+Metro_WestGaokeRoad_L06,Metro_LinyiXincun,956,1,Line 6
+Metro_WestHuaxiaRoad,Metro_GaoqingRoad,956,1,Line 6
+Metro_WestHuaxiaRoad,Metro_ShangnanRoad,956,1,Line 6
+Metro_WulianRoad,Metro_JufengRoad_L06,956,1,Line 6
+Metro_WulianRoad,Metro_BoxingRoad,956,1,Line 6
+Metro_WuzhouAvenue,Metro_DongjingRoad,956,1,Line 6
+Metro_WuzhouAvenue,Metro_ZhouhaiRoad,956,1,Line 6
+Metro_YuanshenSportsCenter,Metro_CenturyAvenue_L06,956,1,Line 6
+Metro_YuanshenSportsCenter,Metro_MinshengRoad,956,1,Line 6
+Metro_YunshanRoad,Metro_DepingRoad,956,1,Line 6
+Metro_YunshanRoad,Metro_JinqiaoRoad,956,1,Line 6
+Metro_ZhouhaiRoad,Metro_WuzhouAvenue,956,1,Line 6
+Metro_ZhouhaiRoad,Metro_SouthWaigaoqiaoFreeTradeZoneStation,956,2,Line 6
+Metro_ChangpingRoad,Metro_JinganTemple_L07,670,1,Line 7
+Metro_ChangpingRoad,Metro_ChangshouRoad_L07,670,1,Line 7
+Metro_ChangqingRoad,Metro_Houtan,670,1,Line 7
+Metro_ChangqingRoad,Metro_YaohuaRoad_L07,670,1,Line 7
+Metro_ChangshouRoad_L07,Metro_ZhenpingRoad_L07,670,1,Line 7
+Metro_ChangshouRoad_L07,Metro_ChangpingRoad,670,1,Line 7
+Metro_ChangshuRoad_L07,Metro_JinganTemple_L07,670,1,Line 7
+Metro_ChangshuRoad_L07,Metro_ZhaojiabangRoad_L07,670,2,Line 7
+Metro_ChangzhongRoad,Metro_ShangdaRoad,670,1,Line 7
+Metro_ChangzhongRoad,Metro_DachangTown,670,1,Line 7
+Metro_DachangTown,Metro_ChangzhongRoad,670,1,Line 7
+Metro_DachangTown,Metro_XingzhiRoad,670,1,Line 7
+Metro_DahuaSanRoad,Metro_XingzhiRoad,670,1,Line 7
+Metro_DahuaSanRoad,Metro_XincunRoad,670,1,Line 7
+Metro_DonganRoad_L07,Metro_ZhaojiabangRoad_L07,670,1,Line 7
+Metro_DonganRoad_L07,Metro_LonghuaMiddleRoad_L07,670,1,Line 7
+Metro_FanghuaRoad,Metro_LongyangRoad_L07,670,1,Line 7
+Metro_FanghuaRoad,Metro_JinxiuRoad,670,1,Line 7
+Metro_GucunPark,Metro_LiuHang,670,2,Line 7
+Metro_GucunPark,Metro_QihuaRoad,670,2,Line 7
+Metro_Houtan,Metro_ChangqingRoad,670,1,Line 7
+Metro_Houtan,Metro_LonghuaMiddleRoad_L07,670,2,Line 7
+Metro_HuamuRoad,Metro_LongyangRoad_L07,670,1,Line 7
+Metro_JinganTemple_L07,Metro_ChangpingRoad,670,1,Line 7
+Metro_JinganTemple_L07,Metro_ChangshuRoad_L07,670,1,Line 7
+Metro_JinxiuRoad,Metro_SouthYanggaoRoad,670,1,Line 7
+Metro_JinxiuRoad,Metro_FanghuaRoad,670,1,Line 7
+Metro_LangaoRoad,Metro_ZhenpingRoad_L07,670,1,Line 7
+Metro_LangaoRoad,Metro_XincunRoad,670,1,Line 7
+Metro_LiuHang,Metro_PanguangRoad,670,1,Line 7
+Metro_LiuHang,Metro_GucunPark,670,2,Line 7
+Metro_LonghuaMiddleRoad_L07,Metro_Houtan,670,2,Line 7
+Metro_LonghuaMiddleRoad_L07,Metro_DonganRoad_L07,670,1,Line 7
+Metro_LongyangRoad_L07,Metro_FanghuaRoad,670,1,Line 7
+Metro_LongyangRoad_L07,Metro_HuamuRoad,670,1,Line 7
+Metro_LuonanXincun,Metro_MeilanLake,670,2,Line 7
+Metro_LuonanXincun,Metro_PanguangRoad,670,2,Line 7
+Metro_MeilanLake,Metro_LuonanXincun,670,2,Line 7
+Metro_NanchenRoad,Metro_ShangdaRoad,670,1,Line 7
+Metro_NanchenRoad,Metro_ShanghaiUniversity,670,1,Line 7
+Metro_PanguangRoad,Metro_LuonanXincun,670,2,Line 7
+Metro_PanguangRoad,Metro_LiuHang,670,1,Line 7
+Metro_QihuaRoad,Metro_GucunPark,670,2,Line 7
+Metro_QihuaRoad,Metro_ShanghaiUniversity,670,1,Line 7
+Metro_ShangdaRoad,Metro_NanchenRoad,670,1,Line 7
+Metro_ShangdaRoad,Metro_ChangzhongRoad,670,1,Line 7
+Metro_ShanghaiUniversity,Metro_NanchenRoad,670,1,Line 7
+Metro_ShanghaiUniversity,Metro_QihuaRoad,670,1,Line 7
+Metro_SouthYanggaoRoad,Metro_JinxiuRoad,670,1,Line 7
+Metro_SouthYanggaoRoad,Metro_WestGaokeRoad_L07,670,1,Line 7
+Metro_WestGaokeRoad_L07,Metro_YuntaiRoad,670,1,Line 7
+Metro_WestGaokeRoad_L07,Metro_SouthYanggaoRoad,670,1,Line 7
+Metro_XincunRoad,Metro_DahuaSanRoad,670,1,Line 7
+Metro_XincunRoad,Metro_LangaoRoad,670,1,Line 7
+Metro_XingzhiRoad,Metro_DachangTown,670,1,Line 7
+Metro_XingzhiRoad,Metro_DahuaSanRoad,670,1,Line 7
+Metro_YaohuaRoad_L07,Metro_ChangqingRoad,670,1,Line 7
+Metro_YaohuaRoad_L07,Metro_YuntaiRoad,670,1,Line 7
+Metro_YuntaiRoad,Metro_YaohuaRoad_L07,670,1,Line 7
+Metro_YuntaiRoad,Metro_WestGaokeRoad_L07,670,1,Line 7
+Metro_ZhaojiabangRoad_L07,Metro_ChangshuRoad_L07,670,2,Line 7
+Metro_ZhaojiabangRoad_L07,Metro_DonganRoad_L07,670,1,Line 7
+Metro_ZhenpingRoad_L07,Metro_LangaoRoad,670,1,Line 7
+Metro_ZhenpingRoad_L07,Metro_ChangshouRoad_L07,670,1,Line 7
+Metro_AnshanXincun,Metro_SipingRoad_L08,663,1,Line 8
+Metro_AnshanXincun,Metro_JiangpuRoad,663,1,Line 8
+Metro_ChengshanRoad,Metro_YaohuaRoad_L08,663,1,Line 8
+Metro_ChengshanRoad,Metro_Yangsi,663,1,Line 8
+Metro_ChinaArtMuseum,Metro_YaohuaRoad_L08,663,1,Line 8
+Metro_ChinaArtMuseum,Metro_SouthXizangRoad_L08,663,2,Line 8
+Metro_GreatWorld,Metro_Laoximen_L08,663,1,Line 8
+Metro_GreatWorld,Metro_PeoplesSquare_L08,663,1,Line 8
+Metro_HongkouFootballStadium_L08,Metro_QuyangRoad,663,1,Line 8
+Metro_HongkouFootballStadium_L08,Metro_NorthXizangRoad,663,1,Line 8
+Metro_HuangxingPark,Metro_MiddleYanjiRoad,663,1,Line 8
+Metro_HuangxingPark,Metro_XiangyinRoad,663,1,Line 8
+Metro_HuangxingRoad,Metro_JiangpuRoad,663,1,Line 8
+Metro_HuangxingRoad,Metro_MiddleYanjiRoad,663,1,Line 8
+Metro_JiangpuRoad,Metro_AnshanXincun,663,1,Line 8
+Metro_JiangpuRoad,Metro_HuangxingRoad,663,1,Line 8
+Metro_JiangyueRoad,Metro_LianhangRoad,663,1,Line 8
+Metro_JiangyueRoad,Metro_PujiangTown,663,1,Line 8
+Metro_Laoximen_L08,Metro_GreatWorld,663,1,Line 8
+Metro_Laoximen_L08,Metro_LujiabangRoad_L08,663,1,Line 8
+Metro_LianhangRoad,Metro_ShenduHighway,663,1,Line 8
+Metro_LianhangRoad,Metro_JiangyueRoad,663,1,Line 8
+Metro_LingzhaoXincun,Metro_LuhengRoad,663,2,Line 8
+Metro_LingzhaoXincun,Metro_OrientalSportsCenter_L08,663,2,Line 8
+Metro_LuhengRoad,Metro_LingzhaoXincun,663,2,Line 8
+Metro_LuhengRoad,Metro_PujiangTown,663,2,Line 8
+Metro_LujiabangRoad_L08,Metro_Laoximen_L08,663,1,Line 8
+Metro_LujiabangRoad_L08,Metro_SouthXizangRoad_L08,663,1,Line 8
+Metro_MiddleYanjiRoad,Metro_HuangxingRoad,663,1,Line 8
+Metro_MiddleYanjiRoad,Metro_HuangxingPark,663,1,Line 8
+Metro_NenjiangRoad,Metro_ShiguangRoad,663,1,Line 8
+Metro_NenjiangRoad,Metro_XiangyinRoad,663,1,Line 8
+Metro_NorthXizangRoad,Metro_HongkouFootballStadium_L08,663,1,Line 8
+Metro_NorthXizangRoad,Metro_ZhongxingRoad,663,1,Line 8
+Metro_OrientalSportsCenter_L08,Metro_LingzhaoXincun,663,2,Line 8
+Metro_OrientalSportsCenter_L08,Metro_Yangsi,663,1,Line 8
+Metro_PeoplesSquare_L08,Metro_GreatWorld,663,1,Line 8
+Metro_PeoplesSquare_L08,Metro_QufuRoad_L08,663,1,Line 8
+Metro_PujiangTown,Metro_LuhengRoad,663,2,Line 8
+Metro_PujiangTown,Metro_JiangyueRoad,663,1,Line 8
+Metro_QufuRoad_L08,Metro_PeoplesSquare_L08,663,1,Line 8
+Metro_QufuRoad_L08,Metro_ZhongxingRoad,663,1,Line 8
+Metro_QuyangRoad,Metro_SipingRoad_L08,663,1,Line 8
+Metro_QuyangRoad,Metro_HongkouFootballStadium_L08,663,1,Line 8
+Metro_ShenduHighway,Metro_LianhangRoad,663,1,Line 8
+Metro_ShiguangRoad,Metro_NenjiangRoad,663,1,Line 8
+Metro_SipingRoad_L08,Metro_QuyangRoad,663,1,Line 8
+Metro_SipingRoad_L08,Metro_AnshanXincun,663,1,Line 8
+Metro_SouthXizangRoad_L08,Metro_LujiabangRoad_L08,663,1,Line 8
+Metro_SouthXizangRoad_L08,Metro_ChinaArtMuseum,663,2,Line 8
+Metro_XiangyinRoad,Metro_NenjiangRoad,663,1,Line 8
+Metro_XiangyinRoad,Metro_HuangxingPark,663,1,Line 8
+Metro_Yangsi,Metro_OrientalSportsCenter_L08,663,1,Line 8
+Metro_Yangsi,Metro_ChengshanRoad,663,1,Line 8
+Metro_YaohuaRoad_L08,Metro_ChengshanRoad,663,1,Line 8
+Metro_YaohuaRoad_L08,Metro_ChinaArtMuseum,663,1,Line 8
+Metro_ZhongxingRoad,Metro_QufuRoad_L08,663,1,Line 8
+Metro_ZhongxingRoad,Metro_NorthXizangRoad,663,1,Line 8
+Metro_CaohejingHiTechPark,Metro_HechuanRoad,1155,1,Line 9
+Metro_CaohejingHiTechPark,Metro_GuilinRoad,1155,2,Line 9
+Metro_CenturyAvenue_L09,Metro_ShangchengRoad,1155,1,Line 9
+Metro_CenturyAvenue_L09,Metro_MiddleYanggaoRoad,1155,2,Line 9
+Metro_Dapuqiao,Metro_JiashanRoad_L09,1155,1,Line 9
+Metro_Dapuqiao,Metro_MadangRoad_L09,1155,1,Line 9
+Metro_Dongjing,Metro_SongjiangUniversityTown,1155,3,Line 9
+Metro_Dongjing,Metro_Sheshan,1155,2,Line 9
+Metro_GuilinRoad,Metro_YishanRoad_L09,1155,2,Line 9
+Metro_GuilinRoad,Metro_CaohejingHiTechPark,1155,2,Line 9
+Metro_HechuanRoad,Metro_XingzhongRoad,1155,2,Line 9
+Metro_HechuanRoad,Metro_CaohejingHiTechPark,1155,1,Line 9
+Metro_JiashanRoad_L09,Metro_Dapuqiao,1155,1,Line 9
+Metro_JiashanRoad_L09,Metro_ZhaojiabangRoad_L09,1155,1,Line 9
+Metro_Jiuting,Metro_Sijing,1155,5,Line 9
+Metro_Jiuting,Metro_ZhongchunRoad,1155,2,Line 9
+Metro_LujiabangRoad_L09,Metro_Xiaonanmen,1155,1,Line 9
+Metro_LujiabangRoad_L09,Metro_MadangRoad_L09,1155,1,Line 9
+Metro_MadangRoad_L09,Metro_Dapuqiao,1155,1,Line 9
+Metro_MadangRoad_L09,Metro_LujiabangRoad_L09,1155,1,Line 9
+Metro_MiddleYanggaoRoad,Metro_CenturyAvenue_L09,1155,2,Line 9
+Metro_Qibao,Metro_XingzhongRoad,1155,2,Line 9
+Metro_Qibao,Metro_ZhongchunRoad,1155,1,Line 9
+Metro_ShangchengRoad,Metro_CenturyAvenue_L09,1155,1,Line 9
+Metro_ShangchengRoad,Metro_Xiaonanmen,1155,2,Line 9
+Metro_Sheshan,Metro_Dongjing,1155,2,Line 9
+Metro_Sheshan,Metro_Sijing,1155,3,Line 9
+Metro_Sijing,Metro_Sheshan,1155,3,Line 9
+Metro_Sijing,Metro_Jiuting,1155,5,Line 9
+Metro_SongjiangNewCity,Metro_SongjiangSportsCenter,1155,2,Line 9
+Metro_SongjiangNewCity,Metro_SongjiangUniversityTown,1155,2,Line 9
+Metro_SongjiangSportsCenter,Metro_SongjiangNewCity,1155,2,Line 9
+Metro_SongjiangSportsCenter,Metro_Zuibaichi,1155,2,Line 9
+Metro_SongjiangUniversityTown,Metro_SongjiangNewCity,1155,2,Line 9
+Metro_SongjiangUniversityTown,Metro_Dongjing,1155,3,Line 9
+Metro_SouthSongjiangRailwayStation,Metro_Zuibaichi,1155,2,Line 9
+Metro_Xiaonanmen,Metro_LujiabangRoad_L09,1155,1,Line 9
+Metro_Xiaonanmen,Metro_ShangchengRoad,1155,2,Line 9
+Metro_XingzhongRoad,Metro_Qibao,1155,2,Line 9
+Metro_XingzhongRoad,Metro_HechuanRoad,1155,2,Line 9
+Metro_Xujiahui_L09,Metro_YishanRoad_L09,1155,1,Line 9
+Metro_Xujiahui_L09,Metro_ZhaojiabangRoad_L09,1155,1,Line 9
+Metro_YishanRoad_L09,Metro_GuilinRoad,1155,2,Line 9
+Metro_YishanRoad_L09,Metro_Xujiahui_L09,1155,1,Line 9
+Metro_ZhaojiabangRoad_L09,Metro_JiashanRoad_L09,1155,1,Line 9
+Metro_ZhaojiabangRoad_L09,Metro_Xujiahui_L09,1155,1,Line 9
+Metro_ZhongchunRoad,Metro_Qibao,1155,1,Line 9
+Metro_ZhongchunRoad,Metro_Jiuting,1155,2,Line 9
+Metro_Zuibaichi,Metro_SongjiangSportsCenter,1155,2,Line 9
+Metro_Zuibaichi,Metro_SouthSongjiangRailwayStation,1155,2,Line 9
+Metro_BaoshanRoad,Metro_BaoshanRoad_L03,9999,1,Pedestrian
+Metro_BaoshanRoad,Metro_BaoshanRoad_L04,9999,1,Pedestrian
+Metro_BaoshanRoad_L03,Metro_BaoshanRoad,9999,1,Pedestrian
+Metro_BaoshanRoad_L03,Metro_BaoshanRoad_L04,9999,1,Pedestrian
+Metro_BaoshanRoad_L04,Metro_BaoshanRoad,9999,1,Pedestrian
+Metro_BaoshanRoad_L04,Metro_BaoshanRoad_L03,9999,1,Pedestrian
+Metro_CaobaoRoad,Metro_CaobaoRoad_L01,9999,1,Pedestrian
+Metro_CaobaoRoad,Metro_CaobaoRoad_L12,9999,1,Pedestrian
+Metro_CaobaoRoad_L01,Metro_CaobaoRoad,9999,1,Pedestrian
+Metro_CaobaoRoad_L01,Metro_CaobaoRoad_L12,9999,1,Pedestrian
+Metro_CaobaoRoad_L12,Metro_CaobaoRoad,9999,1,Pedestrian
+Metro_CaobaoRoad_L12,Metro_CaobaoRoad_L01,9999,1,Pedestrian
+Metro_CaoyangRoad,Metro_CaoyangRoad_L03,9999,1,Pedestrian
+Metro_CaoyangRoad,Metro_CaoyangRoad_L04,9999,1,Pedestrian
+Metro_CaoyangRoad,Metro_CaoyangRoad_L11,9999,1,Pedestrian
+Metro_CaoyangRoad_L03,Metro_CaoyangRoad,9999,1,Pedestrian
+Metro_CaoyangRoad_L03,Metro_CaoyangRoad_L04,9999,1,Pedestrian
+Metro_CaoyangRoad_L03,Metro_CaoyangRoad_L11,9999,1,Pedestrian
+Metro_CaoyangRoad_L04,Metro_CaoyangRoad,9999,1,Pedestrian
+Metro_CaoyangRoad_L04,Metro_CaoyangRoad_L03,9999,1,Pedestrian
+Metro_CaoyangRoad_L04,Metro_CaoyangRoad_L11,9999,1,Pedestrian
+Metro_CaoyangRoad_L11,Metro_CaoyangRoad,9999,1,Pedestrian
+Metro_CaoyangRoad_L11,Metro_CaoyangRoad_L03,9999,1,Pedestrian
+Metro_CaoyangRoad_L11,Metro_CaoyangRoad_L04,9999,1,Pedestrian
+Metro_CenturyAvenue,Metro_CenturyAvenue_L02,9999,1,Pedestrian
+Metro_CenturyAvenue,Metro_CenturyAvenue_L04,9999,1,Pedestrian
+Metro_CenturyAvenue,Metro_CenturyAvenue_L06,9999,1,Pedestrian
+Metro_CenturyAvenue,Metro_CenturyAvenue_L09,9999,1,Pedestrian
+Metro_CenturyAvenue_L02,Metro_CenturyAvenue,9999,1,Pedestrian
+Metro_CenturyAvenue_L02,Metro_CenturyAvenue_L04,9999,1,Pedestrian
+Metro_CenturyAvenue_L02,Metro_CenturyAvenue_L06,9999,1,Pedestrian
+Metro_CenturyAvenue_L02,Metro_CenturyAvenue_L09,9999,1,Pedestrian
+Metro_CenturyAvenue_L04,Metro_CenturyAvenue,9999,1,Pedestrian
+Metro_CenturyAvenue_L04,Metro_CenturyAvenue_L02,9999,1,Pedestrian
+Metro_CenturyAvenue_L04,Metro_CenturyAvenue_L06,9999,1,Pedestrian
+Metro_CenturyAvenue_L04,Metro_CenturyAvenue_L09,9999,1,Pedestrian
+Metro_CenturyAvenue_L06,Metro_CenturyAvenue,9999,1,Pedestrian
+Metro_CenturyAvenue_L06,Metro_CenturyAvenue_L02,9999,1,Pedestrian
+Metro_CenturyAvenue_L06,Metro_CenturyAvenue_L04,9999,1,Pedestrian
+Metro_CenturyAvenue_L06,Metro_CenturyAvenue_L09,9999,1,Pedestrian
+Metro_CenturyAvenue_L09,Metro_CenturyAvenue,9999,1,Pedestrian
+Metro_CenturyAvenue_L09,Metro_CenturyAvenue_L02,9999,1,Pedestrian
+Metro_CenturyAvenue_L09,Metro_CenturyAvenue_L04,9999,1,Pedestrian
+Metro_CenturyAvenue_L09,Metro_CenturyAvenue_L06,9999,1,Pedestrian
+Metro_ChangshouRoad,Metro_ChangshouRoad_L07,9999,1,Pedestrian
+Metro_ChangshouRoad,Metro_ChangshouRoad_L13,9999,1,Pedestrian
+Metro_ChangshouRoad_L07,Metro_ChangshouRoad,9999,1,Pedestrian
+Metro_ChangshouRoad_L07,Metro_ChangshouRoad_L13,9999,1,Pedestrian
+Metro_ChangshouRoad_L13,Metro_ChangshouRoad,9999,1,Pedestrian
+Metro_ChangshouRoad_L13,Metro_ChangshouRoad_L07,9999,1,Pedestrian
+Metro_ChangshuRoad,Metro_ChangshuRoad_L01,9999,1,Pedestrian
+Metro_ChangshuRoad,Metro_ChangshuRoad_L07,9999,1,Pedestrian
+Metro_ChangshuRoad_L01,Metro_ChangshuRoad,9999,1,Pedestrian
+Metro_ChangshuRoad_L01,Metro_ChangshuRoad_L07,9999,1,Pedestrian
+Metro_ChangshuRoad_L07,Metro_ChangshuRoad,9999,1,Pedestrian
+Metro_ChangshuRoad_L07,Metro_ChangshuRoad_L01,9999,1,Pedestrian
+Metro_DalianRoad,Metro_DalianRoad_L04,9999,1,Pedestrian
+Metro_DalianRoad,Metro_DalianRoad_L12,9999,1,Pedestrian
+Metro_DalianRoad_L04,Metro_DalianRoad,9999,1,Pedestrian
+Metro_DalianRoad_L04,Metro_DalianRoad_L12,9999,1,Pedestrian
+Metro_DalianRoad_L12,Metro_DalianRoad,9999,1,Pedestrian
+Metro_DalianRoad_L12,Metro_DalianRoad_L04,9999,1,Pedestrian
+Metro_DamuqiaoRoad,Metro_DamuqiaoRoad_L04,9999,1,Pedestrian
+Metro_DamuqiaoRoad,Metro_DamuqiaoRoad_L12,9999,1,Pedestrian
+Metro_DamuqiaoRoad_L04,Metro_DamuqiaoRoad,9999,1,Pedestrian
+Metro_DamuqiaoRoad_L04,Metro_DamuqiaoRoad_L12,9999,1,Pedestrian
+Metro_DamuqiaoRoad_L12,Metro_DamuqiaoRoad,9999,1,Pedestrian
+Metro_DamuqiaoRoad_L12,Metro_DamuqiaoRoad_L04,9999,1,Pedestrian
+Metro_DonganRoad,Metro_DonganRoad_L04,9999,1,Pedestrian
+Metro_DonganRoad,Metro_DonganRoad_L07,9999,1,Pedestrian
+Metro_DonganRoad_L04,Metro_DonganRoad,9999,1,Pedestrian
+Metro_DonganRoad_L04,Metro_DonganRoad_L07,9999,1,Pedestrian
+Metro_DonganRoad_L07,Metro_DonganRoad,9999,1,Pedestrian
+Metro_DonganRoad_L07,Metro_DonganRoad_L04,9999,1,Pedestrian
+Metro_EastNanjingRoad,Metro_EastNanjingRoad_L02,9999,1,Pedestrian
+Metro_EastNanjingRoad,Metro_EastNanjingRoad_L10,9999,1,Pedestrian
+Metro_EastNanjingRoad_L02,Metro_EastNanjingRoad,9999,1,Pedestrian
+Metro_EastNanjingRoad_L02,Metro_EastNanjingRoad_L10,9999,1,Pedestrian
+Metro_EastNanjingRoad_L10,Metro_EastNanjingRoad,9999,1,Pedestrian
+Metro_EastNanjingRoad_L10,Metro_EastNanjingRoad_L02,9999,1,Pedestrian
+Metro_GangchengRoad,Metro_GangchengRoad_L06,9999,1,Pedestrian
+Metro_GangchengRoad,Metro_GangchengRoad_L10,9999,1,Pedestrian
+Metro_GangchengRoad_L06,Metro_GangchengRoad,9999,1,Pedestrian
+Metro_GangchengRoad_L06,Metro_GangchengRoad_L10,9999,1,Pedestrian
+Metro_GangchengRoad_L10,Metro_GangchengRoad,9999,1,Pedestrian
+Metro_GangchengRoad_L10,Metro_GangchengRoad_L06,9999,1,Pedestrian
+Metro_HailunRoad,Metro_HailunRoad_L04,9999,1,Pedestrian
+Metro_HailunRoad,Metro_HailunRoad_L10,9999,1,Pedestrian
+Metro_HailunRoad_L04,Metro_HailunRoad,9999,1,Pedestrian
+Metro_HailunRoad_L04,Metro_HailunRoad_L10,9999,1,Pedestrian
+Metro_HailunRoad_L10,Metro_HailunRoad,9999,1,Pedestrian
+Metro_HailunRoad_L10,Metro_HailunRoad_L04,9999,1,Pedestrian
+Metro_HanzhongRoad,Metro_HanzhongRoad_L01,9999,1,Pedestrian
+Metro_HanzhongRoad,Metro_HanzhongRoad_L12,9999,1,Pedestrian
+Metro_HanzhongRoad,Metro_HanzhongRoad_L13,9999,1,Pedestrian
+Metro_HanzhongRoad_L01,Metro_HanzhongRoad,9999,1,Pedestrian
+Metro_HanzhongRoad_L01,Metro_HanzhongRoad_L12,9999,1,Pedestrian
+Metro_HanzhongRoad_L01,Metro_HanzhongRoad_L13,9999,1,Pedestrian
+Metro_HanzhongRoad_L12,Metro_HanzhongRoad,9999,1,Pedestrian
+Metro_HanzhongRoad_L12,Metro_HanzhongRoad_L01,9999,1,Pedestrian
+Metro_HanzhongRoad_L12,Metro_HanzhongRoad_L13,9999,1,Pedestrian
+Metro_HanzhongRoad_L13,Metro_HanzhongRoad,9999,1,Pedestrian
+Metro_HanzhongRoad_L13,Metro_HanzhongRoad_L01,9999,1,Pedestrian
+Metro_HanzhongRoad_L13,Metro_HanzhongRoad_L12,9999,1,Pedestrian
+Metro_HongkouFootballStadium,Metro_HongkouFootballStadium_L03,9999,1,Pedestrian
+Metro_HongkouFootballStadium,Metro_HongkouFootballStadium_L08,9999,1,Pedestrian
+Metro_HongkouFootballStadium_L03,Metro_HongkouFootballStadium,9999,1,Pedestrian
+Metro_HongkouFootballStadium_L03,Metro_HongkouFootballStadium_L08,9999,1,Pedestrian
+Metro_HongkouFootballStadium_L08,Metro_HongkouFootballStadium,9999,1,Pedestrian
+Metro_HongkouFootballStadium_L08,Metro_HongkouFootballStadium_L03,9999,1,Pedestrian
+Metro_HongqiaoRailwayStation,Metro_HongqiaoRailwayStation_L02,9999,1,Pedestrian
+Metro_HongqiaoRailwayStation,Metro_HongqiaoRailwayStation_L10,9999,1,Pedestrian
+Metro_HongqiaoRailwayStation_L02,Metro_HongqiaoRailwayStation,9999,1,Pedestrian
+Metro_HongqiaoRailwayStation_L02,Metro_HongqiaoRailwayStation_L10,9999,1,Pedestrian
+Metro_HongqiaoRailwayStation_L10,Metro_HongqiaoRailwayStation,9999,1,Pedestrian
+Metro_HongqiaoRailwayStation_L10,Metro_HongqiaoRailwayStation_L02,9999,1,Pedestrian
+Metro_HongqiaoRoad,Metro_HongqiaoRoad_L03,9999,1,Pedestrian
+Metro_HongqiaoRoad,Metro_HongqiaoRoad_L04,9999,1,Pedestrian
+Metro_HongqiaoRoad,Metro_HongqiaoRoad_L10,9999,1,Pedestrian
+Metro_HongqiaoRoad_L03,Metro_HongqiaoRoad,9999,1,Pedestrian
+Metro_HongqiaoRoad_L03,Metro_HongqiaoRoad_L04,9999,1,Pedestrian
+Metro_HongqiaoRoad_L03,Metro_HongqiaoRoad_L10,9999,1,Pedestrian
+Metro_HongqiaoRoad_L04,Metro_HongqiaoRoad,9999,1,Pedestrian
+Metro_HongqiaoRoad_L04,Metro_HongqiaoRoad_L03,9999,1,Pedestrian
+Metro_HongqiaoRoad_L04,Metro_HongqiaoRoad_L10,9999,1,Pedestrian
+Metro_HongqiaoRoad_L10,Metro_HongqiaoRoad,9999,1,Pedestrian
+Metro_HongqiaoRoad_L10,Metro_HongqiaoRoad_L03,9999,1,Pedestrian
+Metro_HongqiaoRoad_L10,Metro_HongqiaoRoad_L04,9999,1,Pedestrian
+Metro_HongqiaoTerminal2,Metro_HongqiaoTerminal2_L02,9999,1,Pedestrian
+Metro_HongqiaoTerminal2,Metro_HongqiaoTerminal2_L10,9999,1,Pedestrian
+Metro_HongqiaoTerminal2_L02,Metro_HongqiaoTerminal2,9999,1,Pedestrian
+Metro_HongqiaoTerminal2_L02,Metro_HongqiaoTerminal2_L10,9999,1,Pedestrian
+Metro_HongqiaoTerminal2_L10,Metro_HongqiaoTerminal2,9999,1,Pedestrian
+Metro_HongqiaoTerminal2_L10,Metro_HongqiaoTerminal2_L02,9999,1,Pedestrian
+Metro_JiangsuRoad,Metro_JiangsuRoad_L02,9999,1,Pedestrian
+Metro_JiangsuRoad,Metro_JiangsuRoad_L11,9999,1,Pedestrian
+Metro_JiangsuRoad_L02,Metro_JiangsuRoad,9999,1,Pedestrian
+Metro_JiangsuRoad_L02,Metro_JiangsuRoad_L11,9999,1,Pedestrian
+Metro_JiangsuRoad_L11,Metro_JiangsuRoad,9999,1,Pedestrian
+Metro_JiangsuRoad_L11,Metro_JiangsuRoad_L02,9999,1,Pedestrian
+Metro_JiaotongUniversity,Metro_JiaotongUniversity_L10,9999,1,Pedestrian
+Metro_JiaotongUniversity,Metro_JiaotongUniversity_L11,9999,1,Pedestrian
+Metro_JiaotongUniversity_L10,Metro_JiaotongUniversity,9999,1,Pedestrian
+Metro_JiaotongUniversity_L10,Metro_JiaotongUniversity_L11,9999,1,Pedestrian
+Metro_JiaotongUniversity_L11,Metro_JiaotongUniversity,9999,1,Pedestrian
+Metro_JiaotongUniversity_L11,Metro_JiaotongUniversity_L10,9999,1,Pedestrian
+Metro_JiashanRoad,Metro_JiashanRoad_L09,9999,1,Pedestrian
+Metro_JiashanRoad,Metro_JiashanRoad_L12,9999,1,Pedestrian
+Metro_JiashanRoad_L09,Metro_JiashanRoad,9999,1,Pedestrian
+Metro_JiashanRoad_L09,Metro_JiashanRoad_L12,9999,1,Pedestrian
+Metro_JiashanRoad_L12,Metro_JiashanRoad,9999,1,Pedestrian
+Metro_JiashanRoad_L12,Metro_JiashanRoad_L09,9999,1,Pedestrian
+Metro_JinganTemple,Metro_JinganTemple_L02,9999,1,Pedestrian
+Metro_JinganTemple,Metro_JinganTemple_L07,9999,1,Pedestrian
+Metro_JinganTemple_L02,Metro_JinganTemple,9999,1,Pedestrian
+Metro_JinganTemple_L02,Metro_JinganTemple_L07,9999,1,Pedestrian
+Metro_JinganTemple_L07,Metro_JinganTemple,9999,1,Pedestrian
+Metro_JinganTemple_L07,Metro_JinganTemple_L02,9999,1,Pedestrian
+Metro_JinshajiangRoad,Metro_JinshajiangRoad_L03,9999,1,Pedestrian
+Metro_JinshajiangRoad,Metro_JinshajiangRoad_L04,9999,1,Pedestrian
+Metro_JinshajiangRoad,Metro_JinshajiangRoad_L13,9999,1,Pedestrian
+Metro_JinshajiangRoad_L03,Metro_JinshajiangRoad,9999,1,Pedestrian
+Metro_JinshajiangRoad_L03,Metro_JinshajiangRoad_L04,9999,1,Pedestrian
+Metro_JinshajiangRoad_L03,Metro_JinshajiangRoad_L13,9999,1,Pedestrian
+Metro_JinshajiangRoad_L04,Metro_JinshajiangRoad,9999,1,Pedestrian
+Metro_JinshajiangRoad_L04,Metro_JinshajiangRoad_L03,9999,1,Pedestrian
+Metro_JinshajiangRoad_L04,Metro_JinshajiangRoad_L13,9999,1,Pedestrian
+Metro_JinshajiangRoad_L13,Metro_JinshajiangRoad,9999,1,Pedestrian
+Metro_JinshajiangRoad_L13,Metro_JinshajiangRoad_L03,9999,1,Pedestrian
+Metro_JinshajiangRoad_L13,Metro_JinshajiangRoad_L04,9999,1,Pedestrian
+Metro_JufengRoad,Metro_JufengRoad_L06,9999,1,Pedestrian
+Metro_JufengRoad,Metro_JufengRoad_L12,9999,1,Pedestrian
+Metro_JufengRoad_L06,Metro_JufengRoad,9999,1,Pedestrian
+Metro_JufengRoad_L06,Metro_JufengRoad_L12,9999,1,Pedestrian
+Metro_JufengRoad_L12,Metro_JufengRoad,9999,1,Pedestrian
+Metro_JufengRoad_L12,Metro_JufengRoad_L06,9999,1,Pedestrian
+Metro_LancunRoad,Metro_LancunRoad_L04,9999,1,Pedestrian
+Metro_LancunRoad,Metro_LancunRoad_L06,9999,1,Pedestrian
+Metro_LancunRoad_L04,Metro_LancunRoad,9999,1,Pedestrian
+Metro_LancunRoad_L04,Metro_LancunRoad_L06,9999,1,Pedestrian
+Metro_LancunRoad_L06,Metro_LancunRoad,9999,1,Pedestrian
+Metro_LancunRoad_L06,Metro_LancunRoad_L04,9999,1,Pedestrian
+Metro_Laoximen,Metro_Laoximen_L08,9999,1,Pedestrian
+Metro_Laoximen,Metro_Laoximen_L10,9999,1,Pedestrian
+Metro_Laoximen_L08,Metro_Laoximen,9999,1,Pedestrian
+Metro_Laoximen_L08,Metro_Laoximen_L10,9999,1,Pedestrian
+Metro_Laoximen_L10,Metro_Laoximen,9999,1,Pedestrian
+Metro_Laoximen_L10,Metro_Laoximen_L08,9999,1,Pedestrian
+Metro_LongcaoRoad,Metro_LongcaoRoad_L03,9999,1,Pedestrian
+Metro_LongcaoRoad,Metro_LongcaoRoad_L12,9999,1,Pedestrian
+Metro_LongcaoRoad_L03,Metro_LongcaoRoad,9999,1,Pedestrian
+Metro_LongcaoRoad_L03,Metro_LongcaoRoad_L12,9999,1,Pedestrian
+Metro_LongcaoRoad_L12,Metro_LongcaoRoad,9999,1,Pedestrian
+Metro_LongcaoRoad_L12,Metro_LongcaoRoad_L03,9999,1,Pedestrian
+Metro_LongdeRoad,Metro_LongdeRoad_L11,9999,1,Pedestrian
+Metro_LongdeRoad,Metro_LongdeRoad_L13,9999,1,Pedestrian
+Metro_LongdeRoad_L11,Metro_LongdeRoad,9999,1,Pedestrian
+Metro_LongdeRoad_L11,Metro_LongdeRoad_L13,9999,1,Pedestrian
+Metro_LongdeRoad_L13,Metro_LongdeRoad,9999,1,Pedestrian
+Metro_LongdeRoad_L13,Metro_LongdeRoad_L11,9999,1,Pedestrian
+Metro_Longhua,Metro_Longhua_L11,9999,1,Pedestrian
+Metro_Longhua,Metro_Longhua_L12,9999,1,Pedestrian
+Metro_LonghuaMiddleRoad,Metro_LonghuaMiddleRoad_L07,9999,1,Pedestrian
+Metro_LonghuaMiddleRoad,Metro_LonghuaMiddleRoad_L12,9999,1,Pedestrian
+Metro_LonghuaMiddleRoad_L07,Metro_LonghuaMiddleRoad,9999,1,Pedestrian
+Metro_LonghuaMiddleRoad_L07,Metro_LonghuaMiddleRoad_L12,9999,1,Pedestrian
+Metro_LonghuaMiddleRoad_L12,Metro_LonghuaMiddleRoad,9999,1,Pedestrian
+Metro_LonghuaMiddleRoad_L12,Metro_LonghuaMiddleRoad_L07,9999,1,Pedestrian
+Metro_Longhua_L11,Metro_Longhua,9999,1,Pedestrian
+Metro_Longhua_L11,Metro_Longhua_L12,9999,1,Pedestrian
+Metro_Longhua_L12,Metro_Longhua,9999,1,Pedestrian
+Metro_Longhua_L12,Metro_Longhua_L11,9999,1,Pedestrian
+Metro_LongyangRoad,Metro_LongyangRoad_L02,9999,1,Pedestrian
+Metro_LongyangRoad,Metro_LongyangRoad_L07,9999,1,Pedestrian
+Metro_LongyangRoad,Metro_LongyangRoad_L16,9999,1,Pedestrian
+Metro_LongyangRoad_L02,Metro_LongyangRoad,9999,1,Pedestrian
+Metro_LongyangRoad_L02,Metro_LongyangRoad_L07,9999,1,Pedestrian
+Metro_LongyangRoad_L02,Metro_LongyangRoad_L16,9999,1,Pedestrian
+Metro_LongyangRoad_L07,Metro_LongyangRoad,9999,1,Pedestrian
+Metro_LongyangRoad_L07,Metro_LongyangRoad_L02,9999,1,Pedestrian
+Metro_LongyangRoad_L07,Metro_LongyangRoad_L16,9999,1,Pedestrian
+Metro_LongyangRoad_L16,Metro_LongyangRoad,9999,1,Pedestrian
+Metro_LongyangRoad_L16,Metro_LongyangRoad_L02,9999,1,Pedestrian
+Metro_LongyangRoad_L16,Metro_LongyangRoad_L07,9999,1,Pedestrian
+Metro_LongyaoRoad,Metro_LongyaoRoad_L06,9999,1,Pedestrian
+Metro_LongyaoRoad,Metro_LongyaoRoad_L11,9999,1,Pedestrian
+Metro_LongyaoRoad_L06,Metro_LongyaoRoad,9999,1,Pedestrian
+Metro_LongyaoRoad_L06,Metro_LongyaoRoad_L11,9999,1,Pedestrian
+Metro_LongyaoRoad_L11,Metro_LongyaoRoad,9999,1,Pedestrian
+Metro_LongyaoRoad_L11,Metro_LongyaoRoad_L06,9999,1,Pedestrian
+Metro_LujiabangRoad,Metro_LujiabangRoad_L08,9999,1,Pedestrian
+Metro_LujiabangRoad,Metro_LujiabangRoad_L09,9999,1,Pedestrian
+Metro_LujiabangRoad_L08,Metro_LujiabangRoad,9999,1,Pedestrian
+Metro_LujiabangRoad_L08,Metro_LujiabangRoad_L09,9999,1,Pedestrian
+Metro_LujiabangRoad_L09,Metro_LujiabangRoad,9999,1,Pedestrian
+Metro_LujiabangRoad_L09,Metro_LujiabangRoad_L08,9999,1,Pedestrian
+Metro_LuoshanRoad,Metro_LuoshanRoad_L11,9999,1,Pedestrian
+Metro_LuoshanRoad,Metro_LuoshanRoad_L16,9999,1,Pedestrian
+Metro_LuoshanRoad_L11,Metro_LuoshanRoad,9999,1,Pedestrian
+Metro_LuoshanRoad_L11,Metro_LuoshanRoad_L16,9999,1,Pedestrian
+Metro_LuoshanRoad_L16,Metro_LuoshanRoad,9999,1,Pedestrian
+Metro_LuoshanRoad_L16,Metro_LuoshanRoad_L11,9999,1,Pedestrian
+Metro_MadangRoad,Metro_MadangRoad_L09,9999,1,Pedestrian
+Metro_MadangRoad,Metro_MadangRoad_L13,9999,1,Pedestrian
+Metro_MadangRoad_L09,Metro_MadangRoad,9999,1,Pedestrian
+Metro_MadangRoad_L09,Metro_MadangRoad_L13,9999,1,Pedestrian
+Metro_MadangRoad_L13,Metro_MadangRoad,9999,1,Pedestrian
+Metro_MadangRoad_L13,Metro_MadangRoad_L09,9999,1,Pedestrian
+Metro_OrientalSportsCenter,Metro_OrientalSportsCenter_L06,9999,1,Pedestrian
+Metro_OrientalSportsCenter,Metro_OrientalSportsCenter_L08,9999,1,Pedestrian
+Metro_OrientalSportsCenter,Metro_OrientalSportsCenter_L11,9999,1,Pedestrian
+Metro_OrientalSportsCenter_L06,Metro_OrientalSportsCenter,9999,1,Pedestrian
+Metro_OrientalSportsCenter_L06,Metro_OrientalSportsCenter_L08,9999,1,Pedestrian
+Metro_OrientalSportsCenter_L06,Metro_OrientalSportsCenter_L11,9999,1,Pedestrian
+Metro_OrientalSportsCenter_L08,Metro_OrientalSportsCenter,9999,1,Pedestrian
+Metro_OrientalSportsCenter_L08,Metro_OrientalSportsCenter_L06,9999,1,Pedestrian
+Metro_OrientalSportsCenter_L08,Metro_OrientalSportsCenter_L11,9999,1,Pedestrian
+Metro_OrientalSportsCenter_L11,Metro_OrientalSportsCenter,9999,1,Pedestrian
+Metro_OrientalSportsCenter_L11,Metro_OrientalSportsCenter_L06,9999,1,Pedestrian
+Metro_OrientalSportsCenter_L11,Metro_OrientalSportsCenter_L08,9999,1,Pedestrian
+Metro_PeoplesSquare,Metro_PeoplesSquare_L01,9999,1,Pedestrian
+Metro_PeoplesSquare,Metro_PeoplesSquare_L02,9999,1,Pedestrian
+Metro_PeoplesSquare,Metro_PeoplesSquare_L08,9999,1,Pedestrian
+Metro_PeoplesSquare_L01,Metro_PeoplesSquare,9999,1,Pedestrian
+Metro_PeoplesSquare_L01,Metro_PeoplesSquare_L02,9999,1,Pedestrian
+Metro_PeoplesSquare_L01,Metro_PeoplesSquare_L08,9999,1,Pedestrian
+Metro_PeoplesSquare_L02,Metro_PeoplesSquare,9999,1,Pedestrian
+Metro_PeoplesSquare_L02,Metro_PeoplesSquare_L01,9999,1,Pedestrian
+Metro_PeoplesSquare_L02,Metro_PeoplesSquare_L08,9999,1,Pedestrian
+Metro_PeoplesSquare_L08,Metro_PeoplesSquare,9999,1,Pedestrian
+Metro_PeoplesSquare_L08,Metro_PeoplesSquare_L01,9999,1,Pedestrian
+Metro_PeoplesSquare_L08,Metro_PeoplesSquare_L02,9999,1,Pedestrian
+Metro_PudianRoad,Metro_PudianRoad_L04,9999,1,Pedestrian
+Metro_PudianRoad,Metro_PudianRoad_L06,9999,1,Pedestrian
+Metro_PudianRoad_L04,Metro_PudianRoad,9999,1,Pedestrian
+Metro_PudianRoad_L04,Metro_PudianRoad_L06,9999,1,Pedestrian
+Metro_PudianRoad_L06,Metro_PudianRoad,9999,1,Pedestrian
+Metro_PudianRoad_L06,Metro_PudianRoad_L04,9999,1,Pedestrian
+Metro_QufuRoad,Metro_QufuRoad_L08,9999,1,Pedestrian
+Metro_QufuRoad,Metro_QufuRoad_L12,9999,1,Pedestrian
+Metro_QufuRoad_L08,Metro_QufuRoad,9999,1,Pedestrian
+Metro_QufuRoad_L08,Metro_QufuRoad_L12,9999,1,Pedestrian
+Metro_QufuRoad_L12,Metro_QufuRoad,9999,1,Pedestrian
+Metro_QufuRoad_L12,Metro_QufuRoad_L08,9999,1,Pedestrian
+Metro_ShanghaiIndoorStadium,Metro_ShanghaiIndoorStadium_L01,9999,1,Pedestrian
+Metro_ShanghaiIndoorStadium,Metro_ShanghaiIndoorStadium_L04,9999,1,Pedestrian
+Metro_ShanghaiIndoorStadium_L01,Metro_ShanghaiIndoorStadium,9999,1,Pedestrian
+Metro_ShanghaiIndoorStadium_L01,Metro_ShanghaiIndoorStadium_L04,9999,1,Pedestrian
+Metro_ShanghaiIndoorStadium_L04,Metro_ShanghaiIndoorStadium,9999,1,Pedestrian
+Metro_ShanghaiIndoorStadium_L04,Metro_ShanghaiIndoorStadium_L01,9999,1,Pedestrian
+Metro_ShanghaiRailwayStation,Metro_ShanghaiRailwayStation_L01,9999,1,Pedestrian
+Metro_ShanghaiRailwayStation,Metro_ShanghaiRailwayStation_L03,9999,1,Pedestrian
+Metro_ShanghaiRailwayStation,Metro_ShanghaiRailwayStation_L04,9999,1,Pedestrian
+Metro_ShanghaiRailwayStation_L01,Metro_ShanghaiRailwayStation,9999,1,Pedestrian
+Metro_ShanghaiRailwayStation_L01,Metro_ShanghaiRailwayStation_L03,9999,1,Pedestrian
+Metro_ShanghaiRailwayStation_L01,Metro_ShanghaiRailwayStation_L04,9999,1,Pedestrian
+Metro_ShanghaiRailwayStation_L03,Metro_ShanghaiRailwayStation,9999,1,Pedestrian
+Metro_ShanghaiRailwayStation_L03,Metro_ShanghaiRailwayStation_L01,9999,1,Pedestrian
+Metro_ShanghaiRailwayStation_L03,Metro_ShanghaiRailwayStation_L04,9999,1,Pedestrian
+Metro_ShanghaiRailwayStation_L04,Metro_ShanghaiRailwayStation,9999,1,Pedestrian
+Metro_ShanghaiRailwayStation_L04,Metro_ShanghaiRailwayStation_L01,9999,1,Pedestrian
+Metro_ShanghaiRailwayStation_L04,Metro_ShanghaiRailwayStation_L03,9999,1,Pedestrian
+Metro_ShanghaiSouthRailwayStation,Metro_ShanghaiSouthRailwayStation_L01,9999,1,Pedestrian
+Metro_ShanghaiSouthRailwayStation,Metro_ShanghaiSouthRailwayStation_L03,9999,1,Pedestrian
+Metro_ShanghaiSouthRailwayStation_L01,Metro_ShanghaiSouthRailwayStation,9999,1,Pedestrian
+Metro_ShanghaiSouthRailwayStation_L01,Metro_ShanghaiSouthRailwayStation_L03,9999,1,Pedestrian
+Metro_ShanghaiSouthRailwayStation_L03,Metro_ShanghaiSouthRailwayStation,9999,1,Pedestrian
+Metro_ShanghaiSouthRailwayStation_L03,Metro_ShanghaiSouthRailwayStation_L01,9999,1,Pedestrian
+Metro_SipingRoad,Metro_SipingRoad_L08,9999,1,Pedestrian
+Metro_SipingRoad,Metro_SipingRoad_L10,9999,1,Pedestrian
+Metro_SipingRoad_L08,Metro_SipingRoad,9999,1,Pedestrian
+Metro_SipingRoad_L08,Metro_SipingRoad_L10,9999,1,Pedestrian
+Metro_SipingRoad_L10,Metro_SipingRoad,9999,1,Pedestrian
+Metro_SipingRoad_L10,Metro_SipingRoad_L08,9999,1,Pedestrian
+Metro_SongyuanRoad,Metro_SongyuanRoad_L10,9999,1,Pedestrian
+Metro_SongyuanRoad,Metro_SongyuanRoad_L12,9999,1,Pedestrian
+Metro_SongyuanRoad_L10,Metro_SongyuanRoad,9999,1,Pedestrian
+Metro_SongyuanRoad_L10,Metro_SongyuanRoad_L12,9999,1,Pedestrian
+Metro_SongyuanRoad_L12,Metro_SongyuanRoad,9999,1,Pedestrian
+Metro_SongyuanRoad_L12,Metro_SongyuanRoad_L10,9999,1,Pedestrian
+Metro_SouthShaanxiRoad,Metro_SouthShaanxiRoad_L01,9999,1,Pedestrian
+Metro_SouthShaanxiRoad,Metro_SouthShaanxiRoad_L10,9999,1,Pedestrian
+Metro_SouthShaanxiRoad,Metro_SouthShaanxiRoad_L12,9999,1,Pedestrian
+Metro_SouthShaanxiRoad_L01,Metro_SouthShaanxiRoad,9999,1,Pedestrian
+Metro_SouthShaanxiRoad_L01,Metro_SouthShaanxiRoad_L10,9999,1,Pedestrian
+Metro_SouthShaanxiRoad_L01,Metro_SouthShaanxiRoad_L12,9999,1,Pedestrian
+Metro_SouthShaanxiRoad_L10,Metro_SouthShaanxiRoad,9999,1,Pedestrian
+Metro_SouthShaanxiRoad_L10,Metro_SouthShaanxiRoad_L01,9999,1,Pedestrian
+Metro_SouthShaanxiRoad_L10,Metro_SouthShaanxiRoad_L12,9999,1,Pedestrian
+Metro_SouthShaanxiRoad_L12,Metro_SouthShaanxiRoad,9999,1,Pedestrian
+Metro_SouthShaanxiRoad_L12,Metro_SouthShaanxiRoad_L01,9999,1,Pedestrian
+Metro_SouthShaanxiRoad_L12,Metro_SouthShaanxiRoad_L10,9999,1,Pedestrian
+Metro_SouthXizangRoad,Metro_SouthXizangRoad_L04,9999,1,Pedestrian
+Metro_SouthXizangRoad,Metro_SouthXizangRoad_L08,9999,1,Pedestrian
+Metro_SouthXizangRoad_L04,Metro_SouthXizangRoad,9999,1,Pedestrian
+Metro_SouthXizangRoad_L04,Metro_SouthXizangRoad_L08,9999,1,Pedestrian
+Metro_SouthXizangRoad_L08,Metro_SouthXizangRoad,9999,1,Pedestrian
+Metro_SouthXizangRoad_L08,Metro_SouthXizangRoad_L04,9999,1,Pedestrian
+Metro_TiantongRoad,Metro_TiantongRoad_L10,9999,1,Pedestrian
+Metro_TiantongRoad,Metro_TiantongRoad_L12,9999,1,Pedestrian
+Metro_TiantongRoad_L10,Metro_TiantongRoad,9999,1,Pedestrian
+Metro_TiantongRoad_L10,Metro_TiantongRoad_L12,9999,1,Pedestrian
+Metro_TiantongRoad_L12,Metro_TiantongRoad,9999,1,Pedestrian
+Metro_TiantongRoad_L12,Metro_TiantongRoad_L10,9999,1,Pedestrian
+Metro_WestGaokeRoad,Metro_WestGaokeRoad_L06,9999,1,Pedestrian
+Metro_WestGaokeRoad,Metro_WestGaokeRoad_L07,9999,1,Pedestrian
+Metro_WestGaokeRoad_L06,Metro_WestGaokeRoad,9999,1,Pedestrian
+Metro_WestGaokeRoad_L06,Metro_WestGaokeRoad_L07,9999,1,Pedestrian
+Metro_WestGaokeRoad_L07,Metro_WestGaokeRoad,9999,1,Pedestrian
+Metro_WestGaokeRoad_L07,Metro_WestGaokeRoad_L06,9999,1,Pedestrian
+Metro_WestNanjingRoad,Metro_WestNanjingRoad_L02,9999,1,Pedestrian
+Metro_WestNanjingRoad,Metro_WestNanjingRoad_L12,9999,1,Pedestrian
+Metro_WestNanjingRoad,Metro_WestNanjingRoad_L13,9999,1,Pedestrian
+Metro_WestNanjingRoad_L02,Metro_WestNanjingRoad,9999,1,Pedestrian
+Metro_WestNanjingRoad_L02,Metro_WestNanjingRoad_L12,9999,1,Pedestrian
+Metro_WestNanjingRoad_L02,Metro_WestNanjingRoad_L13,9999,1,Pedestrian
+Metro_WestNanjingRoad_L12,Metro_WestNanjingRoad,9999,1,Pedestrian
+Metro_WestNanjingRoad_L12,Metro_WestNanjingRoad_L02,9999,1,Pedestrian
+Metro_WestNanjingRoad_L12,Metro_WestNanjingRoad_L13,9999,1,Pedestrian
+Metro_WestNanjingRoad_L13,Metro_WestNanjingRoad,9999,1,Pedestrian
+Metro_WestNanjingRoad_L13,Metro_WestNanjingRoad_L02,9999,1,Pedestrian
+Metro_WestNanjingRoad_L13,Metro_WestNanjingRoad_L12,9999,1,Pedestrian
+Metro_WestYananRoad,Metro_WestYananRoad_L03,9999,1,Pedestrian
+Metro_WestYananRoad,Metro_WestYananRoad_L04,9999,1,Pedestrian
+Metro_WestYananRoad_L03,Metro_WestYananRoad,9999,1,Pedestrian
+Metro_WestYananRoad_L03,Metro_WestYananRoad_L04,9999,1,Pedestrian
+Metro_WestYananRoad_L04,Metro_WestYananRoad,9999,1,Pedestrian
+Metro_WestYananRoad_L04,Metro_WestYananRoad_L03,9999,1,Pedestrian
+Metro_Xintiandi,Metro_Xintiandi_L10,9999,1,Pedestrian
+Metro_Xintiandi,Metro_Xintiandi_L13,9999,1,Pedestrian
+Metro_Xintiandi_L10,Metro_Xintiandi,9999,1,Pedestrian
+Metro_Xintiandi_L10,Metro_Xintiandi_L13,9999,1,Pedestrian
+Metro_Xintiandi_L13,Metro_Xintiandi,9999,1,Pedestrian
+Metro_Xintiandi_L13,Metro_Xintiandi_L10,9999,1,Pedestrian
+Metro_Xinzhuang,Metro_Xinzhuang_L01,9999,1,Pedestrian
+Metro_Xinzhuang,Metro_Xinzhuang_L05,9999,1,Pedestrian
+Metro_Xinzhuang_L01,Metro_Xinzhuang,9999,1,Pedestrian
+Metro_Xinzhuang_L01,Metro_Xinzhuang_L05,9999,1,Pedestrian
+Metro_Xinzhuang_L05,Metro_Xinzhuang,9999,1,Pedestrian
+Metro_Xinzhuang_L05,Metro_Xinzhuang_L01,9999,1,Pedestrian
+Metro_Xujiahui,Metro_Xujiahui_L01,9999,1,Pedestrian
+Metro_Xujiahui,Metro_Xujiahui_L09,9999,1,Pedestrian
+Metro_Xujiahui,Metro_Xujiahui_L11,9999,1,Pedestrian
+Metro_Xujiahui_L01,Metro_Xujiahui,9999,1,Pedestrian
+Metro_Xujiahui_L01,Metro_Xujiahui_L09,9999,1,Pedestrian
+Metro_Xujiahui_L01,Metro_Xujiahui_L11,9999,1,Pedestrian
+Metro_Xujiahui_L09,Metro_Xujiahui,9999,1,Pedestrian
+Metro_Xujiahui_L09,Metro_Xujiahui_L01,9999,1,Pedestrian
+Metro_Xujiahui_L09,Metro_Xujiahui_L11,9999,1,Pedestrian
+Metro_Xujiahui_L11,Metro_Xujiahui,9999,1,Pedestrian
+Metro_Xujiahui_L11,Metro_Xujiahui_L01,9999,1,Pedestrian
+Metro_Xujiahui_L11,Metro_Xujiahui_L09,9999,1,Pedestrian
+Metro_YaohuaRoad,Metro_YaohuaRoad_L07,9999,1,Pedestrian
+Metro_YaohuaRoad,Metro_YaohuaRoad_L08,9999,1,Pedestrian
+Metro_YaohuaRoad_L07,Metro_YaohuaRoad,9999,1,Pedestrian
+Metro_YaohuaRoad_L07,Metro_YaohuaRoad_L08,9999,1,Pedestrian
+Metro_YaohuaRoad_L08,Metro_YaohuaRoad,9999,1,Pedestrian
+Metro_YaohuaRoad_L08,Metro_YaohuaRoad_L07,9999,1,Pedestrian
+Metro_YishanRoad,Metro_YishanRoad_L03,9999,1,Pedestrian
+Metro_YishanRoad,Metro_YishanRoad_L04,9999,1,Pedestrian
+Metro_YishanRoad,Metro_YishanRoad_L09,9999,1,Pedestrian
+Metro_YishanRoad_L03,Metro_YishanRoad,9999,1,Pedestrian
+Metro_YishanRoad_L03,Metro_YishanRoad_L04,9999,1,Pedestrian
+Metro_YishanRoad_L03,Metro_YishanRoad_L09,9999,1,Pedestrian
+Metro_YishanRoad_L04,Metro_YishanRoad,9999,1,Pedestrian
+Metro_YishanRoad_L04,Metro_YishanRoad_L03,9999,1,Pedestrian
+Metro_YishanRoad_L04,Metro_YishanRoad_L09,9999,1,Pedestrian
+Metro_YishanRoad_L09,Metro_YishanRoad,9999,1,Pedestrian
+Metro_YishanRoad_L09,Metro_YishanRoad_L03,9999,1,Pedestrian
+Metro_YishanRoad_L09,Metro_YishanRoad_L04,9999,1,Pedestrian
+Metro_ZhaojiabangRoad,Metro_ZhaojiabangRoad_L07,9999,1,Pedestrian
+Metro_ZhaojiabangRoad,Metro_ZhaojiabangRoad_L09,9999,1,Pedestrian
+Metro_ZhaojiabangRoad_L07,Metro_ZhaojiabangRoad,9999,1,Pedestrian
+Metro_ZhaojiabangRoad_L07,Metro_ZhaojiabangRoad_L09,9999,1,Pedestrian
+Metro_ZhaojiabangRoad_L09,Metro_ZhaojiabangRoad,9999,1,Pedestrian
+Metro_ZhaojiabangRoad_L09,Metro_ZhaojiabangRoad_L07,9999,1,Pedestrian
+Metro_ZhenpingRoad,Metro_ZhenpingRoad_L03,9999,1,Pedestrian
+Metro_ZhenpingRoad,Metro_ZhenpingRoad_L04,9999,1,Pedestrian
+Metro_ZhenpingRoad,Metro_ZhenpingRoad_L07,9999,1,Pedestrian
+Metro_ZhenpingRoad_L03,Metro_ZhenpingRoad,9999,1,Pedestrian
+Metro_ZhenpingRoad_L03,Metro_ZhenpingRoad_L04,9999,1,Pedestrian
+Metro_ZhenpingRoad_L03,Metro_ZhenpingRoad_L07,9999,1,Pedestrian
+Metro_ZhenpingRoad_L04,Metro_ZhenpingRoad,9999,1,Pedestrian
+Metro_ZhenpingRoad_L04,Metro_ZhenpingRoad_L03,9999,1,Pedestrian
+Metro_ZhenpingRoad_L04,Metro_ZhenpingRoad_L07,9999,1,Pedestrian
+Metro_ZhenpingRoad_L07,Metro_ZhenpingRoad,9999,1,Pedestrian
+Metro_ZhenpingRoad_L07,Metro_ZhenpingRoad_L03,9999,1,Pedestrian
+Metro_ZhenpingRoad_L07,Metro_ZhenpingRoad_L04,9999,1,Pedestrian
+Metro_ZhongshanPark,Metro_ZhongshanPark_L02,9999,1,Pedestrian
+Metro_ZhongshanPark,Metro_ZhongshanPark_L03,9999,1,Pedestrian
+Metro_ZhongshanPark,Metro_ZhongshanPark_L04,9999,1,Pedestrian
+Metro_ZhongshanPark_L02,Metro_ZhongshanPark,9999,1,Pedestrian
+Metro_ZhongshanPark_L02,Metro_ZhongshanPark_L03,9999,1,Pedestrian
+Metro_ZhongshanPark_L02,Metro_ZhongshanPark_L04,9999,1,Pedestrian
+Metro_ZhongshanPark_L03,Metro_ZhongshanPark,9999,1,Pedestrian
+Metro_ZhongshanPark_L03,Metro_ZhongshanPark_L02,9999,1,Pedestrian
+Metro_ZhongshanPark_L03,Metro_ZhongshanPark_L04,9999,1,Pedestrian
+Metro_ZhongshanPark_L04,Metro_ZhongshanPark,9999,1,Pedestrian
+Metro_ZhongshanPark_L04,Metro_ZhongshanPark_L02,9999,1,Pedestrian
+Metro_ZhongshanPark_L04,Metro_ZhongshanPark_L03,9999,1,Pedestrian
+Metro_ZhongtanRoad,Metro_ZhongtanRoad_L03,9999,1,Pedestrian
+Metro_ZhongtanRoad,Metro_ZhongtanRoad_L04,9999,1,Pedestrian
+Metro_ZhongtanRoad_L03,Metro_ZhongtanRoad,9999,1,Pedestrian
+Metro_ZhongtanRoad_L03,Metro_ZhongtanRoad_L04,9999,1,Pedestrian
+Metro_ZhongtanRoad_L04,Metro_ZhongtanRoad,9999,1,Pedestrian
+Metro_ZhongtanRoad_L04,Metro_ZhongtanRoad_L03,9999,1,Pedestrian

@@ -1,0 +1,435 @@
+node_id,station_id,station_name,node_type,line,lon,lat
+Metro_JinganTemple,2050,Jing'an Temple,central,,121.441840398,31.225058466
+Metro_JinganTemple_L02,2050,Jing'an Temple,line,Line 2,121.442340398,31.225058466
+Metro_JinganTemple_L07,2050,Jing'an Temple,line,Line 7,121.441340398,31.225058466
+Metro_FengqiaoRoad,1144,Fengqiao Road,regular,Line 11,121.406511864,31.243749563
+Metro_JufengRoad,2004,Jufeng Road,central,,121.584260909,31.282831741
+Metro_JufengRoad_L06,2004,Jufeng Road,line,Line 6,121.584760909,31.282831741
+Metro_JufengRoad_L12,2004,Jufeng Road,line,Line 12,121.58376090899999,31.282831741
+Metro_XincunRoad,734,Xincun Road,regular,Line 7,121.417997974,31.26563162
+Metro_CenturyPark,251,Century Park,regular,Line 2,121.546610423,31.211428964
+Metro_HongqiaoTerminal2,2013,Hongqiao Terminal 2,central,,121.321717626,31.196484051
+Metro_HongqiaoTerminal2_L02,2013,Hongqiao Terminal 2,line,Line 2,121.322217626,31.196484051
+Metro_HongqiaoTerminal2_L10,2013,Hongqiao Terminal 2,line,Line 10,121.32121762599999,31.196484051
+Metro_Waihuanlu,112,Waihuanlu,regular,Line 1,121.38849586,31.12298734
+Metro_PujiangTown,823,Pujiang Town,regular,Line 8,121.501874632,31.098688359
+Metro_LancunRoad,2015,Lancun Road,central,,121.524302062,31.213714866
+Metro_LancunRoad_L04,2015,Lancun Road,line,Line 4,121.524802062,31.213714866
+Metro_LancunRoad_L06,2015,Lancun Road,line,Line 6,121.523802062,31.213714866
+Metro_Tangqiao,420,Tangqiao,regular,Line 4,121.514379872,31.211791632
+Metro_Zhanghuabang,333,Zhanghuabang,regular,Line 3,121.494268593,31.359927177
+Metro_JinqiaoRoad,638,Jinqiao Road,regular,Line 6,121.577716757,31.259449703
+Metro_PudongInternationalAirport,263,Pudong International Airport,regular,Line 2,121.801903153,31.152450366
+Metro_DahuaSanRoad,733,Dahua San Road,regular,Line 7,121.418482486,31.275723943000003
+Metro_Xiaonanmen,940,Xiaonanmen,regular,Line 9,121.494041588,31.219075141
+Metro_NorthJiading,1131,North Jiading,regular,Line 11,121.232947442,31.393474009
+Metro_LongdeRoad,2057,Longde Road,central,,121.418836726,31.232586009
+Metro_LongdeRoad_L11,2057,Longde Road,line,Line 11,121.419336726,31.232586009
+Metro_LongdeRoad_L13,2057,Longde Road,line,Line 13,121.41833672599999,31.232586009
+Metro_JiashanRoad,2033,Jiashan Road,central,,121.456454874,31.204614556
+Metro_JiashanRoad_L09,2033,Jiashan Road,line,Line 9,121.456954874,31.204614556
+Metro_JiashanRoad_L12,2033,Jiashan Road,line,Line 12,121.455954874,31.204614556
+Metro_YunshanRoad,637,Yunshan Road,regular,Line 6,121.568640821,31.252628085
+Metro_ChangzhongRoad,730,Changzhong Road,regular,Line 7,121.408605124,31.305631244
+Metro_MiddleYanjiRoad,845,Middle Yanji Road,regular,Line 8,121.530621364,31.290009786
+Metro_Xinzhuang,2011,Xinzhuang,central,,121.380839538,31.112983939
+Metro_Xinzhuang_L01,2011,Xinzhuang,line,Line 1,121.381339538,31.112983939
+Metro_Xinzhuang_L05,2011,Xinzhuang,line,Line 5,121.380339538,31.112983939
+Metro_WenshuiRoad,130,Wenshui Road,regular,Line 1,121.445587497,31.29447578
+Metro_DonglanRoad,1223,Donglan Road,regular,Line 12,121.387228456,31.15770063
+Metro_JiangpuPark,1241,Jiangpu Park,regular,Line 12,121.519166426,31.266534411
+Metro_NorthJiangyangRoad,339,North Jiangyang Road,regular,Line 3,121.435081311,31.409673404
+Metro_ShanghaiSwimmingCenter,1150,Shanghai Swimming Center,regular,Line 11,121.436739009,31.181366331
+Metro_HuangxingRoad,844,Huangxing Road,regular,Line 8,121.523979949,31.280810293
+Metro_ShenjiangRoad,1250,Shenjiang Road,regular,Line 12,121.622624106,31.282334324
+Metro_BaoyangRoad,336,Baoyang Road,regular,Line 3,121.475066666,31.397184356
+Metro_LingangAvenue,1632,Lingang Avenue,regular,Line 16,121.90670309,30.925884482
+Metro_HeshaHangcheng,1625,Hesha Hangcheng,regular,Line 16,121.607093362,31.079974585
+Metro_NorthSichuanRoad,1058,North Sichuan Road,regular,Line 10,121.479642061,31.253898054
+Metro_ZhongshanNorthRoad,127,Zhongshan North Road,regular,Line 1,121.454688131,31.260741938
+Metro_ShangdaRoad,729,Shangda Road,regular,Line 7,121.404049079,31.316758855
+Metro_BaoshanRoad,2030,Baoshan Road,central,,121.471816719,31.253456818000004
+Metro_BaoshanRoad_L03,2030,Baoshan Road,line,Line 3,121.472316719,31.253456818000004
+Metro_BaoshanRoad_L04,2030,Baoshan Road,line,Line 4,121.471316719,31.253456818000004
+Metro_BoxingRoad,639,Boxing Road,regular,Line 6,121.582521596,31.265715972
+Metro_SongjiangSportsCenter,920,Songjiang Sports Center,regular,Line 9,121.226364779,31.018055817
+Metro_DisneyResort,1163,Disney Resort,regular,Line 11,121.663732891,31.143438744
+Metro_ShanghaiWestRailwayStation,1142,Shanghai West Railway Station,regular,Line 11,121.396085821,31.264540771
+Metro_Anting,1117,Anting,regular,Line 11,121.157449346,31.29037688
+Metro_GongfuXincun,135,Gongfu Xincun,regular,Line 1,121.429488802,31.356902294
+Metro_JinshajiangRoad,2009,Jinshajiang Road,central,,121.408591207,31.234008201
+Metro_JinshajiangRoad_L03,2009,Jinshajiang Road,line,Line 3,121.409091207,31.234008201
+Metro_JinshajiangRoad_L04,2009,Jinshajiang Road,line,Line 4,121.408341207,31.234441213701896
+Metro_JinshajiangRoad_L13,2009,Jinshajiang Road,line,Line 13,121.408341207,31.233575188298108
+Metro_HongmeiRoad,1224,Hongmei Road,regular,Line 12,121.392662297,31.162296375
+Metro_FujinRoad,138,Fujin Road,regular,Line 1,121.420030689,31.393999581
+Metro_ZhouhaiRoad,644,Zhouhai Road,regular,Line 6,121.585223441,31.314421091
+Metro_WuweiRoad,1139,Wuwei Road,regular,Line 11,121.360455468,31.278154062
+Metro_XingzhiRoad,732,Xingzhi Road,regular,Line 7,121.417174701,31.285986202
+Metro_WorldExpoMuseum,1338,World Expo Museum,regular,Line 13,121.477251581,31.199280653
+Metro_ChunshenRoad,502,Chunshen Road,regular,Line 5,121.381178577,31.100133212
+Metro_TiantongRoad,2026,Tiantong Road,central,,121.47772089,31.246365172
+Metro_TiantongRoad_L10,2026,Tiantong Road,line,Line 10,121.47822089,31.246365172
+Metro_TiantongRoad_L12,2026,Tiantong Road,line,Line 12,121.47722089,31.246365172
+Metro_SouthSongjiangRailwayStation,918,South Songjiang Railway Station,regular,Line 9,121.226390216,30.987130812
+Metro_QilianshanRoad,1140,Qilianshan Road,regular,Line 11,121.371234343,31.273492779
+Metro_Lujiazui,247,Lujiazui,regular,Line 2,121.4979311,31.240237146
+Metro_HuaningRoad,511,Huaning Road,regular,Line 5,121.390678018,31.00938857
+Metro_ShanghaiCircusCity,129,Shanghai Circus City,regular,Line 1,121.447341668,31.281257251
+Metro_Beixinjing,238,Beixinjing,regular,Line 2,121.369712386,31.218084283000003
+Metro_ShanghaiScienceandTechnologyMuseum,250,Shanghai Science and Technology Museum,regular,Line 2,121.54035992,31.220820317
+Metro_JiangpuRoad,843,Jiangpu Road,regular,Line 8,121.513485367,31.276923954
+Metro_LongyangRoad,2052,Longyang Road,central,,121.552971357,31.205156342
+Metro_LongyangRoad_L02,2052,Longyang Road,line,Line 2,121.553471357,31.205156342
+Metro_LongyangRoad_L07,2052,Longyang Road,line,Line 7,121.55272135700001,31.205589354701893
+Metro_LongyangRoad_L16,2052,Longyang Road,line,Line 16,121.55272135700001,31.204723329298105
+Metro_TongheXincun,133,Tonghe Xincun,regular,Line 1,121.436929642,31.332913486
+Metro_EastHuaxiaRoad,258,East Huaxia Road,regular,Line 2,121.676664195,31.198756563000003
+Metro_WestGaokeRoad,2023,West Gaoke Road,central,,121.505517848,31.187777365
+Metro_WestGaokeRoad_L06,2023,West Gaoke Road,line,Line 6,121.506017848,31.187777365
+Metro_WestGaokeRoad_L07,2023,West Gaoke Road,line,Line 7,121.505017848,31.187777365
+Metro_YuyuanGarden,1055,Yuyuan Garden,regular,Line 10,121.482864468,31.229964559000003
+Metro_WestYouyiRoad,137,West Youyi Road,regular,Line 1,121.423323482,31.382958896
+Metro_Huinan,1629,Huinan,regular,Line 16,121.757556095,31.055964545
+Metro_DongchuanRoad,509,Dongchuan Road,regular,Line 5,121.415276286,31.020129531
+Metro_SonghongRoad,237,Songhong Road,regular,Line 2,121.355346112,31.22001095
+Metro_Beiqiao,507,Beiqiao,regular,Line 5,121.405430474,31.04699477
+Metro_EastYingaoRoad,1067,East Yingao Road,regular,Line 10,121.502525459,31.323799384
+Metro_FuxingIsland,1245,Fuxing Island,regular,Line 12,121.557010351,31.282961224
+Metro_ShanghaiZoo,1044,Shanghai Zoo,regular,Line 10,121.363529229,31.192230792
+Metro_SanmenRoad,1066,Sanmen Road,regular,Line 10,121.50401182,31.315050515
+Metro_Xinchang,1627,Xinchang,regular,Line 16,121.644868866,31.04780769
+Metro_LianhuaRoad,113,Lianhua Road,regular,Line 1,121.39828804,31.132883499
+Metro_ChengshanRoad,828,Chengshan Road,regular,Line 8,121.4918544,31.172546018
+Metro_TaopuXincun,1138,Taopu Xincun,regular,Line 11,121.345054448,31.283439299
+Metro_JinkeRoad,254,Jinke Road,regular,Line 2,121.597840355,31.206443837
+Metro_WestNanjingRoad,2041,West Nanjing Road,central,,121.455627903,31.231607822
+Metro_WestNanjingRoad_L02,2041,West Nanjing Road,line,Line 2,121.45612790300001,31.231607822
+Metro_WestNanjingRoad_L12,2041,West Nanjing Road,line,Line 12,121.45537790300001,31.232040834701895
+Metro_WestNanjingRoad_L13,2041,West Nanjing Road,line,Line 13,121.45537790300001,31.231174809298107
+Metro_Sanlin,1155,Sanlin,regular,Line 11,121.507435391,31.14525371
+Metro_PudongAvenue,416,Pudong Avenue,regular,Line 4,121.514986935,31.242168231
+Metro_PeoplesSquare,2035,People's Square,central,,121.470457083,31.234865971
+Metro_PeoplesSquare_L01,2035,People's Square,line,Line 1,121.470957083,31.234865971
+Metro_PeoplesSquare_L02,2035,People's Square,line,Line 2,121.470207083,31.235298983701895
+Metro_PeoplesSquare_L08,2035,People's Square,line,Line 8,121.470207083,31.234432958298108
+Metro_Yuqiao,1159,Yuqiao,regular,Line 11,121.566686634,31.160429607
+Metro_JinjiangAmusementPark,114,Jinjiang Amusement Park,regular,Line 1,121.409494683,31.144053983000003
+Metro_WestHuaxiaRoad,624,West Huaxia Road,regular,Line 6,121.510363399,31.15192965
+Metro_Dapuqiao,937,Dapuqiao,regular,Line 9,121.464086845,31.208456707
+Metro_Yangsi,827,Yangsi,regular,Line 8,121.488937814,31.162962578
+Metro_DongbaoxingRoad,325,Dongbaoxing Road,regular,Line 3,121.475714615,31.26190605
+Metro_SouthXizangRoad,2002,South Xizang Road,central,,121.485172565,31.203927157
+Metro_SouthXizangRoad_L04,2002,South Xizang Road,line,Line 4,121.485672565,31.203927157
+Metro_SouthXizangRoad_L08,2002,South Xizang Road,line,Line 8,121.484672565,31.203927157
+Metro_DachangTown,731,Dachang Town,regular,Line 7,121.411602017,31.29507342
+Metro_EastChangjiRoad,1119,East Changji Road,regular,Line 11,121.195922139,31.295550108
+Metro_BaoanHighway,136,Bao'an Highway,regular,Line 1,121.42634765,31.371233449
+Metro_HongxinRoad,1221,Hongxin Road,regular,Line 12,121.375669938,31.139418878
+Metro_YuntaiRoad,747,Yuntai Road,regular,Line 7,121.496129096,31.18446681
+Metro_YouyiRoad,337,Youyi Road,regular,Line 3,121.471384511,31.405920883
+Metro_ChangqingRoad,745,Changqing Road,regular,Line 7,121.481698094,31.17661023
+Metro_SouthQilianshanRoad,1324,South Qilianshan Road,regular,Line 13,121.362869603,31.239405116
+Metro_HongqiaoRoad,2044,Hongqiao Road,central,,121.416178272,31.199283289
+Metro_HongqiaoRoad_L03,2044,Hongqiao Road,line,Line 3,121.416678272,31.199283289
+Metro_HongqiaoRoad_L04,2044,Hongqiao Road,line,Line 4,121.415928272,31.199716301701894
+Metro_HongqiaoRoad_L10,2044,Hongqiao Road,line,Line 10,121.415928272,31.198850276298106
+Metro_JiangningRoad,1331,Jiangning Road,regular,Line 13,121.440163596,31.246266848
+Metro_LianhangRoad,821,Lianhang Road,regular,Line 8,121.506222033,31.075710319
+Metro_CaobaoRoad,2038,Caobao Road,central,,121.430310384,31.170171562
+Metro_CaobaoRoad_L01,2038,Caobao Road,line,Line 1,121.430810384,31.170171562
+Metro_CaobaoRoad_L12,2038,Caobao Road,line,Line 12,121.42981038399999,31.170171562
+Metro_EastSanlin,1156,East Sanlin,regular,Line 11,121.518661386,31.148597133000003
+Metro_Shuyuan,1631,Shuyuan,regular,Line 16,121.846216134,30.961601584
+Metro_NewJiangwanCity,1068,New Jiangwan City,regular,Line 10,121.502697658,31.33112066
+Metro_ShangnanRoad,623,Shangnan Road,regular,Line 6,121.502354461,31.15110376
+Metro_LonghuaMiddleRoad,2045,Longhua Middle Road,central,,121.452651529,31.186257229
+Metro_LonghuaMiddleRoad_L07,2045,Longhua Middle Road,line,Line 7,121.453151529,31.186257229
+Metro_LonghuaMiddleRoad_L12,2045,Longhua Middle Road,line,Line 12,121.45215152899999,31.186257229
+Metro_JinyunRoad,1321,Jinyun Road,regular,Line 13,121.314864878,31.242815574
+Metro_QuyangRoad,840,Quyang Road,regular,Line 8,121.486134081,31.278512493
+Metro_FanghuaRoad,751,Fanghua Road,regular,Line 7,121.545954276,31.194881433000003
+Metro_LongxiRoad,1045,Longxi Road,regular,Line 10,121.375244457,31.196193522
+Metro_HechuanRoad,930,Hechuan Road,regular,Line 9,121.380123957,31.168432353000004
+Metro_HongkouFootballStadium,2005,Hongkou Football Stadium,central,,121.47470204,31.273254588
+Metro_HongkouFootballStadium_L03,2005,Hongkou Football Stadium,line,Line 3,121.47520204,31.273254588
+Metro_HongkouFootballStadium_L08,2005,Hongkou Football Stadium,line,Line 8,121.47420204,31.273254588
+Metro_MiddleHuaxiaRoad,1622,Middle Huaxia Road,regular,Line 16,121.578857186,31.178233461
+Metro_YiliRoad,1047,Yili Road,regular,Line 10,121.39921421,31.201064069
+Metro_WuningRoad,1329,Wuning Road,regular,Line 13,121.425915093,31.236185753
+Metro_Xintiandi,2053,Xintiandi,central,,121.470561773,31.218292459
+Metro_Xintiandi_L10,2053,Xintiandi,line,Line 10,121.471061773,31.218292459
+Metro_Xintiandi_L13,2053,Xintiandi,line,Line 13,121.470061773,31.218292459
+Metro_LoushanguanRoad,240,Loushanguan Road,regular,Line 2,121.399743041,31.213019401
+Metro_PusanRoad,1157,Pusan Road,regular,Line 11,121.534488832,31.153109847
+Metro_ZhongchunRoad,927,Zhongchun Road,regular,Line 9,121.332241062,31.150968837
+Metro_YangshupuRoad,415,Yangshupu Road,regular,Line 4,121.512674289,31.254056501
+Metro_SouthLingyanRoad,622,South Lingyan Road,regular,Line 6,121.490806173,31.150842633000003
+Metro_WestJiading,1132,West Jiading,regular,Line 11,121.223424041,31.379042743000003
+Metro_ShanghaiLibrary,1051,Shanghai Library,regular,Line 10,121.441741894,31.211194198
+Metro_QihuaRoad,726,Qihua Road,regular,Line 7,121.368834677,31.324270359
+Metro_SouthYanggaoRoad,749,South Yanggao Road,regular,Line 7,121.520047669,31.189639158
+Metro_LinyiXincun,628,Linyi Xincun,regular,Line 6,121.512700268,31.195301069
+Metro_MinhangDevelopmentZone,513,Minhang Development Zone,regular,Line 5,121.365118845,31.002572281
+Metro_YishanRoad,2051,Yishan Road,central,,121.422615594,31.188486856
+Metro_YishanRoad_L03,2051,Yishan Road,line,Line 3,121.42311559400001,31.188486856
+Metro_YishanRoad_L04,2051,Yishan Road,line,Line 4,121.42236559400001,31.188919868701895
+Metro_YishanRoad_L09,2051,Yishan Road,line,Line 9,121.42236559400001,31.188053843298107
+Metro_Longhua,2012,Longhua,central,,121.448485485,31.17485915
+Metro_Longhua_L11,2012,Longhua,line,Line 11,121.44898548500001,31.17485915
+Metro_Longhua_L12,2012,Longhua,line,Line 12,121.447985485,31.17485915
+Metro_HangzhongRoad,1018,Hangzhong Road,regular,Line 10,121.350339687,31.167316837
+Metro_Qibao,928,Qibao,regular,Line 9,121.345076273,31.157421516
+Metro_ZhenbeiRoad,1325,Zhenbei Road,regular,Line 13,121.377228761,31.234191683
+Metro_ZitengRoad,1019,Ziteng Road,regular,Line 10,121.360100502,31.171575037
+Metro_InternationalCruiseTerminal,1238,International Cruise Terminal,regular,Line 12,121.494592057,31.252401124
+Metro_EastZhoupu,1624,East Zhoupu,regular,Line 16,121.602754092,31.112309544
+Metro_JinjingRoad,1249,Jinjing Road,regular,Line 12,121.610593785,31.281820276
+Metro_SongjiangUniversityTown,922,Songjiang University Town,regular,Line 9,121.228252415,31.056164209
+Metro_NanpuBridge,421,Nanpu Bridge,regular,Line 4,121.494964097,31.210345047
+Metro_CenturyAvenue,2010,Century Avenue,central,,121.522955917,31.230803895
+Metro_CenturyAvenue_L02,2010,Century Avenue,line,Line 2,121.523455917,31.230803895
+Metro_CenturyAvenue_L04,2010,Century Avenue,line,Line 4,121.522955917,31.231303895
+Metro_CenturyAvenue_L06,2010,Century Avenue,line,Line 6,121.522455917,31.230803895
+Metro_CenturyAvenue_L09,2010,Century Avenue,line,Line 9,121.522955917,31.230303895000002
+Metro_ChangshouRoad,2020,Changshou Road,central,,121.433696872,31.241718375
+Metro_ChangshouRoad_L07,2020,Changshou Road,line,Line 7,121.434196872,31.241718375
+Metro_ChangshouRoad_L13,2020,Changshou Road,line,Line 13,121.433196872,31.241718375
+Metro_ShuichanRoad,335,Shuichan Road,regular,Line 3,121.483768106,31.383177516
+Metro_ShanghaiStadium,426,Shanghai Stadium,regular,Line 4,121.438950452,31.187352492
+Metro_LongchangRoad,1243,Longchang Road,regular,Line 12,121.540707808,31.277458786
+Metro_SouthChangjiangRoad,331,South Changjiang Road,regular,Line 3,121.487004553,31.333957359
+Metro_ExpoAvenue,1339,Expo Avenue,regular,Line 13,121.479708201,31.18501371
+Metro_DaduheRoad,1326,Daduhe Road,regular,Line 13,121.389819686,31.233673981
+Metro_JianchuanRoad,508,Jianchuan Road,regular,Line 5,121.411962619,31.028392219
+Metro_Tilanqiao,1239,Tilanqiao,regular,Line 12,121.502585748,31.255518759
+Metro_JinhaiRoad,2022,Jinhai Road,regular,Line 12,121.634358453,31.266432375
+Metro_ShanghaiIndoorStadium,2029,Shanghai Indoor Stadium,central,,121.431603228,31.183782631
+Metro_ShanghaiIndoorStadium_L01,2029,Shanghai Indoor Stadium,line,Line 1,121.432103228,31.183782631
+Metro_ShanghaiIndoorStadium_L04,2029,Shanghai Indoor Stadium,line,Line 4,121.431103228,31.183782631
+Metro_DalianRoad,2032,Dalian Road,central,,121.508367336,31.26024083
+Metro_DalianRoad_L04,2032,Dalian Road,line,Line 4,121.50886733600001,31.26024083
+Metro_DalianRoad_L12,2032,Dalian Road,line,Line 12,121.507867336,31.26024083
+Metro_HongcaoRoad,1225,Hongcao Road,regular,Line 12,121.40572841,31.166154493
+Metro_WestYingaoRoad,330,West Yingao Road,regular,Line 3,121.480433603,31.321846932
+Metro_ShanghaiCircuit,1120,Shanghai Circuit,regular,Line 11,121.221647938,31.33387003
+Metro_HulanRoad,134,Hulan Road,regular,Line 1,121.433106054,31.341600756
+Metro_LingpingRoad,413,Lingping Road,regular,Line 4,121.49643205,31.262993787
+Metro_ShanghaiAutomobileCity,1118,Shanghai Automobile City,regular,Line 11,121.176250907,31.28729941
+Metro_SouthHuangpiRoad,2028,South Huangpi Road,regular,Line 1,121.468716902,31.224666072
+Metro_LongbaiXincun,1020,Longbai Xincun,regular,Line 10,121.365793331,31.179095825
+Metro_PanguangRoad,723,Panguang Road,regular,Line 7,121.351598417,31.365445218
+Metro_LiuHang,724,Liu Hang,regular,Line 7,121.357774726,31.359381323
+Metro_GangchengRoad,648,Gangcheng Road,central,,121.570374974,31.355142146
+Metro_GangchengRoad_L06,648,Gangcheng Road,line,Line 6,121.570874974,31.355142146
+Metro_GangchengRoad_L10,648,Gangcheng Road,line,Line 10,121.569874974,31.355142146
+Metro_ShangchengRoad,941,Shangcheng Road,regular,Line 9,121.512034464,31.232726476
+Metro_SongyuanRoad,1048,Songyuan Road,central,,121.407543286,31.198348293
+Metro_SongyuanRoad_L10,1048,Songyuan Road,line,Line 10,121.40804328600001,31.198348293
+Metro_SongyuanRoad_L12,1048,Songyuan Road,line,Line 12,121.407043286,31.198348293
+Metro_NorthYanggaoRoad,1248,North Yanggao Road,regular,Line 12,121.598573379,31.282251196
+Metro_EastXujing,234,East Xujing,regular,Line 2,121.295031968,31.190426253
+Metro_XingzhongRoad,929,Xingzhong Road,regular,Line 9,121.364298895,31.160014256
+Metro_HuangxingPark,846,Huangxing Park,regular,Line 8,121.52862169,31.298126414
+Metro_XiuyanRoad,1161,Xiuyan Road,regular,Line 11,121.594253458,31.140388537
+Metro_ZhangjiangHiTechPark,253,Zhangjiang Hi-Tech Park,regular,Line 2,121.583445308,31.204000442
+Metro_GreatWorld,834,Great World,regular,Line 8,121.474712385,31.229130521
+Metro_MiddleYanggaoRoad,943,Middle Yanggao Road,regular,Line 9,121.544387644,31.229674097
+Metro_LongcaoRoad,2048,Longcao Road,central,,121.439715575,31.171622034
+Metro_LongcaoRoad_L03,2048,Longcao Road,line,Line 3,121.440215575,31.171622034
+Metro_LongcaoRoad_L12,2048,Longcao Road,line,Line 12,121.43921557499999,31.171622034
+Metro_ShanghaiChildrensMedicalCenter,629,Shanghai Children's Medical Center,regular,Line 6,121.51890689,31.204842461
+Metro_ShanghaiNaturalHistoryMuseum,1333,Shanghai Natural History Museum,regular,Line 13,121.457823884,31.238327541
+Metro_Sijing,925,Sijing,regular,Line 9,121.2559243,31.120403035
+Metro_ZhaofengRoad,1116,Zhaofeng Road,regular,Line 11,121.145740322,31.290849897
+Metro_WulianRoad,640,Wulian Road,regular,Line 6,121.58378743,31.27414907
+Metro_QixinRoad,1220,Qixin Road,regular,Line 12,121.35721193,31.132914547
+Metro_Dabaishu,328,Dabaishu,regular,Line 3,121.47870274,31.291415275
+Metro_SipingRoad,2018,Siping Road,central,,121.497061344,31.276968216
+Metro_SipingRoad_L08,2018,Siping Road,line,Line 8,121.497561344,31.276968216
+Metro_SipingRoad_L10,2018,Siping Road,line,Line 10,121.496561344,31.276968216
+Metro_NorthXizangRoad,838,North Xizang Road,regular,Line 8,121.464264315,31.265306644
+Metro_Fengzhuang,1323,Fengzhuang,regular,Line 13,121.350698505,31.244292623000003
+Metro_SongjiangNewCity,921,Songjiang New City,regular,Line 9,121.226340383,31.032245093
+Metro_ChangshuRoad,2017,Changshu Road,central,,121.446512851,31.215311025
+Metro_ChangshuRoad_L01,2017,Changshu Road,line,Line 1,121.447012851,31.215311025
+Metro_ChangshuRoad_L07,2017,Changshu Road,line,Line 7,121.44601285099999,31.215311025
+Metro_Xujiahui,2025,Xujiahui,central,,121.433617821,31.193882267
+Metro_Xujiahui_L01,2025,Xujiahui,line,Line 1,121.434117821,31.193882267
+Metro_Xujiahui_L09,2025,Xujiahui,line,Line 9,121.433367821,31.194315279701893
+Metro_Xujiahui_L11,2025,Xujiahui,line,Line 11,121.433367821,31.193449254298105
+Metro_HengshanRoad,119,Hengshan Road,regular,Line 1,121.441944506,31.206619041
+Metro_HangjinRoad,646,Hangjin Road,regular,Line 6,121.589807171,31.337549811
+Metro_ShiguangRoad,849,Shiguang Road,regular,Line 8,121.527610735,31.324729476
+Metro_MadangRoad,2031,Madang Road,central,,121.472724523,31.211562334
+Metro_MadangRoad_L09,2031,Madang Road,line,Line 9,121.473224523,31.211562334
+Metro_MadangRoad_L13,2031,Madang Road,line,Line 13,121.472224523,31.211562334
+Metro_Huaqiao,1114,Huaqiao,regular,Line 11,121.099702972,31.300398755
+Metro_WuzhouAvenue,643,Wuzhou Avenue,regular,Line 6,121.585133606,31.304728889
+Metro_GuilinRoad,932,Guilin Road,regular,Line 9,121.413652527,31.176699229
+Metro_ZhongxingRoad,837,Zhongxing Road,regular,Line 8,121.464500701,31.255223204
+Metro_XinzhaRoad,124,Xinzha Road,regular,Line 1,121.463493379,31.24067856
+Metro_JiadingNewCity,1134,Jiading New City,regular,Line 11,121.249887524,31.332106143
+Metro_YuandongAvenue,261,Yuandong Avenue,regular,Line 2,121.751012842,31.201430591
+Metro_WestJinshajiangRoad,1322,West Jinshajiang Road,regular,Line 13,121.330754923,31.243072825
+Metro_Houtan,744,Houtan,regular,Line 7,121.469379488,31.174029921
+Metro_EastNanjingRoad,2019,East Nanjing Road,central,,121.478953029,31.239024894
+Metro_EastNanjingRoad_L02,2019,East Nanjing Road,line,Line 2,121.479453029,31.239024894
+Metro_EastNanjingRoad_L10,2019,East Nanjing Road,line,Line 10,121.478453029,31.239024894
+Metro_ZhongshanPark,2043,Zhongshan Park,central,,121.412622045,31.220078902
+Metro_ZhongshanPark_L02,2043,Zhongshan Park,line,Line 2,121.41312204500001,31.220078902
+Metro_ZhongshanPark_L03,2043,Zhongshan Park,line,Line 3,121.41237204500001,31.220511914701895
+Metro_ZhongshanPark_L04,2043,Zhongshan Park,line,Line 4,121.41237204500001,31.219645889298107
+Metro_ChuangxinCentralRoad,257,Chuangxin Central Road,regular,Line 2,121.669574879,31.215686458
+Metro_ShilongRoad,312,Shilong Road,regular,Line 3,121.438667977,31.159856731
+Metro_ZhenpingRoad,2024,Zhenping Road,central,,121.425155934,31.248182892
+Metro_ZhenpingRoad_L03,2024,Zhenping Road,line,Line 3,121.425655934,31.248182892
+Metro_ZhenpingRoad_L04,2024,Zhenping Road,line,Line 4,121.42490593400001,31.248615904701893
+Metro_ZhenpingRoad_L07,2024,Zhenping Road,line,Line 7,121.42490593400001,31.247749879298105
+Metro_TongjiUniversity,1062,Tongji University,regular,Line 10,121.501792382,31.283944779
+Metro_MeilanLake,721,Meilan Lake,regular,Line 7,121.345259511,31.403775779
+Metro_HongqiaoTerminal1,1043,Hongqiao Terminal 1,regular,Line 10,121.342591804,31.193518019000003
+Metro_ShanghaiSouthRailwayStation,2027,Shanghai South Railway Station,central,,121.425368538,31.15649931
+Metro_ShanghaiSouthRailwayStation_L01,2027,Shanghai South Railway Station,line,Line 1,121.425868538,31.15649931
+Metro_ShanghaiSouthRailwayStation_L03,2027,Shanghai South Railway Station,line,Line 3,121.424868538,31.15649931
+Metro_JiangwanTown,329,Jiangwan Town,regular,Line 3,121.480588797,31.307468902
+Metro_ZhaojiabangRoad,2003,Zhaojiabang Road,central,,121.445871009,31.200675112
+Metro_ZhaojiabangRoad_L07,2003,Zhaojiabang Road,line,Line 7,121.446371009,31.200675112
+Metro_ZhaojiabangRoad_L09,2003,Zhaojiabang Road,line,Line 9,121.445371009,31.200675112
+Metro_NorthWaigaoqiaoFreeTradeZoneStation,647,North Waigaoqiao Free Trade Zone Station,regular,Line 6,121.582724831,31.349940744
+Metro_WenjingRoad,512,Wenjing Road,regular,Line 5,121.376150158,31.005526962
+Metro_DishuiLake,1633,Dishui Lake,regular,Line 16,121.925777167,30.909305386
+Metro_SouthShaanxiRoad,2056,South Shaanxi Road,central,,121.455464091,31.21914496
+Metro_SouthShaanxiRoad_L01,2056,South Shaanxi Road,line,Line 1,121.455964091,31.21914496
+Metro_SouthShaanxiRoad_L10,2056,South Shaanxi Road,line,Line 10,121.455214091,31.219577972701895
+Metro_SouthShaanxiRoad_L12,2056,South Shaanxi Road,line,Line 12,121.455214091,31.218711947298107
+Metro_DongluRoad,1246,Donglu Road,regular,Line 12,121.57507366,31.284688952
+Metro_YunjinRoad,1152,Yunjin Road,regular,Line 11,121.453824439,31.169478023000003
+Metro_SouthWaigaoqiaoFreeTradeZoneStation,645,South Waigaoqiao Free Trade Zone Station,regular,Line 6,121.59778165,31.323763133000003
+Metro_NingguoRoad,1242,Ningguo Road,regular,Line 12,121.527936109,31.270559692
+Metro_OrientalSportsCenter,2040,Oriental Sports Center,central,,121.476423914,31.15531154
+Metro_OrientalSportsCenter_L06,2040,Oriental Sports Center,line,Line 6,121.476923914,31.15531154
+Metro_OrientalSportsCenter_L08,2040,Oriental Sports Center,line,Line 8,121.476173914,31.155744552701893
+Metro_OrientalSportsCenter_L11,2040,Oriental Sports Center,line,Line 11,121.476173914,31.154878527298106
+Metro_ShanghaiUniversity,727,Shanghai University,regular,Line 7,121.384324697,31.322373451
+Metro_QufuRoad,2021,Qufu Road,central,,121.467113891,31.244662253
+Metro_QufuRoad_L08,2021,Qufu Road,line,Line 8,121.467613891,31.244662253
+Metro_QufuRoad_L12,2021,Qufu Road,line,Line 12,121.466613891,31.244662253
+Metro_Liziyuan,1141,Liziyuan,regular,Line 11,121.385192546,31.270865609
+Metro_LingkongRoad,260,Lingkong Road,regular,Line 2,121.719371563,31.194796045
+Metro_PudianRoad,2049,Pudian Road,central,,121.527848943,31.224457288000004
+Metro_PudianRoad_L04,2049,Pudian Road,line,Line 4,121.528348943,31.224457288000004
+Metro_PudianRoad_L06,2049,Pudian Road,line,Line 6,121.52734894299999,31.224457288000004
+Metro_LangaoRoad,735,Langao Road,regular,Line 7,121.417161444,31.257880611
+Metro_Nanxiang,1137,Nanxiang,regular,Line 11,121.318651748,31.298837137
+Metro_LongyaoRoad,1153,Longyao Road,central,,121.455131976,31.161590898000004
+Metro_LongyaoRoad_L06,1153,Longyao Road,line,Line 6,121.455631976,31.161590898000004
+Metro_LongyaoRoad_L11,1153,Longyao Road,line,Line 11,121.454631976,31.161590898000004
+Metro_ChangpingRoad,738,Changping Road,regular,Line 7,121.43788726,31.235646924
+Metro_DamuqiaoRoad,2007,Damuqiao Road,central,,121.458937996,31.195957765
+Metro_DamuqiaoRoad_L04,2007,Damuqiao Road,line,Line 4,121.459437996,31.195957765
+Metro_DamuqiaoRoad_L12,2007,Damuqiao Road,line,Line 12,121.458437996,31.195957765
+Metro_DepingRoad,636,Deping Road,regular,Line 6,121.559841511,31.247492601
+Metro_HangtouEast,1626,Hangtou East,regular,Line 16,121.613286958,31.05724005
+Metro_HongqiaoRailwayStation,2014,Hongqiao Railway Station,central,,121.313063017,31.196155828
+Metro_HongqiaoRailwayStation_L02,2014,Hongqiao Railway Station,line,Line 2,121.313563017,31.196155828
+Metro_HongqiaoRailwayStation_L10,2014,Hongqiao Railway Station,line,Line 10,121.312563017,31.196155828
+Metro_CaoxiRoad,314,Caoxi Road,regular,Line 3,121.433731362,31.178643733
+Metro_ShanghaiRailwayStation,2034,Shanghai Railway Station,central,,121.451257271,31.249149419
+Metro_ShanghaiRailwayStation_L01,2034,Shanghai Railway Station,line,Line 1,121.451757271,31.249149419
+Metro_ShanghaiRailwayStation_L03,2034,Shanghai Railway Station,line,Line 3,121.45100727100001,31.249582431701892
+Metro_ShanghaiRailwayStation_L04,2034,Shanghai Railway Station,line,Line 4,121.45100727100001,31.248716406298104
+Metro_YuanshenSportsCenter,633,Yuanshen Sports Center,regular,Line 6,121.530378145,31.235143094
+Metro_SongbinRoad,334,Songbin Road,regular,Line 3,121.488635629,31.372264208
+Metro_MinshengRoad,634,Minsheng Road,regular,Line 6,121.53961142,31.238147385
+Metro_ChinaArtMuseum,830,China Art Museum,regular,Line 8,121.489343642,31.18724117
+Metro_AiguoRoad,1244,Aiguo Road,regular,Line 12,121.548415693,31.281994036
+Metro_LubanRoad,423,Luban Road,regular,Line 4,121.470721641,31.201255467
+Metro_Jiuting,926,Jiuting,regular,Line 9,121.315099332,31.139406939
+Metro_GudaiRoad,1222,Gudai Road,regular,Line 12,121.387239321,31.142693849
+Metro_GuoquanRoad,1063,Guoquan Road,regular,Line 10,121.50566807,31.291328446
+Metro_JingpingRoad,510, Jingping Road,regular,Line 5,121.405597024,31.013174969
+Metro_ZhongtanRoad,2001,Zhongtan Road,central,,121.436350839,31.256450861
+Metro_ZhongtanRoad_L03,2001,Zhongtan Road,line,Line 3,121.436850839,31.256450861
+Metro_ZhongtanRoad_L04,2001,Zhongtan Road,line,Line 4,121.435850839,31.256450861
+Metro_Haitian3rdRoad,262,Haitian 3rd Road,regular,Line 2,121.792700291,31.170492685
+Metro_BeiyangjingRoad,635,Beiyangjing Road,regular,Line 6,121.547873193,31.24121507
+Metro_Wujiaochang,1064,Wujiaochang,regular,Line 10,121.510067542,31.2997292
+Metro_Zhuanqiao,505,Zhuanqiao,regular,Line 5,121.397229638,31.068926951
+Metro_WeiningRoad,239,Weining Road,regular,Line 2,121.382591045,31.216888017
+Metro_Laoximen,2008,Laoximen,central,,121.478279894,31.221015196
+Metro_Laoximen_L08,2008,Laoximen,line,Line 8,121.478779894,31.221015196
+Metro_Laoximen_L10,2008,Laoximen,line,Line 10,121.477779894,31.221015196
+Metro_ChifengRoad,327,Chifeng Road,regular,Line 3,121.477955068,31.283218029
+Metro_BaiyinRoad,1133,Baiyin Road,regular,Line 11,121.240967331,31.347225544
+Metro_ShanghaiWildAnimalPark,1628,Shanghai Wild Animal Park,regular,Line 16,121.695438606,31.052487249
+Metro_Tangzhen,256,Tangzhen,regular,Line 2,121.652313671,31.216483578
+Metro_YoudianXincun,1060,Youdian Xincun,regular,Line 10,121.489789828,31.270427704
+Metro_NenjiangRoad,848,Nenjiang Road,regular,Line 8,121.527373151,31.316802024
+Metro_HanzhongRoad,2039,Hanzhong Road,central,,121.454089429,31.24375272
+Metro_HanzhongRoad_L01,2039,Hanzhong Road,line,Line 1,121.45458942900001,31.24375272
+Metro_HanzhongRoad_L12,2039,Hanzhong Road,line,Line 12,121.45383942900001,31.244185732701894
+Metro_HanzhongRoad_L13,2039,Hanzhong Road,line,Line 13,121.45383942900001,31.243319707298106
+Metro_ShuichengRoad,1046,Shuicheng Road,regular,Line 10,121.38734927,31.201321803000003
+Metro_HuinanEast,1630,Huinan East,regular,Line 16,121.789523971,31.02841678
+Metro_JinxiuRoad,750,Jinxiu Road,regular,Line 7,121.535752807,31.189635096
+Metro_KangxinHighway,1162,Kangxin Highway,regular,Line 11,121.613030242,31.132655073
+Metro_CaoyangRoad,2055,Caoyang Road,central,,121.413156251,31.241192686
+Metro_CaoyangRoad_L03,2055,Caoyang Road,line,Line 3,121.413656251,31.241192686
+Metro_CaoyangRoad_L04,2055,Caoyang Road,line,Line 4,121.41290625100001,31.241625698701895
+Metro_CaoyangRoad_L11,2055,Caoyang Road,line,Line 11,121.41290625100001,31.240759673298108
+Metro_NanchenRoad,728,Nanchen Road,regular,Line 7,121.394081532,31.323554777
+Metro_GongkangRoad,132,Gongkang Road,regular,Line 1,121.442452627,31.320858825
+Metro_LuonanXincun,722,Luonan Xincun,regular,Line 7,121.35280146,31.39059269
+Metro_DongchangRoad,248,Dongchang Road,regular,Line 2,121.511146849,31.235374664
+Metro_Sheshan,924,Sheshan,regular,Line 9,121.225311253,31.10625363
+Metro_LuhengRoad,824,Luheng Road,regular,Line 8,121.493805184,31.120878108000003
+Metro_GuanglanRoad,255,Guanglan Road,regular,Line 2,121.616923077,31.213126633
+Metro_DonganRoad,2006,Dong'an Road,central,,121.4499314,31.19256869
+Metro_DonganRoad_L04,2006,Dong'an Road,line,Line 4,121.4504314,31.19256869
+Metro_DonganRoad_L07,2006,Dong'an Road,line,Line 7,121.4494314,31.19256869
+Metro_WestYananRoad,2046,West Yan'an Road,central,,121.412433163,31.21145601
+Metro_WestYananRoad_L03,2046,West Yan'an Road,line,Line 3,121.412933163,31.21145601
+Metro_WestYananRoad_L04,2046,West Yan'an Road,line,Line 4,121.411933163,31.21145601
+Metro_HuamuRoad,753,Huamu Road,regular,Line 7,121.558661905,31.213026204
+Metro_XiangyinRoad,847,Xiangyin Road,regular,Line 8,121.527501152,31.307201218000003
+Metro_LuoshanRoad,2042,Luoshan Road,central,,121.588971931,31.155506111
+Metro_LuoshanRoad_L11,2042,Luoshan Road,line,Line 11,121.589471931,31.155506111
+Metro_LuoshanRoad_L16,2042,Luoshan Road,line,Line 16,121.588471931,31.155506111
+Metro_AnshanXincun,842,Anshan Xincun,regular,Line 8,121.505160723,31.275299223
+Metro_YinduRoad,503,Yindu Road,regular,Line 5,121.385726775,31.091103672
+Metro_LujiabangRoad,2036,Lujiabang Road,central,,121.481629339,31.213855096
+Metro_LujiabangRoad_L08,2036,Lujiabang Road,line,Line 8,121.482129339,31.213855096
+Metro_LujiabangRoad_L09,2036,Lujiabang Road,line,Line 9,121.48112933899999,31.213855096
+Metro_HailunRoad,2047,Hailun Road,central,,121.485286062,31.260924792
+Metro_HailunRoad_L04,2047,Hailun Road,line,Line 4,121.485786062,31.260924792
+Metro_HailunRoad_L10,2047,Hailun Road,line,Line 10,121.484786062,31.260924792
+Metro_YanchangRoad,128,Yanchang Road,regular,Line 1,121.450712025,31.273307641
+Metro_Chuansha,259,Chuansha,regular,Line 2,121.69397627,31.188872391
+Metro_SongfaRoad,332,Songfa Road,regular,Line 3,121.495949213,31.347075743
+Metro_ShenduHighway,820,Shendu Highway,regular,Line 8,121.507905886,31.063523541
+Metro_GuilinPark,1226,Guilin Park,regular,Line 12,121.415287723,31.169028586
+Metro_PengpuXincun,131,Pengpu Xincun,regular,Line 1,121.444082899,31.30850675
+Metro_YaohuaRoad,2016,Yaohua Road,central,,121.490091266,31.180529911
+Metro_YaohuaRoad_L07,2016,Yaohua Road,line,Line 7,121.490591266,31.180529911
+Metro_YaohuaRoad_L08,2016,Yaohua Road,line,Line 8,121.48959126599999,31.180529911
+Metro_Zhenru,1143,Zhenru,regular,Line 11,121.402592639,31.252631342
+Metro_Malu,1135,Malu,regular,Line 11,121.272439838,31.321597357
+Metro_GaoqingRoad,625,Gaoqing Road,regular,Line 6,121.511143798,31.161859926
+Metro_JiangwanStadium,1065,Jiangwan Stadium,regular,Line 10,121.509729601,31.305442827
+Metro_JiaotongUniversity,2037,Jiaotong University,central,,121.429716393,31.203733942
+Metro_JiaotongUniversity_L10,2037,Jiaotong University,line,Line 10,121.43021639300001,31.203733942
+Metro_JiaotongUniversity_L11,2037,Jiaotong University,line,Line 11,121.429216393,31.203733942
+Metro_TieliRoad,338,Tieli Road,regular,Line 3,121.456448336,31.409918876
+Metro_DongmingRoad,626,Dongming Road,regular,Line 6,121.506212539,31.174923735
+Metro_Dongjing,923,Dongjing,regular,Line 9,121.226085386,31.086565625
+Metro_JiangyueRoad,822,Jiangyue Road,regular,Line 8,121.504236848,31.086342078
+Metro_CaohejingHiTechPark,931,Caohejing Hi-Tech Park,regular,Line 9,121.393065079,31.172459594
+Metro_LingzhaoXincun,825,Lingzhao Xincun,regular,Line 8,121.48489117,31.143021235
+Metro_GucunPark,725,Gucun Park,regular,Line 7,121.368320304,31.34649161
+Metro_JiangsuRoad,2054,Jiangsu Road,central,,121.427966595,31.221768963
+Metro_JiangsuRoad_L02,2054,Jiangsu Road,line,Line 2,121.428466595,31.221768963
+Metro_JiangsuRoad_L11,2054,Jiangsu Road,line,Line 11,121.427466595,31.221768963
+Metro_Zuibaichi,919,Zuibaichi,regular,Line 9,121.224717028,31.002760868000003
+Metro_DongjingRoad,642,Dongjing Road,regular,Line 6,121.584663712,31.293153416
+Metro_GuangmingRoad,1115,Guangming Road,regular,Line 11,121.112634001,31.298066751

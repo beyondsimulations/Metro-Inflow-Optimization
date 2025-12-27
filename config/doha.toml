@@ -1,0 +1,16 @@
+# Doha Metro Configuration
+
+[region]
+name = "doha"
+display_name = "Doha Metro"
+
+[paths]
+base_dir = "data_public/Doha"
+metroarcs_file = "metroarcs_doha.csv"
+stations_file = "stations_doha.csv"
+od_file_pattern = "OD_{date}.csv"
+
+[time]
+interval_minutes = 15           # Doha data has 15-minute resolution
+closed_hours = [3, 4, 5]        # Metro closed during these hours
+date_format = "yyyy-mm-dd"

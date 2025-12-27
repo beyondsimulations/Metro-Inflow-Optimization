@@ -1,0 +1,16 @@
+# Shanghai Metro Configuration
+
+[region]
+name = "shanghai"
+display_name = "Shanghai Metro"
+
+[paths]
+base_dir = "data_public/Shanghai"
+metroarcs_file = "metroarcs_shanghai.csv"
+stations_file = "stationInfo.csv"
+od_file_pattern = "OD_{date}.csv"
+
+[time]
+interval_minutes = 10           # Shanghai data has 10-minute resolution
+closed_hours = [3, 4]           # Metro closed during these hours
+date_format = "yyyy-mm-dd"

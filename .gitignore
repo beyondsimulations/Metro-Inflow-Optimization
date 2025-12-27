@@ -26,4 +26,7 @@ Manifest.toml
 # MacOS Files
 .DS_Store
 results
-data_public
+data_public/doha
+data_public/Shanghai/metroData_InOutFlow.csv
+data_public/Shanghai/metroData_ODFlow.csv
+data_public/Shanghai/OD_*.csv

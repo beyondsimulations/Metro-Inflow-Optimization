@@ -5,21 +5,33 @@
 
 set -e  # Exit on any error
 
+# Region configuration file (change this for different regions)
+# Options: config/doha.toml, config/shanghai.toml
+CONFIG="config/doha.toml"
+
 # Define multiple time periods to analyze
 # Each element should be in format "start_time,end_time"
+# Doha example dates:
 TIME_PERIODS=(
     #"2022-11-27T05:00:00.00,2022-11-28T04:59:00.00"
     #"2022-11-28T05:00:00.00,2022-11-29T04:59:00.00"
     "2022-11-29T05:00:00.00,2022-11-30T04:59:00.00"
 )
+# Shanghai example dates (after running transform_od.jl):
+# TIME_PERIODS=(
+#     "2017-05-08T05:00:00.00,2017-05-09T04:59:00.00"
+# )
 
 # Array of minutes_in_period values to test (you can modify this list)
+# For Doha (15-min intervals): use multiples of 15
+# For Shanghai (10-min intervals): use multiples of 10
 MINUTES_VALUES=(15 30 45 60)
 
 # Base session name
 SESSION_BASE="metro_framework"
 
 echo "Starting Metro Framework parallel execution..."
+echo "Configuration: $CONFIG"
 echo "Time periods to analyze: ${#TIME_PERIODS[@]}"
 for i in "${!TIME_PERIODS[@]}"; do
     IFS=',' read -r start_time end_time <<< "${TIME_PERIODS[$i]}"
@@ -81,14 +93,15 @@ create_session_with_windows() {
         tmux send-keys -t "$window_target" "cd $(pwd)" Enter
         tmux send-keys -t "$window_target" "echo '=========================================='" Enter
         tmux send-keys -t "$window_target" "echo 'Metro Framework - Time Period $time_index'" Enter
+        tmux send-keys -t "$window_target" "echo 'Configuration: $CONFIG'" Enter
         tmux send-keys -t "$window_target" "echo 'Minutes in period: $minutes'" Enter
         tmux send-keys -t "$window_target" "echo 'Start time: $start_time'" Enter
         tmux send-keys -t "$window_target" "echo 'End time: $end_time'" Enter
         tmux send-keys -t "$window_target" "echo '=========================================='" Enter
         tmux send-keys -t "$window_target" "echo 'Starting computation...'" Enter
 
-        # Run the Julia script
-        tmux send-keys -t "$window_target" "julia metro_framework_parallel.jl $minutes '$start_time' '$end_time'" Enter
+        # Run the Julia script with config
+        tmux send-keys -t "$window_target" "julia metro_framework_parallel.jl --config $CONFIG $minutes '$start_time' '$end_time'" Enter
 
         # Small delay between window setups
         sleep 0.5

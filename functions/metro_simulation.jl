@@ -1,16 +1,17 @@
 """
-    create_od_queue!(im, real_od_queue)
+    create_od_queue!(im, real_od_queue, config)
 
 Purpose: Initializes a tensor that tracks passenger demand by time, origin, and destination.
-Details: Loads raw demand data and distributes it across 15-minute intervals to create a minute-by-minute representation of passenger demand between all station pairs.
+Details: Loads raw demand data and distributes it across time intervals (based on config.interval_minutes) to create a minute-by-minute representation of passenger demand between all station pairs.
 """
-function create_od_queue!(im, real_od_queue)
-    demand = load_demand()
+function create_od_queue!(im, real_od_queue, config)
+    demand = load_demand(config)
     timesteps = start_time:Minute(1):end_time
     timestep_id = Dict(timesteps[i] => i for i in eachindex(timesteps))
+    interval = config.interval_minutes
     for data in eachrow(demand)
-        for minutestep in data.datetime:Minute(1):data.datetime+Minute(14)
-            real_od_queue[timestep_id[minutestep], d_node_id[data.origin], d_node_id[data.destination]] = (data.value * im.scaling) / 15
+        for minutestep in data.datetime:Minute(1):data.datetime+Minute(interval - 1)
+            real_od_queue[timestep_id[minutestep], d_node_id[data.origin], d_node_id[data.destination]] = (data.value * im.scaling) / interval
         end
     end
 
@@ -31,7 +32,7 @@ function create_entry_list!(im, real_allowed_entry, queues)
 end
 
 """
-    simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_period_age, infeasible_solutions)
+    simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_period_age, infeasible_solutions, config)
 
 Purpose: Simulates passenger flow through the metro network given entry constraints and demand patterns.
 Details: Performs a minute-by-minute simulation that:
@@ -53,7 +54,7 @@ The function also:
 
 Returns: Two DataFrames with simulation results - station queue information and arc utilization data
 """
-function simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_period_age, infeasible_solutions)
+function simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_period_age, infeasible_solutions, config)
     real_arc_use = zeros(Float64, im.nr_minutes, im.nr_arcs)
     real_queue_use = zeros(Float64, im.nr_minutes, im.nr_nodes)
     real_od_queue = zeros(Float64, im.nr_minutes, im.nr_nodes, im.nr_nodes)
@@ -61,7 +62,7 @@ function simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_per
     exceeded = Vector{String}
 
     ## load all queues into a tensor
-    create_od_queue!(im, real_od_queue)
+    create_od_queue!(im, real_od_queue, config)
 
     ## create the list that saves the number of allowed people
     real_allowed_entry = zeros(Float64, im.nr_minutes, im.nr_nodes)
@@ -253,13 +254,16 @@ function simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_per
         safety_090quant=quantile(sf, 0.90),
     ))
 
-    CSV.write("logfile_$(start_time)_$(minutes_in_period).csv", logfile)
+    # Save logfile to both root folder and results folder
+    logfile_name = "logfile_$(config.name)_$(start_time)_$(minutes_in_period).csv"
+    CSV.write(logfile_name, logfile)
+    CSV.write("results/$logfile_name", logfile)
 
-    CSV.write("results/queues/sim_queues_$(start_time)_$(minutes_in_period)_$(im.safety_factor),$(string(start_time) * " to " * string(end_time)),$(im.minutes_in_period),$(im.past_minutes),$(im.max_entry_origin),$(im.min_entry_origin),$(im.scaling),$(im.kind_opt),$(kind_sim),$(im.kind_queue).csv",
+    CSV.write("results/queues/sim_queues_$(config.name)_$(im.safety_factor)_$(im.minutes_in_period)_$(im.past_minutes)_$(im.max_entry_origin)_$(im.min_entry_origin)_$(im.scaling)_$(im.kind_opt)_$(kind_sim)_$(im.kind_queue).csv",
         sim_queues
     )
 
-    CSV.write("results/arcs/sim_arcs_$(start_time)_$(minutes_in_period)_$(im.safety_factor),$(string(start_time) * " to " * string(end_time)),$(im.minutes_in_period),$(im.past_minutes),$(im.max_entry_origin),$(im.min_entry_origin),$(im.scaling),$(im.kind_opt),$(kind_sim),$(im.kind_queue).csv",
+    CSV.write("results/arcs/sim_arcs_$(config.name)_$(im.safety_factor)_$(im.minutes_in_period)_$(im.past_minutes)_$(im.max_entry_origin)_$(im.min_entry_origin)_$(im.scaling)_$(im.kind_opt)_$(kind_sim)_$(im.kind_queue).csv",
         sim_arcs
     )
     return sim_queues, sim_arcs

@@ -1,23 +1,30 @@
 """
-    load_demand()
+    load_demand(config::RegionConfig)
 
 Purpose: Loads passenger demand data from CSV files for the specified date range and time window.
-Details: Reads multiple daily CSV files, combines them, and filters the data to only include entries between start_time and end_time.
+Details: Reads multiple daily CSV files from the configured region directory, combines them, and filters the data to only include entries between start_time and end_time.
 Returns: A DataFrame containing the filtered demand data.
 """
-function load_demand()
-    demand = []
+function load_demand(config::RegionConfig)
+    demand = DataFrame()
 
     # Iterate over each day in the date range
     for day in eachindex(daterange)
-        # If this is the first day, read the demand data from the corresponding CSV file
-        if day == 1
-            demand = CSV.read("data_demand/OD_$(daterange[day]).csv", DataFrame)
+        filepath = get_od_filepath(config, daterange[day])
 
-            # Otherwise, concatenate the demand data from the previous days with the current day's data
-        else
-            demand = vcat(demand, CSV.read("data_demand/OD_$(daterange[day]).csv", DataFrame))
+        # Check if file exists
+        if !isfile(filepath)
+            @warn "OD file not found, skipping: $filepath"
+            continue
         end
+
+        # Read and concatenate demand data
+        day_demand = CSV.read(filepath, DataFrame)
+        demand = isempty(demand) ? day_demand : vcat(demand, day_demand)
+    end
+
+    if isempty(demand)
+        error("No demand data found for date range $(daterange[1]) to $(daterange[end]) in $(config.base_dir)")
     end
 
     # Filter the demand data to include only the data within the specified time range (start_time and end_time)
@@ -28,16 +35,16 @@ function load_demand()
 end
 
 """
-    aggregate_demand()
+    aggregate_demand(config::RegionConfig)
 
 Purpose: Processes raw demand data into a summarized format grouped by origin, destination, and time period.
 Details: Calls load_demand() to get raw data, maps each minute to a specific period, and then groups and sums demand values.
 Returns: A DataFrame with aggregated demand values by origin, destination, and time period.
 """
-function aggregate_demand()
+function aggregate_demand(config::RegionConfig)
 
     # Load the demand data for the specified time range
-    demand = load_demand()
+    demand = load_demand(config)
 
     # Create a mapping from periods to date ranges
     timesteps = start_time:Minute(1):end_time
