@@ -12,16 +12,19 @@ od_file_pattern = "OD_{date}.csv"
 
 [time]
 interval_minutes = 10           # Shanghai data has 10-minute resolution
-closed_hours = [3, 4]           # Metro closed during these hours
+closed_hours = [0, 1, 2, 3, 4]  # Metro closed during these hours
 date_format = "yyyy-mm-dd"
 
 [optimization]
 # Parameters from paper: α=0.9, c_o^min=20, c_o^max=120, m=30, s̄=4
-safety_factors = [0.9]          # α: arc capacity safety factor
-min_enter = [20]                # c_o^min: minimum entries per minute per station
-max_enter = [120]               # c_o^max: maximum entries per minute per station
-scaling_factors = [1.0, 1.1, 1.2]  # demand scaling (+10%, +20%)
-past_periods = [4]              # s̄: number of past periods to consider
-minutes_in_period = [10, 20, 30, 40, 50, 60]  # m: optimization period lengths
-kind_opt = ["linweight"]        # optimization objective type
-kind_queue = ["shift_periods"]  # queue handling method
+safety_factors = [1.0]            # α: arc capacity safety factor
+min_enter = [0]                   # c_o^min: minimum entries per minute per station
+max_enter = [1000]                # c_o^max: maximum entries per minute per station
+scaling_factors = [1.0, 1.1, 1.2] # demand scaling (+10%, +20%)
+past_periods = [4]                # s̄: number of past periods to consider
+kind_opt = ["linweight"]          # optimization objective type
+kind_queue = ["shift_periods"]    # queue handling method
+
+# Reference only - not used by metro_framework_parallel.jl
+# The actual minutes_in_period is passed as CLI argument (see run_sequential_metro.sh)
+minutes_in_period = [20, 40, 60]  # m: optimization period lengths (documentation only)

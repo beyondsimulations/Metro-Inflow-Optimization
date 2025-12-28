@@ -64,21 +64,21 @@ function heuristic_adding_queues(im)
         println("Total Queue Length")
         println(round.(Int64, sum(im.cum_demand_od_in_period[:, :, fix_period])))
 
-        model, X = build_restricted_optimization_model(im, fix_period, queue_period_age, inflow_raw)
+        if im.closed_period[fix_period] == false
+            # Only build and solve model during open periods
+            model, X = build_restricted_optimization_model(im, fix_period, queue_period_age, inflow_raw)
 
-        for o in 1:im.nr_nodes
-            if fix_period > 1
-                for p in lower_period:fix_period-1
-                    if inflow_raw[o, p] > 0.0001
-                        fix(X[o, p], inflow_raw[o, p]; force=true)
-                    else
-                        fix(X[o, p], 0; force=true)
+            for o in 1:im.nr_nodes
+                if fix_period > 1
+                    for p in lower_period:fix_period-1
+                        if inflow_raw[o, p] > 0.0001
+                            fix(X[o, p], inflow_raw[o, p]; force=true)
+                        else
+                            fix(X[o, p], 0; force=true)
+                        end
                     end
                 end
             end
-        end
-
-        if im.closed_period[fix_period] == false
 
             optimization_duration[fix_period] = @elapsed optimize!(model)
 
@@ -94,7 +94,13 @@ function heuristic_adding_queues(im)
                 infeasible_solutions += 1
                 inflow_raw[:, fix_period] .= 0
             end
+
+            # Release model memory to prevent RAM accumulation
+            empty!(model)
+            GC.gc()
         else
+            # Closed period: skip model building entirely
+            println("Skipping closed period $fix_period")
             inflow_raw[:, fix_period] .= 0
         end
 
@@ -151,45 +157,74 @@ function heuristic_adding_queues(im)
     display(plot(transpose(save_queue), title="Queue Length", label=""))
     display(plot(transpose(queue_period_age), title="Waiting", label=""))
 
-    results_queues = DataFrame(datetime=DateTime[], station=String[], allowed=Int64[], moved=Int64[], queued=Int64[])
-    results_arcs = DataFrame(datetime=DateTime[], connection=Int64[], line=String[], utilization_aggregated=Float64[], utilization_period=Float64[])
+    println("Computing arc utilization metrics...")
+    # Precompute sums per (origin, period) - avoids repeated sum() calls
+    cum_sum_op = [@views sum(im.cum_demand_od_in_period[o, :, p]) for o in 1:im.nr_nodes, p in 1:im.nr_periods]
+    demand_sum_op = [@views sum(im.demand_od_in_period[o, :, p]) for o in 1:im.nr_nodes, p in 1:im.nr_periods]
 
     utilization_aggregated = zeros(Float64, im.nr_arcs, im.nr_minutes)
     utilization_period = zeros(Float64, im.nr_arcs, im.nr_minutes)
-    for a in 1:im.nr_arcs
-        for t in 1:im.nr_minutes
+    println("Using $(Threads.nthreads()) threads...")
+    progress = Progress(im.nr_arcs, desc="Computing utilization...")
+    Threads.@threads for a in 1:im.nr_arcs
+        @inbounds for t in 1:im.nr_minutes
             for (o, d, p) in shift_original[a, t]
-                if im.cum_demand_od_in_period[o, d, p] > 0
-                    utilization_aggregated[a, t] += sum(inflow_raw[o, p] * im.cum_demand_od_in_period[o, d, p] / sum(im.cum_demand_od_in_period[o, :, p]))
-                    utilization_period[a, t] += sum(inflow_raw[o, p] * im.demand_od_in_period[o, d, p] / sum(im.demand_od_in_period[o, :, p]))
+                cum_demand_odp = im.cum_demand_od_in_period[o, d, p]
+                if cum_demand_odp > 0
+                    cum_sum = cum_sum_op[o, p]
+                    demand_sum = demand_sum_op[o, p]
+                    if cum_sum > 0 && demand_sum > 0
+                        utilization_aggregated[a, t] += inflow_raw[o, p] * cum_demand_odp / cum_sum
+                        utilization_period[a, t] += inflow_raw[o, p] * im.demand_od_in_period[o, d, p] / demand_sum
+                    end
                 end
             end
         end
+        next!(progress)
     end
 
-    for p in 1:nr_periods
+    # Preallocate results_queues arrays
+    n_queue_rows = nr_periods * nr_nodes
+    rq_datetime = Vector{DateTime}(undef, n_queue_rows)
+    rq_station = Vector{String}(undef, n_queue_rows)
+    rq_allowed = Vector{Int64}(undef, n_queue_rows)
+    rq_moved = Vector{Int64}(undef, n_queue_rows)
+    rq_queued = Vector{Int64}(undef, n_queue_rows)
+
+    @inbounds for p in 1:nr_periods
+        base = (p - 1) * nr_nodes
         for o in 1:nr_nodes
-            push!(results_queues, (
-                datetime=periodrange[p],
-                station=nodes[o],
-                allowed=round(inflow_raw[o, p]),
-                moved=round(inflow_raw[o, p]),
-                queued=round(save_queue[o, p])))
+            idx = base + o
+            rq_datetime[idx] = periodrange[p]
+            rq_station[idx] = nodes[o]
+            rq_allowed[idx] = round(Int64, inflow_raw[o, p])
+            rq_moved[idx] = round(Int64, inflow_raw[o, p])
+            rq_queued[idx] = round(Int64, save_queue[o, p])
         end
     end
+    results_queues = DataFrame(datetime=rq_datetime, station=rq_station, allowed=rq_allowed, moved=rq_moved, queued=rq_queued)
 
-    for t in 1:length(start_time:Minute(1):end_time)
+    # Preallocate results_arcs arrays
+    timesteps = collect(start_time:Minute(1):end_time)
+    n_arc_rows = length(timesteps) * nr_arcs
+    ra_datetime = Vector{DateTime}(undef, n_arc_rows)
+    ra_connection = Vector{Int64}(undef, n_arc_rows)
+    ra_line = Vector{String}(undef, n_arc_rows)
+    ra_util_agg = Vector{Float64}(undef, n_arc_rows)
+    ra_util_period = Vector{Float64}(undef, n_arc_rows)
+
+    @inbounds for t in 1:length(timesteps)
+        base = (t - 1) * nr_arcs
         for a in 1:nr_arcs
-            push!(results_arcs, (
-                datetime=(start_time:Minute(1):end_time)[t],
-                connection=a,
-                line=metroarcs[a].category,
-                utilization_aggregated=utilization_aggregated[a, t] / metroarcs[a].capacity,
-                utilization_period=utilization_period[a, t] / metroarcs[a].capacity
-            )
-            )
+            idx = base + a
+            ra_datetime[idx] = timesteps[t]
+            ra_connection[idx] = a
+            ra_line[idx] = metroarcs[a].category
+            ra_util_agg[idx] = utilization_aggregated[a, t] / metroarcs[a].capacity
+            ra_util_period[idx] = utilization_period[a, t] / metroarcs[a].capacity
         end
     end
+    results_arcs = DataFrame(datetime=ra_datetime, connection=ra_connection, line=ra_line, utilization_aggregated=ra_util_agg, utilization_period=ra_util_period)
 
     sort!(results_queues, [:datetime, :station])
     sort!(results_arcs, [:datetime, :line, :connection])

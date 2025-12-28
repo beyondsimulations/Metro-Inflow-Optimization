@@ -9,7 +9,8 @@ function create_od_queue!(im, real_od_queue, config)
     timesteps = start_time:Minute(1):end_time
     timestep_id = Dict(timesteps[i] => i for i in eachindex(timesteps))
     interval = config.interval_minutes
-    for data in eachrow(demand)
+    println("Creating OD queue tensor...")
+    @showprogress desc="Building OD queue..." for data in eachrow(demand)
         for minutestep in data.datetime:Minute(1):data.datetime+Minute(interval - 1)
             real_od_queue[timestep_id[minutestep], d_node_id[data.origin], d_node_id[data.destination]] = (data.value * im.scaling) / interval
         end
@@ -76,59 +77,79 @@ function simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_per
     )
 
     ## start the flow through the network
-    @showprogress for minute in 1:size(real_arc_use, 1)
+    println("Simulating passenger flow...")
+    split_flow = zeros(Float64, im.nr_nodes)  # Preallocate once
+    n_minutes = size(real_arc_use, 1)
+    # Track earliest minute with non-zero queue per origin (avoids O(n²) iteration)
+    earliest_nonempty = ones(Int, im.nr_nodes)
+    @showprogress desc="Simulating minutes..." for minute in 1:n_minutes
 
-        new_demand = sum(real_od_queue[minute, :, :])
-        moved_demand = 0
+        new_demand = @views sum(real_od_queue[minute, :, :])
+        moved_demand = 0.0
 
         for origin in eachindex(nodes)
 
             ## determine the number of people allowed to enter in the minute at station
+            queue_sum = @views sum(real_od_queue[earliest_nonempty[origin]:minute, origin, :])
+
+            # Skip origins with no passengers waiting
+            if queue_sum <= 0
+                real_queue_use[minute, origin] = 0.0
+                continue
+            end
+
             if kind_sim == "bound"
-                moved_minute = min(real_allowed_entry[minute, origin], sum(real_od_queue[1:minute, origin, :]))
-
+                moved_minute = min(real_allowed_entry[minute, origin], queue_sum)
             elseif kind_sim == "inflow"
-                moved_minute = min(sum(real_od_queue[1:minute, origin, :]), im.max_entry_origin)
-
-            else
-                kind_sim == "unbound"
-                moved_minute = sum(real_od_queue[1:minute, origin, :])
-
+                moved_minute = min(queue_sum, im.max_entry_origin)
+            else  # "unbound"
+                moved_minute = queue_sum
             end
 
             ## dispatch the ratio according to each destination
             if moved_minute > 0
-                for queue_minute in 1:minute
-                    if any(real_od_queue[queue_minute, origin, :] .> 0)
-                        queue_length = sum(real_od_queue[queue_minute, origin, :])
-                        all_inflow = min(moved_minute, queue_length)
-                        split_flow = (real_od_queue[queue_minute, origin, :] / queue_length) .* all_inflow
-                        moved_demand += all_inflow
-                        for destination in 1:im.nr_nodes
-                            if split_flow[destination] > 0
-                                for movement in shift_start_end[origin, destination]
-                                    if minute + movement[2] - 1 <= size(real_arc_use, 1)
-                                        real_arc_use[minute+movement[2]-1, movement[1]] += split_flow[destination]
-                                    end
+                for queue_minute in earliest_nonempty[origin]:minute
+                    queue_length = @views sum(real_od_queue[queue_minute, origin, :])
+                    # Advance pointer if this minute is empty
+                    if queue_length <= 0
+                        if queue_minute == earliest_nonempty[origin]
+                            earliest_nonempty[origin] = queue_minute + 1
+                        end
+                        continue
+                    end
+                    all_inflow = min(moved_minute, queue_length)
+                    @views split_flow .= (real_od_queue[queue_minute, origin, :] ./ queue_length) .* all_inflow
+                    moved_demand += all_inflow
+                    @inbounds for destination in 1:im.nr_nodes
+                        if split_flow[destination] > 0
+                            for movement in shift_start_end[origin, destination]
+                                if minute + movement[2] - 1 <= n_minutes
+                                    real_arc_use[minute+movement[2]-1, movement[1]] += split_flow[destination]
                                 end
                             end
                         end
-                        real_od_queue[queue_minute, origin, :] .-= split_flow
-                        if sum(real_od_queue[queue_minute, origin, :]) <= 0.1
-                            real_od_queue[queue_minute, origin, :] .= 0
+                    end
+                    @views real_od_queue[queue_minute, origin, :] .-= split_flow
+                    if @views sum(real_od_queue[queue_minute, origin, :]) <= 0.1
+                        @views real_od_queue[queue_minute, origin, :] .= 0
+                        # Advance pointer if we just emptied the earliest
+                        if queue_minute == earliest_nonempty[origin]
+                            earliest_nonempty[origin] = queue_minute + 1
                         end
-                        moved_minute -= all_inflow
-                        if moved_minute <= 0.1
-                            break
-                        end
+                    end
+                    moved_minute -= all_inflow
+                    if moved_minute <= 0.1
+                        break
                     end
                 end
             end
-            real_queue_use[minute, origin] = sum(real_od_queue[1:minute, origin, :])
+            real_queue_use[minute, origin] = @views sum(real_od_queue[earliest_nonempty[origin]:minute, origin, :])
+        end
 
-            if all(i -> i == 0, real_allowed_entry[minute, :]) && infeasible_solutions == 0
-                real_od_queue[1:minute, :, :] .= 0
-            end
+        # Clear queues if metro is closed (moved outside origin loop - runs once per minute)
+        if all(i -> i == 0, real_allowed_entry[minute, :]) && infeasible_solutions == 0
+            real_od_queue[1:minute, :, :] .= 0
+            earliest_nonempty .= minute + 1  # Reset pointers after bulk clear
         end
 
         push!(stats, (
@@ -145,7 +166,8 @@ function simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_per
     display(plot!(stats.minute, stats.in_queue, label="queued", title="Simulation - B"))
 
 
-    for arc in axes(grapharcs, 1)
+    println("Computing arc utilization...")
+    @showprogress desc="Computing utilization..." for arc in axes(grapharcs, 1)
         for minute in axes(real_arc_use, 1)
             if real_arc_use[minute, arc] > 0 && grapharcs.capacity[arc] > 0
                 real_arc_use[minute, arc] = real_arc_use[minute, arc] / grapharcs.capacity[arc]
@@ -153,33 +175,53 @@ function simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_per
         end
     end
 
-    sim_queues = DataFrame(datetime=DateTime[], station=String[], queued=Int64[], allowed=Int64[])
-    sim_arcs = DataFrame(datetime=DateTime[], connection=Int64[], line=String[], utilization=Float64[])
+    timesteps = collect(start_time:Minute(1):end_time)
+    n_timesteps = length(timesteps)
 
-    timesteps = start_time:Minute(1):end_time
+    println("Building result DataFrames...")
+    # Preallocate arrays for sim_queues
+    n_queue_rows = n_timesteps * nr_nodes
+    queue_datetimes = Vector{DateTime}(undef, n_queue_rows)
+    queue_stations = Vector{String}(undef, n_queue_rows)
+    queue_queued = Vector{Int64}(undef, n_queue_rows)
+    queue_allowed = Vector{Int64}(undef, n_queue_rows)
 
-    for t in 1:length(start_time:Minute(1):end_time)
-        for o in 1:nr_nodes
-            push!(sim_queues, (
-                datetime=timesteps[t],
-                station=nodes[o],
-                queued=round(real_queue_use[t, o]),
-                allowed=round(real_allowed_entry[t, o]))
-            )
+    # Preallocate arrays for sim_arcs
+    n_arc_rows = n_timesteps * nr_arcs
+    arc_datetimes = Vector{DateTime}(undef, n_arc_rows)
+    arc_connections = Vector{Int64}(undef, n_arc_rows)
+    arc_lines = Vector{String}(undef, n_arc_rows)
+    arc_utilizations = Vector{Float64}(undef, n_arc_rows)
+
+    # Fill arrays
+    @showprogress desc="Building results..." for t in 1:n_timesteps
+        # Queue data
+        queue_base = (t - 1) * nr_nodes
+        @inbounds for o in 1:nr_nodes
+            idx = queue_base + o
+            queue_datetimes[idx] = timesteps[t]
+            queue_stations[idx] = nodes[o]
+            queue_queued[idx] = round(Int64, real_queue_use[t, o])
+            queue_allowed[idx] = round(Int64, real_allowed_entry[t, o])
         end
-        for a in 1:nr_arcs
-            push!(sim_arcs, (
-                datetime=timesteps[t],
-                connection=a,
-                line=metroarcs[a].category,
-                utilization=real_arc_use[t, a],
-            )
-            )
+        # Arc data
+        arc_base = (t - 1) * nr_arcs
+        @inbounds for a in 1:nr_arcs
+            idx = arc_base + a
+            arc_datetimes[idx] = timesteps[t]
+            arc_connections[idx] = a
+            arc_lines[idx] = metroarcs[a].category
+            arc_utilizations[idx] = real_arc_use[t, a]
         end
     end
 
-    if isfile("logfile_$(start_time)_$(minutes_in_period).csv")
-        logfile = CSV.read("logfile_$(start_time)_$(minutes_in_period).csv", DataFrame)
+    # Create DataFrames from preallocated arrays
+    sim_queues = DataFrame(datetime=queue_datetimes, station=queue_stations, queued=queue_queued, allowed=queue_allowed)
+    sim_arcs = DataFrame(datetime=arc_datetimes, connection=arc_connections, line=arc_lines, utilization=arc_utilizations)
+
+    logfile_name = "logfile_$(config.name)_$(start_time)_$(minutes_in_period).csv"
+    if isfile(logfile_name)
+        logfile = CSV.read(logfile_name, DataFrame)
     else
         logfile = DataFrame(
             timestamp=DateTime[],
@@ -255,7 +297,6 @@ function simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_per
     ))
 
     # Save logfile to both root folder and results folder
-    logfile_name = "logfile_$(config.name)_$(start_time)_$(minutes_in_period).csv"
     CSV.write(logfile_name, logfile)
     CSV.write("results/$logfile_name", logfile)
 

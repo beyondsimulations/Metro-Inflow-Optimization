@@ -20,6 +20,9 @@ function build_optimization_model(modelInstance)
     set_attribute(im, "time_limit", 120.0)
     set_attribute(im, "mip_rel_gap", 0.0)
 
+    # Precompute total demand per origin per period (avoids repeated sum() calls)
+    total_demand_od = [sum(modelInstance.demand_od_in_period[o, :, p]) for o in 1:modelInstance.nr_nodes, p in 1:modelInstance.nr_periods]
+
     println("Preparing optimization model.")
     @variable(im,
         modelInstance.min_entry_origin .<= X[o=1:modelInstance.nr_nodes, p=1:modelInstance.nr_periods] .<= modelInstance.max_entry_origin * modelInstance.safety_factor
@@ -32,7 +35,7 @@ function build_optimization_model(modelInstance)
 
     println("Preparing capacity constraints.")
     @constraint(im, capacity[a in 1:modelInstance.nr_arcs, t in 1:modelInstance.nr_minutes, p_shifts in 0:ceil(Int, modelInstance.past_minutes / modelInstance.minutes_in_period); shift[a, t] != []],
-        sum(X[o, p] * modelInstance.demand_od_in_period[o, d, max(1, p - p_shifts)] / sum(modelInstance.demand_od_in_period[o, :, max(1, p - p_shifts)]) for (o, d, p) in modelInstance.shift[a, t] if modelInstance.demand_od_in_period[o, d, max(1, p - p_shifts)] > 0) <= modelInstance.capacity_arcs[a] * modelInstance.safety_factor
+        sum(X[o, p] * modelInstance.demand_od_in_period[o, d, max(1, p - p_shifts)] / total_demand_od[o, max(1, p - p_shifts)] for (o, d, p) in modelInstance.shift[a, t] if modelInstance.demand_od_in_period[o, d, max(1, p - p_shifts)] > 0 && total_demand_od[o, max(1, p - p_shifts)] > 0) <= modelInstance.capacity_arcs[a] * modelInstance.safety_factor
     )
 
     return im, X
@@ -76,27 +79,45 @@ function build_restricted_optimization_model(modelInstance, current_period, queu
         end
     end
 
+    # Precompute total demand per origin per period (avoids repeated sum() calls)
+    println("Precomputing demand totals and ratios...")
+    total_demand = zeros(Float64, modelInstance.nr_nodes, modelInstance.nr_periods)
+    total_demand_od = zeros(Float64, modelInstance.nr_nodes, modelInstance.nr_periods)
+    demand_ratio = zeros(Float64, modelInstance.nr_nodes, modelInstance.nr_nodes, modelInstance.nr_periods)
+    @showprogress desc="Computing demand totals..." for o in 1:modelInstance.nr_nodes
+        for p in 1:modelInstance.nr_periods
+            total_demand[o, p] = sum(adjusted_cum_demand[o, :, p])
+            total_demand_od[o, p] = sum(modelInstance.demand_od_in_period[o, :, p])
+            # Precompute demand ratios: demand[o,d,p] / total_demand_od[o,p]
+            if total_demand_od[o, p] > 0
+                for d in 1:modelInstance.nr_nodes
+                    demand_ratio[o, d, p] = modelInstance.demand_od_in_period[o, d, p] / total_demand_od[o, p]
+                end
+            end
+        end
+    end
+
     println("Preparing optimization model.")
     @variable(im,
-        min(sum(adjusted_cum_demand[o, :, p]) / modelInstance.minutes_in_period, modelInstance.min_entry_origin) .<= X[o=1:modelInstance.nr_nodes, p=lower_period:upper_period] .<= modelInstance.max_entry_origin * modelInstance.safety_factor
+        min(total_demand[o, p] / modelInstance.minutes_in_period, modelInstance.min_entry_origin) .<= X[o=1:modelInstance.nr_nodes, p=lower_period:upper_period] .<= modelInstance.max_entry_origin * modelInstance.safety_factor
     )
 
     if modelInstance.kind_opt == "regularSqr"
         println("Preparing regular objective function.")
         @objective(im, Min,
-            sum((sum(adjusted_cum_demand[o, :, p]) - (X[o, p] * modelInstance.minutes_in_period))^2 for o in 1:modelInstance.nr_nodes, p in current_period:upper_period)
+            sum((total_demand[o, p] - (X[o, p] * modelInstance.minutes_in_period))^2 for o in 1:modelInstance.nr_nodes, p in current_period:upper_period)
         )
 
     elseif modelInstance.kind_opt == "linweight"
         println("Preparing linear objective function.")
         @objective(im, Min,
-            sum((sum(adjusted_cum_demand[o, :, p]) - X[o, p] * modelInstance.minutes_in_period) * queue_period_age[o, p] for o in 1:modelInstance.nr_nodes, p in current_period:upper_period)
+            sum((total_demand[o, p] - X[o, p] * modelInstance.minutes_in_period) * queue_period_age[o, p] for o in 1:modelInstance.nr_nodes, p in current_period:upper_period)
         )
 
-        println("Prepare constraint to prevent a negative dispatch.")
+        println("Preparing constraint to prevent negative dispatch.")
         @constraint(
             im, queue[o in 1:modelInstance.nr_nodes, p in current_period:upper_period],
-            sum(adjusted_cum_demand[o, :, p]) - X[o, p] * modelInstance.minutes_in_period >= 0
+            total_demand[o, p] - X[o, p] * modelInstance.minutes_in_period >= 0
         )
 
     end
@@ -112,31 +133,34 @@ function build_restricted_optimization_model(modelInstance, current_period, queu
             adjusted_capacity_arcs[t, :] = modelInstance.capacity_arcs * modelInstance.safety_factor
         end
 
-        for a in 1:modelInstance.nr_arcs
-            for t in minute_range
-                if shift[a, t] != []
-                    for p_shifts in 0:periods_to_consider
-                        arcweight = 0.0
-                        for (o, d, p) in shift[a, t]
-                            if modelInstance.demand_od_in_period[o, d, max(1, p - p_shifts)] > 0
-                                if p < current_period
-                                    arcweight += ceil(inflow_raw[o, p] * modelInstance.demand_od_in_period[o, d, max(1, p - p_shifts)] / sum(modelInstance.demand_od_in_period[o, :, max(1, p - p_shifts)]), digits=8)
-                                end
-                                if p >= current_period
-                                    arcweight += ceil(modelInstance.min_entry_origin * modelInstance.demand_od_in_period[o, d, max(1, p - p_shifts)] / sum(modelInstance.demand_od_in_period[o, :, max(1, p - p_shifts)]), digits=8)
-                                end
-                            end
-                        end
-                        if arcweight > adjusted_capacity_arcs[t, a]
-                            adjusted_capacity_arcs[t, a] = arcweight
-                        end
+        # Precompute active (arc, minute) pairs to skip empty cells
+        active_shifts = [(a, t) for a in 1:modelInstance.nr_arcs for t in minute_range if !isempty(shift[a, t])]
+        println("Active (arc, minute) pairs: $(length(active_shifts)) / $(modelInstance.nr_arcs * length(minute_range))")
+
+        println("Computing adjusted capacities (threads: $(Threads.nthreads()))...")
+        progress = Progress(length(active_shifts), desc="Adjusting arc capacities...")
+        min_entry = modelInstance.min_entry_origin
+        Threads.@threads for idx in eachindex(active_shifts)
+            (a, t) = active_shifts[idx]
+            local_max = adjusted_capacity_arcs[t, a]
+            for p_shifts in 0:periods_to_consider
+                arcweight = 0.0
+                @inbounds for (o, d, p) in shift[a, t]
+                    p_idx = max(1, p - p_shifts)
+                    ratio = demand_ratio[o, d, p_idx]
+                    if ratio > 0
+                        base = p < current_period ? inflow_raw[o, p] : min_entry
+                        arcweight += base * ratio
                     end
                 end
+                local_max = max(local_max, arcweight)
             end
+            adjusted_capacity_arcs[t, a] = local_max
+            next!(progress)
         end
         println("Preparing capacity constraints for periodical demand.")
         @constraint(im, capacity_period[a in 1:modelInstance.nr_arcs, t in lower_minute:upper_minute, p_shifts in 0:ceil(Int, modelInstance.past_minutes / minutes_in_period); shift[a, t] != []],
-            sum(X[o, p] * modelInstance.demand_od_in_period[o, d, max(1, p - p_shifts)] / sum(modelInstance.demand_od_in_period[o, :, max(1, p - p_shifts)]) for (o, d, p) in modelInstance.shift[a, t] if modelInstance.demand_od_in_period[o, d, max(1, p - p_shifts)] > 0 && p <= upper_period) <= modelInstance.capacity_arcs[a] * modelInstance.safety_factor
+            sum(X[o, p] * demand_ratio[o, d, max(1, p - p_shifts)] for (o, d, p) in modelInstance.shift[a, t] if demand_ratio[o, d, max(1, p - p_shifts)] > 0 && p <= upper_period) <= modelInstance.capacity_arcs[a] * modelInstance.safety_factor
         )
 
     elseif modelInstance.kind_queue == "lag_periods"
@@ -150,32 +174,36 @@ function build_restricted_optimization_model(modelInstance, current_period, queu
             adjusted_capacity_arcs[t, :] = modelInstance.capacity_arcs * modelInstance.safety_factor
         end
 
-        for a in 1:modelInstance.nr_arcs
-            for t in minute_range
-                if shift[a, t] != []
-                    for p_shifts in 0:periods_to_consider
-                        arcweight = 0.0
-                        for (o, d, p) in shift[a, t]
-                            if modelInstance.demand_od_in_period[o, d, min(p, max(1, p - queue_period_age[o, p] + p_shifts))] > 0
-                                if p < current_period
-                                    arcweight += ceil(inflow_raw[o, p] * modelInstance.demand_od_in_period[o, d, min(p, max(1, p - queue_period_age[o, p] + p_shifts), modelInstance.nr_periods)] / sum(modelInstance.demand_od_in_period[o, :, min(p, max(1, p - queue_period_age[o, p] + p_shifts), modelInstance.nr_periods)]), digits=8)
-                                end
-                                if p >= current_period
-                                    arcweight += ceil(modelInstance.min_entry_origin * modelInstance.demand_od_in_period[o, d, min(p, max(1, p - queue_period_age[o, p] + p_shifts), modelInstance.nr_periods)] / sum(modelInstance.demand_od_in_period[o, :, min(p, max(1, p - queue_period_age[o, p] + p_shifts), modelInstance.nr_periods)]), digits=8)
-                                end
-                            end
-                        end
-                        if arcweight > adjusted_capacity_arcs[t, a]
-                            adjusted_capacity_arcs[t, a] = arcweight
-                        end
+        # Precompute active (arc, minute) pairs to skip empty cells
+        active_shifts = [(a, t) for a in 1:modelInstance.nr_arcs for t in minute_range if !isempty(shift[a, t])]
+        println("Active (arc, minute) pairs: $(length(active_shifts)) / $(modelInstance.nr_arcs * length(minute_range))")
+
+        println("Computing adjusted capacities (threads: $(Threads.nthreads()))...")
+        progress = Progress(length(active_shifts), desc="Adjusting arc capacities...")
+        min_entry = modelInstance.min_entry_origin
+        nr_periods = modelInstance.nr_periods
+        Threads.@threads for idx in eachindex(active_shifts)
+            (a, t) = active_shifts[idx]
+            local_max = adjusted_capacity_arcs[t, a]
+            for p_shifts in 0:periods_to_consider
+                arcweight = 0.0
+                @inbounds for (o, d, p) in shift[a, t]
+                    p_idx = min(p, max(1, p - queue_period_age[o, p] + p_shifts), nr_periods)
+                    ratio = demand_ratio[o, d, p_idx]
+                    if ratio > 0
+                        base = p < current_period ? inflow_raw[o, p] : min_entry
+                        arcweight += base * ratio
                     end
                 end
+                local_max = max(local_max, arcweight)
             end
+            adjusted_capacity_arcs[t, a] = local_max
+            next!(progress)
         end
 
         println("Preparing capacity constraints for periodical demand shifted to the queue length.")
         @constraint(im, capacity_period[a in 1:modelInstance.nr_arcs, t in minute_range, p_shifts in 0:periods_to_consider; shift[a, t] != []],
-            sum(X[o, p] * modelInstance.demand_od_in_period[o, d, min(p, max(1, p - queue_period_age[o, p] + p_shifts), modelInstance.nr_periods)] / sum(modelInstance.demand_od_in_period[o, :, min(p, max(1, p - queue_period_age[o, p] + p_shifts), modelInstance.nr_periods)]) for (o, d, p) in modelInstance.shift[a, t] if modelInstance.demand_od_in_period[o, d, min(p, max(1, p - queue_period_age[o, p] + p_shifts), modelInstance.nr_periods)] > 0 && p <= upper_period) <= adjusted_capacity_arcs[t, a]
+            sum(X[o, p] * demand_ratio[o, d, min(p, max(1, p - queue_period_age[o, p] + p_shifts), modelInstance.nr_periods)] for (o, d, p) in modelInstance.shift[a, t] if demand_ratio[o, d, min(p, max(1, p - queue_period_age[o, p] + p_shifts), modelInstance.nr_periods)] > 0 && p <= upper_period) <= adjusted_capacity_arcs[t, a]
         )
     end
 
