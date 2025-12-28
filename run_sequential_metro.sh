@@ -113,9 +113,14 @@ echo ""
 run_count=0
 
 if [ "$RUN_MODE" = "unbound" ]; then
-    # UNBOUND MODE: Only 1 run per time period, uses first minutes value
+    # UNBOUND MODE: Only 1 run per time period, uses base interval from config
     total_runs=${#TIME_PERIODS[@]}
-    minutes=${MINUTES_VALUES[0]}
+    # Use base interval: 10 for Shanghai, 15 for Doha
+    if [[ "$CONFIG" == *"shanghai"* ]]; then
+        minutes=10
+    else
+        minutes=15
+    fi
 
     for time_period in "${TIME_PERIODS[@]}"; do
         IFS=',' read -r start_time end_time <<< "$time_period"

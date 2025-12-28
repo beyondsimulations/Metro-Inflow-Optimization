@@ -219,7 +219,11 @@ function simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_per
     sim_queues = DataFrame(datetime=queue_datetimes, station=queue_stations, queued=queue_queued, allowed=queue_allowed)
     sim_arcs = DataFrame(datetime=arc_datetimes, connection=arc_connections, line=arc_lines, utilization=arc_utilizations)
 
-    logfile_name = "logfile_$(config.name)_$(start_time)_$(minutes_in_period).csv"
+    logfile_name = if kind_sim == "unbound"
+        "logfile_$(config.name)_$(start_time)_unbound.csv"
+    else
+        "logfile_$(config.name)_$(start_time)_$(im.minutes_in_period).csv"
+    end
     if isfile(logfile_name)
         logfile = CSV.read(logfile_name, DataFrame)
     else
