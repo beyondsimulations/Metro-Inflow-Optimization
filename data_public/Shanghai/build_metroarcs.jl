@@ -658,25 +658,20 @@ function precompute_paths(g, node_to_station, station_to_node, weights)
 end
 
 """
-Parse date integer (YYYYMMDD) to get hour from startTime (HHMMSS).
-"""
-function get_hour(start_time_int::Int)::Int
-    return div(start_time_int, 10000)
-end
-
-"""
 Compute empirical arc capacities from OD flow data.
-Aggregates flow to hourly level, finds peak, divides by 60 for per-minute capacity.
+Uses peak 10-minute interval flow, divides by 10 for per-minute capacity.
+This captures true peak demand rather than hourly averages.
 Ensures consistent capacity per line using line maximum.
 """
 function compute_empirical_capacity(od_file::String, paths, arcs, station_names)
     println("\nComputing empirical capacity from OD data...")
+    println("  Using peak 10-minute interval (not hourly average)")
     println("  This may take 20-30 minutes for the 11GB file...")
 
-    # Arc hourly flows: arc => Dict(date_hour => flow)
-    arc_hourly_flows = Dict{Tuple{Int, Int}, Dict{Tuple{Int, Int}, Float64}}()
+    # Arc interval flows: arc => Dict((date, timeslot) => flow)
+    arc_interval_flows = Dict{Tuple{Int, Int}, Dict{Tuple{Int, Int}, Float64}}()
     for arc in keys(arcs)
-        arc_hourly_flows[arc] = Dict{Tuple{Int, Int}, Float64}()
+        arc_interval_flows[arc] = Dict{Tuple{Int, Int}, Float64}()
     end
 
     # Build station ID lookup from names
@@ -699,7 +694,7 @@ function compute_empirical_capacity(od_file::String, paths, arcs, station_names)
         dest_id = row.destinationStation
         flow = row.Flow
         date = row.date
-        hour = get_hour(row.startTime)
+        timeslot = row.timeslot  # Use 10-minute timeslot directly
 
         # Skip if same station
         if origin_id == dest_id
@@ -717,27 +712,27 @@ function compute_empirical_capacity(od_file::String, paths, arcs, station_names)
         routed_flows += 1
 
         # Add flow to each arc in path
-        date_hour = (date, hour)
+        date_timeslot = (date, timeslot)
         for arc in path
-            if haskey(arc_hourly_flows, arc)
-                if !haskey(arc_hourly_flows[arc], date_hour)
-                    arc_hourly_flows[arc][date_hour] = 0.0
+            if haskey(arc_interval_flows, arc)
+                if !haskey(arc_interval_flows[arc], date_timeslot)
+                    arc_interval_flows[arc][date_timeslot] = 0.0
                 end
-                arc_hourly_flows[arc][date_hour] += flow
+                arc_interval_flows[arc][date_timeslot] += flow
             end
         end
     end
 
     println("  Routed $routed_flows flows, $missing_paths had no path")
 
-    # Find peak hourly flow for each arc
-    println("  Computing peak flows per arc...")
+    # Find peak 10-minute flow for each arc
+    println("  Computing peak 10-min flows per arc...")
     arc_peak_flows = Dict{Tuple{Int, Int}, Float64}()
-    for (arc, hourly_flows) in arc_hourly_flows
-        if isempty(hourly_flows)
+    for (arc, interval_flows) in arc_interval_flows
+        if isempty(interval_flows)
             arc_peak_flows[arc] = 0.0
         else
-            arc_peak_flows[arc] = maximum(values(hourly_flows))
+            arc_peak_flows[arc] = maximum(values(interval_flows))
         end
     end
 
@@ -755,12 +750,12 @@ function compute_empirical_capacity(od_file::String, paths, arcs, station_names)
         end
     end
 
-    # Convert to per-minute capacity (hourly peak / 60)
+    # Convert to per-minute capacity (10-min peak / 10)
     line_capacities = Dict{String, Int}()
     for (line, peak) in line_peak_flows
-        capacity = max(1, round(Int, peak / 60))
+        capacity = max(1, round(Int, peak / 10))
         line_capacities[line] = capacity
-        println("    $line: peak=$(@sprintf("%.0f", peak))/hour → $capacity/min")
+        println("    $line: peak=$(@sprintf("%.0f", peak))/10min → $capacity/min")
     end
 
     return line_capacities
