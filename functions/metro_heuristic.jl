@@ -1,5 +1,5 @@
 """
-    heuristic_adding_queues(im)
+    heuristic_adding_queues(im, config)
 
 Purpose: Implements a time-based heuristic to optimize passenger inflow across metro stations while managing queues.
 Details: Works period by period to:
@@ -19,12 +19,13 @@ Returns: Five items:
 - queue_period_age: Matrix tracking how long passengers have been waiting at each station
 - infeasible_solutions: Count of periods where no feasible solution was found
 """
-function heuristic_adding_queues(im)
+function heuristic_adding_queues(im, config)
     # Initialization of variables
     remaining_queue = copy(im.demand_od_in_period) # Initialize a new variable to store the remaining queue data
     inflow_raw = zeros(Float64, im.nr_nodes, im.nr_periods) .= im.min_entry_origin  # Initialize an array to store the values of the X variable
     optimization_duration = zeros(Float64, im.nr_periods) # Initialize optimization duration vector
-    queue_period_age = zeros(Int64, im.nr_nodes, im.nr_periods) .= 1 # Computes the age of each queue per period
+    build_duration = zeros(Float64, im.nr_periods) # Initialize model build duration vector
+    queue_period_age = zeros(Int64, im.nr_nodes, im.nr_periods) .= 1 # Computes the age of each queue per period (min 1 for optimization weighting)
     save_queue = zeros(Int64, nr_nodes, im.nr_periods) .= 1 # Saves the queue for the output
 
     stats = DataFrame(
@@ -66,7 +67,9 @@ function heuristic_adding_queues(im)
 
         if im.closed_period[fix_period] == false
             # Only build and solve model during open periods
-            model, X = build_restricted_optimization_model(im, fix_period, queue_period_age, inflow_raw)
+            build_duration[fix_period] = @elapsed begin
+                model, X = build_restricted_optimization_model(im, fix_period, queue_period_age, inflow_raw)
+            end
 
             for o in 1:im.nr_nodes
                 if fix_period > 1
@@ -150,12 +153,20 @@ function heuristic_adding_queues(im)
         )
     end
 
-    plot(stats.period, stats.new_demand, label="new demand")
-    plot!(stats.period, stats.in_queue, label="in_queue")
-    display(plot!(stats.period, stats.moved_demand, label="moved", title="Optimization"))
+    # Save optimization diagnostic plots
+    plot_dir = "results/plots/$(config.name)_$(im.safety_factor)_$(im.minutes_in_period)_$(im.past_minutes)_$(im.max_entry_origin)_$(im.min_entry_origin)_$(im.scaling)_$(im.kind_opt)_$(im.kind_queue)"
+    mkpath(plot_dir)
 
-    display(plot(transpose(save_queue), title="Queue Length", label=""))
-    display(plot(transpose(queue_period_age), title="Waiting", label=""))
+    p1 = plot(stats.period, stats.new_demand, label="new demand")
+    plot!(p1, stats.period, stats.in_queue, label="in_queue")
+    plot!(p1, stats.period, stats.moved_demand, label="moved", title="Optimization")
+    savefig(p1, "$(plot_dir)/optimization_stats.png")
+
+    p2 = plot(transpose(save_queue), title="Queue Length", label="")
+    savefig(p2, "$(plot_dir)/optimization_queue_length.png")
+
+    p3 = plot(transpose(queue_period_age), title="Waiting", label="")
+    savefig(p3, "$(plot_dir)/optimization_waiting.png")
 
     println("Computing arc utilization metrics...")
     # Precompute sums per (origin, period) - avoids repeated sum() calls
@@ -229,5 +240,5 @@ function heuristic_adding_queues(im)
     sort!(results_queues, [:datetime, :station])
     sort!(results_arcs, [:datetime, :line, :connection])
 
-    return results_queues, results_arcs, optimization_duration, queue_period_age, infeasible_solutions
+    return results_queues, results_arcs, optimization_duration, build_duration, queue_period_age, infeasible_solutions
 end

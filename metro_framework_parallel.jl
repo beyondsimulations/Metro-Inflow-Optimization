@@ -166,6 +166,7 @@ end
 if !isdir("results/visuals")
     mkdir("results/visuals")
 end
+mkpath("results/plots")
 
 # Load data of the metroarcs
 println("Loading data for $(config.display_name).")
@@ -239,11 +240,12 @@ if unbound_mode
     flush(log_file)
 
     global combination_count = 0
+    progress = Progress(total_combinations, desc="Scaling scenarios: ", showspeed=true)
 
     for scaling in set_scaling
         global combination_count += 1
 
-        println("[$combination_count/$total_combinations] UNBOUND: scaling=$scaling")
+        println("/n[$combination_count/$total_combinations] UNBOUND: scaling=$scaling")
         println(log_file, "[$combination_count/$total_combinations] Processing: scaling=$scaling (unbound baseline)")
         flush(log_file)
 
@@ -296,12 +298,13 @@ if unbound_mode
             end
 
             opt_duration = zeros(Float64, nr_periods)
+            build_duration = zeros(Float64, nr_periods)
             queue_period_age = zeros(Float64, nr_periods, nr_nodes)
             infeasible_solutions = 0
 
             # Run simulation directly (no optimization)
             println("Start simulation $kind_sim (baseline - no optimization).")
-            sim_queues, sim_arcs = simulate_metro(modelInstance, queues, opt_duration, grapharcs, kind_sim, queue_period_age, infeasible_solutions, config)
+            sim_queues, sim_arcs = simulate_metro(modelInstance, queues, opt_duration, build_duration, grapharcs, kind_sim, queue_period_age, infeasible_solutions, config)
 
             println(log_file, "  ✓ Completed successfully")
 
@@ -316,6 +319,7 @@ if unbound_mode
         end
 
         flush(log_file)
+        next!(progress)
     end
 
 else
@@ -330,6 +334,7 @@ else
     flush(log_file)
 
     global combination_count = 0
+    progress = Progress(total_combinations, desc="Parameter combinations: ", showspeed=true)
 
     for min_enter in set_min_enter
         for safety in set_safety
@@ -367,11 +372,11 @@ else
 
                                 try
                                     # Start of the iterative allocation
-                                    queues, arcs, opt_duration, queue_period_age, infeasible_solutions = heuristic_adding_queues(modelInstance)
+                                    queues, arcs, opt_duration, build_duration, queue_period_age, infeasible_solutions = heuristic_adding_queues(modelInstance, config)
 
                                     # Start the simulation
                                     println("Start simulation $kind_sim.")
-                                    sim_queues,sim_arcs = simulate_metro(modelInstance,queues,opt_duration,grapharcs,kind_sim,queue_period_age,infeasible_solutions,config)
+                                    sim_queues,sim_arcs = simulate_metro(modelInstance,queues,opt_duration,build_duration,grapharcs,kind_sim,queue_period_age,infeasible_solutions,config)
 
                                     # Save results with parameter-specific naming
                                     result_name = "safety_$(safety)_maxenter_$(max_enter)_minenter_$(min_enter)_scaling_$(scaling)_past_$(past_minutes)_$(kind_opt)_$(kind_queue)"
@@ -390,6 +395,7 @@ else
                                 end
 
                                 flush(log_file)
+                                next!(progress)
                             end
                         end
                     end

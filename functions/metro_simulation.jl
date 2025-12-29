@@ -33,7 +33,7 @@ function create_entry_list!(im, real_allowed_entry, queues)
 end
 
 """
-    simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_period_age, infeasible_solutions, config)
+    simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kind_sim, queue_period_age, infeasible_solutions, config)
 
 Purpose: Simulates passenger flow through the metro network given entry constraints and demand patterns.
 Details: Performs a minute-by-minute simulation that:
@@ -55,7 +55,7 @@ The function also:
 
 Returns: Two DataFrames with simulation results - station queue information and arc utilization data
 """
-function simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_period_age, infeasible_solutions, config)
+function simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kind_sim, queue_period_age, infeasible_solutions, config)
     real_arc_use = zeros(Float64, im.nr_minutes, im.nr_arcs)
     real_queue_use = zeros(Float64, im.nr_minutes, im.nr_nodes)
     real_od_queue = zeros(Float64, im.nr_minutes, im.nr_nodes, im.nr_nodes)
@@ -82,10 +82,35 @@ function simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_per
     n_minutes = size(real_arc_use, 1)
     # Track earliest minute with non-zero queue per origin (avoids O(n²) iteration)
     earliest_nonempty = ones(Int, im.nr_nodes)
+
+    # Queue age tracking for simulation-based metrics
+    birth_weighted_sum = zeros(Float64, im.nr_nodes)   # Σ(queue_size × arrival_minute)
+    queue_total_tracking = zeros(Float64, im.nr_nodes) # Σ(queue_size)
+
+    # Accumulators for avg_queue_age
+    total_age_contribution = 0.0   # Σ(weighted_age) across all open (minute, origin)
+    total_queue_contribution = 0.0 # Σ(queue_total) across all open (minute, origin)
+
+    # For end_queue_age - compute last_open_minute before simulation
+    last_open_minute_sim = findlast(m -> any(real_allowed_entry[m, :] .> 0), 1:n_minutes)
+    if last_open_minute_sim === nothing
+        last_open_minute_sim = n_minutes
+    end
+    sim_end_queue_age = 0.0
+
     @showprogress desc="Simulating minutes..." for minute in 1:n_minutes
 
         new_demand = @views sum(real_od_queue[minute, :, :])
         moved_demand = 0.0
+
+        # Track new arrivals for queue age calculation
+        for o in 1:im.nr_nodes
+            new_arrivals = @views sum(real_od_queue[minute, o, :])
+            if new_arrivals > 0
+                birth_weighted_sum[o] += new_arrivals * minute
+                queue_total_tracking[o] += new_arrivals
+            end
+        end
 
         for origin in eachindex(nodes)
 
@@ -120,6 +145,9 @@ function simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_per
                     all_inflow = min(moved_minute, queue_length)
                     @views split_flow .= (real_od_queue[queue_minute, origin, :] ./ queue_length) .* all_inflow
                     moved_demand += all_inflow
+                    # Update age tracking - passengers from queue_minute are being served
+                    birth_weighted_sum[origin] -= all_inflow * queue_minute
+                    queue_total_tracking[origin] -= all_inflow
                     @inbounds for destination in 1:im.nr_nodes
                         if split_flow[destination] > 0
                             for movement in shift_start_end[origin, destination]
@@ -146,10 +174,38 @@ function simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_per
             real_queue_use[minute, origin] = @views sum(real_od_queue[earliest_nonempty[origin]:minute, origin, :])
         end
 
+        # Accumulate queue age data for open minutes
+        if any(real_allowed_entry[minute, :] .> 0)
+            for o in 1:im.nr_nodes
+                if queue_total_tracking[o] > 0
+                    weighted_age = queue_total_tracking[o] * minute - birth_weighted_sum[o]
+                    total_age_contribution += weighted_age
+                    total_queue_contribution += queue_total_tracking[o]
+                end
+            end
+        end
+
+        # Compute end_queue_age at last open minute
+        if minute == last_open_minute_sim
+            end_age_sum = 0.0
+            end_queue_sum = 0.0
+            for o in 1:im.nr_nodes
+                if queue_total_tracking[o] > 0
+                    weighted_age = queue_total_tracking[o] * minute - birth_weighted_sum[o]
+                    end_age_sum += weighted_age
+                    end_queue_sum += queue_total_tracking[o]
+                end
+            end
+            sim_end_queue_age = end_queue_sum > 0 ? end_age_sum / end_queue_sum : 0.0
+        end
+
         # Clear queues if metro is closed (moved outside origin loop - runs once per minute)
         if all(i -> i == 0, real_allowed_entry[minute, :]) && infeasible_solutions == 0
             real_od_queue[1:minute, :, :] .= 0
             earliest_nonempty .= minute + 1  # Reset pointers after bulk clear
+            # Reset age tracking
+            birth_weighted_sum .= 0
+            queue_total_tracking .= 0
         end
 
         push!(stats, (
@@ -161,9 +217,14 @@ function simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_per
         )
     end
 
-    plot(stats.minute, stats.new_demand, label="new demand")
-    display(plot!(stats.minute, stats.moved_demand, label="moved", title="Simulation - A"))
-    display(plot!(stats.minute, stats.in_queue, label="queued", title="Simulation - B"))
+    # Save simulation diagnostic plots
+    plot_dir = "results/plots/$(config.name)_$(im.safety_factor)_$(im.minutes_in_period)_$(im.past_minutes)_$(im.max_entry_origin)_$(im.min_entry_origin)_$(im.scaling)_$(im.kind_opt)_$(kind_sim)_$(im.kind_queue)"
+    mkpath(plot_dir)
+
+    p1 = plot(stats.minute, stats.new_demand, label="new demand")
+    plot!(p1, stats.minute, stats.moved_demand, label="moved")
+    plot!(p1, stats.minute, stats.in_queue, label="queued", title="Simulation - $(kind_sim)")
+    savefig(p1, "$(plot_dir)/simulation_stats_$(kind_sim).png")
 
 
     println("Computing arc utilization...")
@@ -242,6 +303,8 @@ function simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_per
             infeasible=Int64[],
             avg_duration=Float64[],
             total_duration=Float64[],
+            max_duration=Float64[],
+            avg_build_time=Float64[],
             avg_queue=Float64[],
             end_queue=Float64[],
             avg_queue_age=Float64[],
@@ -262,6 +325,18 @@ function simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_per
             safety_090quant=Float64[],)
     end
 
+    # Compute simulation-based average queue age
+    sim_avg_queue_age = total_queue_contribution > 0 ? total_age_contribution / total_queue_contribution : 0.0
+
+    # Filter to only open hours for accurate averages
+    open_minutes = findall(m -> any(real_allowed_entry[m, :] .> 0), 1:n_minutes)
+    n_open_minutes = length(open_minutes)
+
+    # Calculate averages only over operating hours
+    avg_queue_open = sum(real_queue_use[open_minutes, :]) / (n_open_minutes * nr_nodes)
+    open_arc_rows = filter(row -> hour(row.datetime) ∉ config.closed_hours, eachrow(sim_arcs))
+    avg_util_open = isempty(open_arc_rows) ? 0.0 : sum(r.utilization for r in open_arc_rows) / length(open_arc_rows)
+
     ex = length(filter(x -> x > 1, sim_arcs.utilization)) == 0 ? [0] : filter(x -> x > 1, sim_arcs.utilization)
     sf = length(filter(x -> x > im.safety_factor, sim_arcs.utilization)) == 0 ? [0] : filter(x -> x > im.safety_factor, sim_arcs.utilization)
 
@@ -280,13 +355,15 @@ function simulate_metro(im, queues, opt_duration, grapharcs, kind_sim, queue_per
         infeasible=infeasible_solutions,
         avg_duration=sum(opt_duration) / length(opt_duration),
         total_duration=sum(opt_duration),
-        avg_queue=sum(sim_queues.queued) / nrow(sim_queues),
-        end_queue=sum(real_queue_use[end, :]),
-        avg_queue_age=(sum(queue_period_age) / (size(queue_period_age, 1) * size(queue_period_age, 2))) * im.minutes_in_period,
-        end_queue_age=(sum(queue_period_age[end, :]) / (size(queue_period_age, 2))) * im.minutes_in_period,
+        max_duration=maximum(opt_duration),
+        avg_build_time=sum(build_duration) / length(build_duration),
+        avg_queue=avg_queue_open,
+        end_queue=sum(real_queue_use[last_open_minute_sim, :]),
+        avg_queue_age=sim_avg_queue_age,
+        end_queue_age=sim_end_queue_age,
         total_demand=sum(stats.new_demand),
         people_moved=sum(stats.moved_demand),
-        avg_utilization=sum(sim_arcs.utilization) / nrow(sim_arcs),
+        avg_utilization=avg_util_open,
         max_utilization=maximum(sim_arcs.utilization),
         exceeded_minutes=length(filter(x -> x > 1, sim_arcs.utilization)),
         exceeded_mean=mean(filter(x -> x > 1, sim_arcs.utilization)),
