@@ -2,20 +2,33 @@
     create_od_queue!(im, real_od_queue, config)
 
 Purpose: Initializes a tensor that tracks passenger demand by time, origin, and destination.
-Details: Loads raw demand data and distributes it across time intervals (based on config.interval_minutes) to create a minute-by-minute representation of passenger demand between all station pairs.
+Details: Uses the SAME demand data as optimization (im.demand_od_in_period) to ensure consistency.
+Distributes period-level demand across minutes within each period.
 """
 function create_od_queue!(im, real_od_queue, config)
-    demand = load_demand(config)
-    timesteps = start_time:Minute(1):end_time
-    timestep_id = Dict(timesteps[i] => i for i in eachindex(timesteps))
     interval = config.interval_minutes
-    println("Creating OD queue tensor...")
-    @showprogress desc="Building OD queue..." for data in eachrow(demand)
-        for minutestep in data.datetime:Minute(1):data.datetime+Minute(interval - 1)
-            real_od_queue[timestep_id[minutestep], d_node_id[data.origin], d_node_id[data.destination]] = (data.value * im.scaling) / interval
+    println("Creating OD queue tensor from optimization demand...")
+
+    # Use demand_od_in_period (already scaled in framework) to ensure consistency
+    # Distribute each period's demand evenly across its minutes
+    for p in 1:im.nr_periods
+        # Calculate minute range for this period
+        period_start_minute = (p - 1) * im.minutes_in_period + 1
+        period_end_minute = min(p * im.minutes_in_period, im.nr_minutes)
+
+        for o in 1:im.nr_nodes
+            for d in 1:im.nr_nodes
+                period_demand = im.demand_od_in_period[o, d, p]
+                if period_demand > 0
+                    # Distribute demand evenly across minutes in this period
+                    demand_per_minute = period_demand / im.minutes_in_period
+                    for minute in period_start_minute:period_end_minute
+                        real_od_queue[minute, o, d] = demand_per_minute
+                    end
+                end
+            end
         end
     end
-
 end
 
 """
@@ -68,6 +81,29 @@ function simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kin
     ## create the list that saves the number of allowed people
     real_allowed_entry = zeros(Float64, im.nr_minutes, im.nr_nodes)
     create_entry_list!(im, real_allowed_entry, queues)
+
+    # === DEMAND VERIFICATION: Compare optimization vs simulation initial demand ===
+    sim_total_demand = sum(real_od_queue)
+    opt_total_demand = sum(im.demand_od_in_period)
+    demand_diff_pct = opt_total_demand > 0 ? abs(sim_total_demand - opt_total_demand) / opt_total_demand * 100 : 0.0
+
+    # Total allowed entries from optimization
+    opt_total_allowed = sum(queues.allowed) * im.minutes_in_period  # allowed is per-minute rate
+    sim_total_allowed = sum(real_allowed_entry)  # Already minute-level
+
+    println("\n=== Demand & Capacity Verification ===")
+    println("  Optimization total demand:  $(round(Int, opt_total_demand))")
+    println("  Simulation total demand:    $(round(Int, sim_total_demand))")
+    println("  Demand difference:          $(round(demand_diff_pct, digits=2))%")
+    println("  ---")
+    println("  Opt total allowed entries:  $(round(Int, opt_total_allowed))")
+    println("  Sim total allowed entries:  $(round(Int, sim_total_allowed))")
+    println("  Expected end queue (opt):   $(round(Int, max(0, opt_total_demand - opt_total_allowed)))")
+    println("  Expected end queue (sim):   $(round(Int, max(0, sim_total_demand - sim_total_allowed)))")
+    if demand_diff_pct > 0.1
+        println("  WARNING: Demand sources differ! This will cause queue mismatch.")
+    end
+    println("======================================\n")
 
     stats = DataFrame(
         minute=Int64[],
@@ -158,7 +194,7 @@ function simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kin
                         end
                     end
                     @views real_od_queue[queue_minute, origin, :] .-= split_flow
-                    if @views sum(real_od_queue[queue_minute, origin, :]) <= 0.1
+                    if @views sum(real_od_queue[queue_minute, origin, :]) < 0.01
                         @views real_od_queue[queue_minute, origin, :] .= 0
                         # Advance pointer if we just emptied the earliest
                         if queue_minute == earliest_nonempty[origin]
@@ -166,7 +202,7 @@ function simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kin
                         end
                     end
                     moved_minute -= all_inflow
-                    if moved_minute <= 0.1
+                    if moved_minute < 0.01
                         break
                     end
                 end
@@ -199,8 +235,10 @@ function simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kin
             sim_end_queue_age = end_queue_sum > 0 ? end_age_sum / end_queue_sum : 0.0
         end
 
-        # Clear queues if metro is closed (moved outside origin loop - runs once per minute)
-        if all(i -> i == 0, real_allowed_entry[minute, :]) && infeasible_solutions == 0
+        # Clear queues if metro is closed (all stations have 0 allowed entry)
+        # Note: Removed infeasible_solutions check - queue should clear during closed hours
+        # regardless of whether some optimization periods were infeasible
+        if all(i -> i == 0, real_allowed_entry[minute, :])
             real_od_queue[1:minute, :, :] .= 0
             earliest_nonempty .= minute + 1  # Reset pointers after bulk clear
             # Reset age tracking
@@ -339,6 +377,28 @@ function simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kin
 
     ex = length(filter(x -> x > 1, sim_arcs.utilization)) == 0 ? [0] : filter(x -> x > 1, sim_arcs.utilization)
     sf = length(filter(x -> x > im.safety_factor, sim_arcs.utilization)) == 0 ? [0] : filter(x -> x > im.safety_factor, sim_arcs.utilization)
+
+    # === QUEUE VERIFICATION: Compare optimization vs simulation queues ===
+    # Find last OPEN period for comparison
+    all_periods = sort(unique(queues.datetime))
+    last_open_period_dt = nothing
+    for dt in reverse(all_periods)
+        if hour(dt) ∉ config.closed_hours
+            last_open_period_dt = dt
+            break
+        end
+    end
+
+    if last_open_period_dt !== nothing
+        opt_final_queues = filter(row -> row.datetime == last_open_period_dt, queues)
+        opt_total_queue = sum(opt_final_queues.queued)
+        sim_total_queue = sum(real_queue_use[last_open_minute_sim, :])
+        queue_diff_pct = opt_total_queue > 0 ? abs(sim_total_queue - opt_total_queue) / opt_total_queue * 100 : 0.0
+
+        if queue_diff_pct > 1.0
+            println("\n  WARNING: Queue mismatch of $(round(queue_diff_pct, digits=1))% between optimization and simulation (likely due to rounding).\n")
+        end
+    end
 
     push!(logfile, (
         timestamp=now(),

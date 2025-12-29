@@ -17,7 +17,7 @@ date_format = "yyyy-mm-dd"
 
 [optimization]
 # Parameter ranges for grid search
-safety_factors = [0.6, 0.7, 0.8, 0.9, 1.0]  # α: arc capacity safety factor
+safety_factors = [0.7, 0.8, 0.9, 1.0]   # α: arc capacity safety factor
 min_enter = [0, 10]                          # c_o^min: minimum entries per minute
 max_enter = [80, 160, 240]                   # c_o^max: maximum entries per minute
 scaling_factors = [0.8, 1.0, 1.2]            # demand scaling factors

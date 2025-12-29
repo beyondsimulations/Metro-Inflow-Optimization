@@ -258,6 +258,8 @@ if unbound_mode
         kind_queue = "none"
 
         # Create a minimal MetroInstance (optimization params don't matter for unbound)
+        # Apply scaling to demand here so optimization and simulation use same values
+        scaled_demand = copy(demand_od) .* scaling
         modelInstance = MetroInstance(
             kind_opt,
             kind_queue,
@@ -271,8 +273,8 @@ if unbound_mode
             safety,
             min_enter,
             max_enter,
-            copy(demand_od),
-            copy(demand_od),
+            scaled_demand,
+            copy(scaled_demand),
             shift,
             scaling,
             closed_period,
@@ -350,6 +352,8 @@ else
                                 flush(log_file)
 
                                 # Create a MetroInstance object with the following parameters:
+                                # Apply scaling to demand here so optimization and simulation use same values
+                                scaled_demand = copy(demand_od) .* scaling
                                 modelInstance = MetroInstance(
                                     kind_opt,
                                     kind_queue,
@@ -363,8 +367,8 @@ else
                                     safety,
                                     min_enter,
                                     max_enter,
-                                    copy(demand_od),
-                                    copy(demand_od),
+                                    scaled_demand,
+                                    copy(scaled_demand),
                                     shift,
                                     scaling,
                                     closed_period,

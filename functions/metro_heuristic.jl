@@ -26,7 +26,7 @@ function heuristic_adding_queues(im, config)
     optimization_duration = zeros(Float64, im.nr_periods) # Initialize optimization duration vector
     build_duration = zeros(Float64, im.nr_periods) # Initialize model build duration vector
     queue_period_age = zeros(Int64, im.nr_nodes, im.nr_periods) .= 1 # Computes the age of each queue per period (min 1 for optimization weighting)
-    save_queue = zeros(Int64, nr_nodes, im.nr_periods) .= 1 # Saves the queue for the output
+    save_queue = zeros(Float64, nr_nodes, im.nr_periods) # Saves the queue for the output
 
     stats = DataFrame(
         period=Int64[],
@@ -115,23 +115,27 @@ function heuristic_adding_queues(im, config)
 
         for o in 1:im.nr_nodes
             for p in 1:fix_period
-                current_ratio = (remaining_queue[o, :, p] / sum(remaining_queue[o, :, p]))
-                current_ratio .= ifelse.(isnan.(current_ratio), 0, current_ratio)
+                queue_sum = sum(remaining_queue[o, :, p])
 
-                while sum(remaining_queue[o, :, p]) >= 1 && demand_fulfiled[o] >= 1
-                    remaining_queue[o, :, p] .-= im.minutes_in_period .* current_ratio
-                    demand_fulfiled[o] -= im.minutes_in_period
+                # Skip if no queue or no demand to fulfill (use small threshold to avoid floating-point noise)
+                if queue_sum < 0.01 || demand_fulfiled[o] < 0.01
+                    continue
                 end
 
-                if sum(remaining_queue[o, :, p]) <= 1
+                current_ratio = remaining_queue[o, :, p] ./ queue_sum
+                current_ratio .= ifelse.(isnan.(current_ratio), 0, current_ratio)
+
+                # Deplete by actual available amount, not fixed minutes_in_period
+                actual_depletion = min(queue_sum, demand_fulfiled[o])
+                remaining_queue[o, :, p] .-= actual_depletion .* current_ratio
+                demand_fulfiled[o] -= actual_depletion
+
+                if sum(remaining_queue[o, :, p]) < 0.01
                     remaining_queue[o, :, p] .= 0
                 end
 
-                if demand_fulfiled[o] <= 1
+                if demand_fulfiled[o] < 0.01
                     demand_fulfiled[o] = 0
-                end
-
-                if demand_fulfiled[o] == 0
                     break
                 end
             end
@@ -141,7 +145,7 @@ function heuristic_adding_queues(im, config)
             remaining_queue[:, :, 1:fix_period] .= 0
         end
         for o in 1:im.nr_nodes
-            save_queue[o, fix_period] = round(Int64, sum(remaining_queue[o, :, 1:fix_period]))
+            save_queue[o, fix_period] = sum(remaining_queue[o, :, 1:fix_period])
         end
 
         push!(stats, (
@@ -198,9 +202,9 @@ function heuristic_adding_queues(im, config)
     n_queue_rows = nr_periods * nr_nodes
     rq_datetime = Vector{DateTime}(undef, n_queue_rows)
     rq_station = Vector{String}(undef, n_queue_rows)
-    rq_allowed = Vector{Int64}(undef, n_queue_rows)
-    rq_moved = Vector{Int64}(undef, n_queue_rows)
-    rq_queued = Vector{Int64}(undef, n_queue_rows)
+    rq_allowed = Vector{Float64}(undef, n_queue_rows)
+    rq_moved = Vector{Float64}(undef, n_queue_rows)
+    rq_queued = Vector{Float64}(undef, n_queue_rows)
 
     @inbounds for p in 1:nr_periods
         base = (p - 1) * nr_nodes
@@ -208,9 +212,9 @@ function heuristic_adding_queues(im, config)
             idx = base + o
             rq_datetime[idx] = periodrange[p]
             rq_station[idx] = nodes[o]
-            rq_allowed[idx] = round(Int64, inflow_raw[o, p])
-            rq_moved[idx] = round(Int64, inflow_raw[o, p])
-            rq_queued[idx] = round(Int64, save_queue[o, p])
+            rq_allowed[idx] = inflow_raw[o, p]
+            rq_moved[idx] = inflow_raw[o, p]
+            rq_queued[idx] = save_queue[o, p]
         end
     end
     results_queues = DataFrame(datetime=rq_datetime, station=rq_station, allowed=rq_allowed, moved=rq_moved, queued=rq_queued)

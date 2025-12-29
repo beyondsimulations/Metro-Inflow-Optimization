@@ -17,7 +17,7 @@ date_format = "yyyy-mm-dd"
 
 [optimization]
 safety_factors = [1.0]            # α: arc capacity safety factor
-min_enter = [1]                  # c_o^min: minimum entries per minute per station
+min_enter = [0]                  # c_o^min: minimum entries per minute per station
 max_enter = [1000]                # c_o^max: maximum entries per minute per station
 scaling_factors = [1.0, 1.1, 1.2] # demand scaling (+10%, +20%)
 past_periods = [4]                # s̄: number of past periods to consider
