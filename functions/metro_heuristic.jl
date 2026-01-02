@@ -158,7 +158,7 @@ function heuristic_adding_queues(im, config)
     end
 
     # Save optimization diagnostic plots
-    plot_dir = "results/plots/$(config.name)_$(im.safety_factor)_$(im.minutes_in_period)_$(im.past_minutes)_$(im.max_entry_origin)_$(im.min_entry_origin)_$(im.scaling)_$(im.kind_opt)_$(im.kind_queue)"
+    plot_dir = "results/plots/$(config.name)_$(Date(start_time))_$(im.safety_factor)_$(im.minutes_in_period)_$(im.past_minutes)_$(im.max_entry_origin)_$(im.min_entry_origin)_$(im.scaling)_$(im.kind_opt)_$(im.kind_queue)"
     mkpath(plot_dir)
 
     p1 = plot(stats.period, stats.new_demand, label="new demand")

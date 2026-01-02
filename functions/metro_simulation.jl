@@ -256,7 +256,7 @@ function simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kin
     end
 
     # Save simulation diagnostic plots
-    plot_dir = "results/plots/$(config.name)_$(im.safety_factor)_$(im.minutes_in_period)_$(im.past_minutes)_$(im.max_entry_origin)_$(im.min_entry_origin)_$(im.scaling)_$(im.kind_opt)_$(kind_sim)_$(im.kind_queue)"
+    plot_dir = "results/plots/$(config.name)_$(Date(start_time))_$(im.safety_factor)_$(im.minutes_in_period)_$(im.past_minutes)_$(im.max_entry_origin)_$(im.min_entry_origin)_$(im.scaling)_$(im.kind_opt)_$(kind_sim)_$(im.kind_queue)"
     mkpath(plot_dir)
 
     p1 = plot(stats.minute, stats.new_demand, label="new demand")
@@ -443,11 +443,11 @@ function simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kin
     CSV.write(logfile_name, logfile)
     CSV.write("results/$logfile_name", logfile)
 
-    CSV.write("results/queues/sim_queues_$(config.name)_$(im.safety_factor)_$(im.minutes_in_period)_$(im.past_minutes)_$(im.max_entry_origin)_$(im.min_entry_origin)_$(im.scaling)_$(im.kind_opt)_$(kind_sim)_$(im.kind_queue).csv",
+    CSV.write("results/queues/sim_queues_$(config.name)_$(Date(start_time))_$(im.safety_factor)_$(im.minutes_in_period)_$(im.past_minutes)_$(im.max_entry_origin)_$(im.min_entry_origin)_$(im.scaling)_$(im.kind_opt)_$(kind_sim)_$(im.kind_queue).csv",
         sim_queues
     )
 
-    CSV.write("results/arcs/sim_arcs_$(config.name)_$(im.safety_factor)_$(im.minutes_in_period)_$(im.past_minutes)_$(im.max_entry_origin)_$(im.min_entry_origin)_$(im.scaling)_$(im.kind_opt)_$(kind_sim)_$(im.kind_queue).csv",
+    CSV.write("results/arcs/sim_arcs_$(config.name)_$(Date(start_time))_$(im.safety_factor)_$(im.minutes_in_period)_$(im.past_minutes)_$(im.max_entry_origin)_$(im.min_entry_origin)_$(im.scaling)_$(im.kind_opt)_$(kind_sim)_$(im.kind_queue).csv",
         sim_arcs
     )
     return sim_queues, sim_arcs
