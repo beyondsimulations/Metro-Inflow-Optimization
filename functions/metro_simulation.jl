@@ -439,6 +439,10 @@ function simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kin
         safety_090quant=quantile(sf, 0.90),
     ))
 
+    # Ensure output directories exist (mkpath is safe if they already exist)
+    mkpath("results/queues")
+    mkpath("results/arcs")
+
     # Save logfile to both root folder and results folder
     CSV.write(logfile_name, logfile)
     CSV.write("results/$logfile_name", logfile)
