@@ -194,7 +194,7 @@ function simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kin
                         end
                     end
                     @views real_od_queue[queue_minute, origin, :] .-= split_flow
-                    if @views sum(real_od_queue[queue_minute, origin, :]) < 0.01
+                    if @views sum(real_od_queue[queue_minute, origin, :]) < 1e-9
                         @views real_od_queue[queue_minute, origin, :] .= 0
                         # Advance pointer if we just emptied the earliest
                         if queue_minute == earliest_nonempty[origin]
@@ -202,7 +202,7 @@ function simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kin
                         end
                     end
                     moved_minute -= all_inflow
-                    if moved_minute < 0.01
+                    if moved_minute < 1e-9
                         break
                     end
                 end
@@ -363,15 +363,17 @@ function simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kin
             safety_090quant=Float64[],)
     end
 
-    # Compute simulation-based average queue age
-    sim_avg_queue_age = total_queue_contribution > 0 ? total_age_contribution / total_queue_contribution : 0.0
-
     # Filter to only open hours for accurate averages
     open_minutes = findall(m -> any(real_allowed_entry[m, :] .> 0), 1:n_minutes)
     n_open_minutes = length(open_minutes)
 
     # Calculate averages only over operating hours
     avg_queue_open = sum(real_queue_use[open_minutes, :]) / (n_open_minutes * nr_nodes)
+    end_queue_total = sum(real_queue_use[last_open_minute_sim, :])
+
+    # Compute queue ages - set to 0 if no queue exists (avoid misleading values)
+    sim_avg_queue_age = (avg_queue_open > 0.01 && total_queue_contribution > 0) ? total_age_contribution / total_queue_contribution : 0.0
+    sim_end_queue_age = end_queue_total > 0.01 ? sim_end_queue_age : 0.0
     open_arc_rows = filter(row -> hour(row.datetime) ∉ config.closed_hours, eachrow(sim_arcs))
     avg_util_open = isempty(open_arc_rows) ? 0.0 : sum(r.utilization for r in open_arc_rows) / length(open_arc_rows)
 
@@ -418,7 +420,7 @@ function simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kin
         max_duration=maximum(opt_duration),
         avg_build_time=sum(build_duration) / length(build_duration),
         avg_queue=avg_queue_open,
-        end_queue=sum(real_queue_use[last_open_minute_sim, :]),
+        end_queue=end_queue_total,
         avg_queue_age=sim_avg_queue_age,
         end_queue_age=sim_end_queue_age,
         total_demand=sum(stats.new_demand),

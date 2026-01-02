@@ -287,7 +287,8 @@ if unbound_mode
             queues = DataFrame(
                 datetime = repeat(collect(periodrange_local), inner=nr_nodes),
                 station = repeat(nodes, outer=length(periodrange_local)),
-                allowed = zeros(Float64, nr_nodes * length(periodrange_local))
+                allowed = zeros(Float64, nr_nodes * length(periodrange_local)),
+                queued = zeros(Float64, nr_nodes * length(periodrange_local))
             )
             # Set allowed = max_enter for open periods, 0 for closed (respects metro hours)
             for row in eachrow(queues)
