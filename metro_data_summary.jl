@@ -304,10 +304,27 @@ if nrow(data) > 0
     closed_changesort = get_closed_changesort(config.closed_hours)
     filter!(row -> !(row.changesort in closed_changesort), arcutil)
 
-    # Dynamic styles based on combinations
-    n_combinations = length(unique(arcutil.combination))
-    comb_linestyles = repeat(PLOT_LINESTYLES, ceil(Int, n_combinations / length(PLOT_LINESTYLES)))[1:n_combinations]
-    comb_colors = repeat(PLOT_COLORS, ceil(Int, n_combinations / length(PLOT_COLORS)))[1:n_combinations]
+    # Colors for the 3 days: red, blue, grey
+    day_colors = [:firebrick, :blue, :grey]
+
+    # Build color and linestyle arrays based on combinations (date + kind)
+    unique_dates = sort(unique(arcutil.date))
+    unique_combinations = sort(unique(arcutil.combination))
+
+    comb_colors = Symbol[]
+    comb_linestyles = Symbol[]
+    for comb in unique_combinations
+        # Find which day this combination belongs to
+        day_idx = findfirst(d -> occursin(d, comb), unique_dates)
+        day_idx = day_idx === nothing ? 1 : day_idx
+        push!(comb_colors, day_colors[mod1(day_idx, length(day_colors))])
+        # Baseline = solid, optimized = dot
+        if occursin("baseline", comb)
+            push!(comb_linestyles, :solid)
+        else
+            push!(comb_linestyles, :dot)
+        end
+    end
 
     @df arcutil plot(
         :stringday,
@@ -322,6 +339,7 @@ if nrow(data) > 0
         margin=5mm,
         fontfamily="Computer Modern",
         color=permutedims(comb_colors),
+        legend = :topright,
     )
     savefig("visuals/arcutil_$(config.name).pdf")
     println("Saved: visuals/arcutil_$(config.name).pdf")
@@ -330,11 +348,11 @@ if nrow(data) > 0
     unique_arc_dates = unique(arcutil.date)
 
     for (y, x) in enumerate(unique_arc_dates)
-        colorset = PLOT_COLORS[mod1(y, length(PLOT_COLORS))]
+        colorset = day_colors[mod1(y, length(day_colors))]
         day = filter(row -> row.date == x, arcutil)
 
-        n_kinds = length(unique(day.kind))
-        kind_linestyles = repeat([:solid, :dash], ceil(Int, n_kinds / 2))[1:n_kinds]
+        # Baseline = solid, optimized = dot
+        kind_linestyles = [k == "baseline" ? :solid : :dot for k in sort(unique(day.kind))]
 
         @df day plot(
             :stringday,
@@ -348,11 +366,10 @@ if nrow(data) > 0
             size=(700,280),
             margin=5mm,
             fontfamily="Computer Modern",
-            legend = :topleft,
+            legend = :topright,
             color = colorset,
             ylim = (0, maximum(arcutil.utilization_maximum)),
         )
-        hline!([0.9], lw=0.5, label="restriction", linestyle=:dash, color=:black)
         savefig("visuals/arcutil_$(config.name)_$x.pdf")
         println("Saved: visuals/arcutil_$(config.name)_$x.pdf")
     end
@@ -423,6 +440,7 @@ if nrow(data) > 0
         margin=5mm,
         fontfamily="Computer Modern",
         color=permutedims(comb_colors),
+        legend = :topright,
     )
     savefig("visuals/queues_$(config.name).pdf")
     println("Saved: visuals/queues_$(config.name).pdf")
@@ -448,6 +466,7 @@ if nrow(data) > 0
             margin=5mm,
             fontfamily="Computer Modern",
             color=colorset,
+            legend = :topright,
         )
         savefig("visuals/queues_$(config.name)_$x.pdf")
         println("Saved: visuals/queues_$(config.name)_$x.pdf")
