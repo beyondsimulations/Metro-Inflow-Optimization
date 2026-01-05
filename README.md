@@ -35,10 +35,6 @@ julia metro_framework_parallel.jl --config config/shanghai.toml 10 '2017-05-15T0
 │   ├── doha.toml
 │   └── shanghai.toml
 ├── data_public/
-│   ├── Doha/                    # Doha Metro data
-│   │   ├── metroarcs_doha.csv
-│   │   ├── stations_doha.csv
-│   │   └── OD_*.csv
 │   └── Shanghai/                # Shanghai Metro data
 │       ├── README.md            # Detailed preprocessing docs
 │       ├── stationInfo.csv      # Station data (included, with fixes)
@@ -54,7 +50,6 @@ julia metro_framework_parallel.jl --config config/shanghai.toml 10 '2017-05-15T0
 │   └── metro_simulation.jl      # Simulation logic
 ├── results/                     # Output directory
 ├── metroflow/                   # Julia project environment
-├── metro_framework.jl           # Simple framework (single-threaded)
 └── metro_framework_parallel.jl  # Parallel framework (recommended)
 ```
 

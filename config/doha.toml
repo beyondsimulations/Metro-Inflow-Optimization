@@ -20,7 +20,7 @@ date_format = "yyyy-mm-dd"
 safety_factors = [0.7, 0.8, 0.9, 1.0]   # α: arc capacity safety factor
 min_enter = [0, 10]                          # c_o^min: minimum entries per minute
 max_enter = [80, 160, 240]                   # c_o^max: maximum entries per minute
-scaling_factors = [0.8, 1.0, 1.2]            # demand scaling factors
+scaling_factors = [1.0]                      # demand scaling factors (1.0 = actual World Cup demand)
 past_periods = [1, 2, 3, 4, 5, 6]            # s̄: number of past periods
 kind_opt = ["linweight"]       # optimization objective types
 kind_queue = ["lag_periods"]  # queue handling methods
@@ -28,3 +28,12 @@ kind_queue = ["lag_periods"]  # queue handling methods
 # Reference only - not used by metro_framework_parallel.jl
 # The actual minutes_in_period is passed as CLI argument (see run_sequential_metro.sh)
 minutes_in_period = [15, 30, 45, 60]         # m: optimization period lengths (documentation only)
+
+[plotting]
+# Specific parameters for paper figures (filters arc utilization and queue plots)
+# Based on parameter sensitivity analysis: α=0.9, m=60, s̄=4, c_o^max=160, c_o^min=10
+safety = 0.9                    # α: arc capacity safety factor
+period_length = 60              # m: optimization period length in minutes
+past_periods = 4                # s̄: number of past periods to consider
+max_enter = 160                 # c_o^max: maximum entries per minute
+min_enter = 10                  # c_o^min: minimum entries per minute

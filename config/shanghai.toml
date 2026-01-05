@@ -17,13 +17,21 @@ date_format = "yyyy-mm-dd"
 
 [optimization]
 safety_factors = [1.0]            # α: arc capacity safety factor
-min_enter = [0]                  # c_o^min: minimum entries per minute per station
+min_enter = [0]                   # c_o^min: minimum entries per minute per station
 max_enter = [1000]                # c_o^max: maximum entries per minute per station
-scaling_factors = [1.4]         # demand scaling (+40%)
+scaling_factors = [1.0, 1.2, 1.4]  # demand scaling (baseline, +20%, +40%)
 past_periods = [4]                # s̄: number of past periods to consider
 kind_opt = ["linweight"]          # optimization objective type
 kind_queue = ["shift_periods"]    # queue handling method
 
 # Reference only - not used by metro_framework_parallel.jl
 # The actual minutes_in_period is passed as CLI argument (see run_sequential_metro.sh)
-minutes_in_period = [20, 40, 60]  # m: optimization period lengths (documentation only)
+minutes_in_period = [60]          # m: optimization period lengths (documentation only)
+
+[plotting]
+# Specific parameters for paper figures (matches optimization settings)
+safety = 1.0                    # α: arc capacity safety factor
+period_length = 60              # m: optimization period length in minutes
+past_periods = 4                # s̄: number of past periods to consider
+max_enter = 1000                # c_o^max: maximum entries per minute
+min_enter = 0                   # c_o^min: minimum entries per minute

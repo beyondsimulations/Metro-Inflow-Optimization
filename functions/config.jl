@@ -37,6 +37,13 @@ struct RegionConfig
     minutes_in_period::Vector{Int}
     kind_opt::Vector{String}
     kind_queue::Vector{String}
+
+    # Plotting parameters (optional - if set, filter plots to these specific values)
+    plot_safety::Union{Nothing, Float64}
+    plot_period_length::Union{Nothing, Int}
+    plot_past_periods::Union{Nothing, Int}
+    plot_max_enter::Union{Nothing, Int}
+    plot_min_enter::Union{Nothing, Int}
 end
 
 """
@@ -68,10 +75,14 @@ function load_config(config_path::String)::RegionConfig
     paths = toml["paths"]
     time = toml["time"]
     opt = get(toml, "optimization", Dict())
+    plotting = get(toml, "plotting", Dict())
 
     # Default optimization parameters (for backward compatibility)
     base_interval = time["interval_minutes"]
     default_minutes = [base_interval * i for i in 1:4 if base_interval * i <= 60]
+
+    # Helper to get optional plotting parameter
+    get_optional(d, key, T) = haskey(d, key) ? convert(T, d[key]) : nothing
 
     return RegionConfig(
         # Region
@@ -94,7 +105,13 @@ function load_config(config_path::String)::RegionConfig
         convert(Vector{Int}, get(opt, "past_periods", [4])),
         convert(Vector{Int}, get(opt, "minutes_in_period", default_minutes)),
         convert(Vector{String}, get(opt, "kind_opt", ["linweight"])),
-        convert(Vector{String}, get(opt, "kind_queue", ["shift_periods"]))
+        convert(Vector{String}, get(opt, "kind_queue", ["shift_periods"])),
+        # Plotting (optional filters)
+        get_optional(plotting, "safety", Float64),
+        get_optional(plotting, "period_length", Int),
+        get_optional(plotting, "past_periods", Int),
+        get_optional(plotting, "max_enter", Int),
+        get_optional(plotting, "min_enter", Int)
     )
 end
 

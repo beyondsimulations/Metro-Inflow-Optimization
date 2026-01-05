@@ -36,11 +36,11 @@ TIME_PERIODS=(
 # Array of minutes_in_period values to test (you can modify this list)
 # For Doha (15-min intervals): use multiples of 15
 # For Shanghai (10-min intervals): use multiples of 10
-MINUTES_VALUES=(60 40 20)
+MINUTES_VALUES=(60)
 
 # Run mode: "bound" for optimized runs, "unbound" for baseline (no optimization)
 # Set to "unbound" to generate baseline data for comparison
-RUN_MODE="bound"  # Options: "bound", "unbound"
+RUN_MODE="unbound"  # Options: "bound", "unbound"
 
 # =============================================================================
 

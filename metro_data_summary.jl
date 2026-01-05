@@ -12,6 +12,7 @@ using ColorSchemes
 using Statistics
 using Colors
 using TOML
+using ProgressMeter
 
 include("functions/config.jl")
 
@@ -49,9 +50,12 @@ else
 end
 println("Analysis station: $ANALYSIS_STATION")
 
+# =============================================================================
+# Helper Functions
+# =============================================================================
+
 # Helper function to compute changesort (hours after midnight for sorting)
 function compute_changesort(hour_val, closed_hours)
-    # Hours in closed_hours that are early morning get shifted to 24+
     max_closed = maximum(closed_hours)
     if hour_val <= max_closed
         return hour_val + 24
@@ -65,6 +69,101 @@ function get_closed_changesort(closed_hours)
     return [h <= 5 ? h + 24 : h for h in closed_hours]
 end
 
+# Assign daycode based on operating day (spans midnight)
+function assign_daycode(date, hour_val, unique_dates, first_open_hour, last_closed_hour)
+    for i in 1:length(unique_dates)-1
+        current_date = unique_dates[i]
+        next_date = unique_dates[i+1]
+        if (date == current_date && hour_val >= first_open_hour) ||
+           (date == next_date && hour_val <= last_closed_hour)
+            return string(current_date)
+        end
+    end
+    return "irrelevant"
+end
+
+# Parse all parameters from filename
+# Format: sim_arcs_region_date_safety_period_past_maxenter_minenter_scaling_kindopt_kindsim_kindqueue.csv
+# Example: sim_arcs_doha_2022-11-27_0.9_60_240_160_10_1.0_linweight_bound_lag_periods.csv
+struct FileParams
+    safety::Union{Nothing, Float64}
+    period_length::Union{Nothing, Int}
+    past_minutes::Union{Nothing, Int}
+    max_enter::Union{Nothing, Int}
+    min_enter::Union{Nothing, Int}
+    scaling::Union{Nothing, Float64}
+    is_baseline::Bool
+end
+
+function parse_file_params(filename::String)::FileParams
+    is_baseline = occursin("unbound", filename)
+
+    # Use regex to extract parameters
+    # Pattern: _safety_period_past_maxenter_minenter_scaling_kindopt_
+    m = match(r"_(\d+\.?\d*)_(\d+)_(\d+)_(\d+)_(\d+)_(\d+\.?\d*)_(?:linweight|none)_", filename)
+
+    if m !== nothing
+        return FileParams(
+            tryparse(Float64, m.captures[1]),  # safety
+            tryparse(Int, m.captures[2]),       # period_length
+            tryparse(Int, m.captures[3]),       # past_minutes
+            tryparse(Int, m.captures[4]),       # max_enter
+            tryparse(Int, m.captures[5]),       # min_enter
+            tryparse(Float64, m.captures[6]),   # scaling
+            is_baseline
+        )
+    end
+
+    return FileParams(nothing, nothing, nothing, nothing, nothing, nothing, is_baseline)
+end
+
+# Check if file matches plotting filters from config
+function matches_plot_filters(params::FileParams, config)::Bool
+    # Always include baseline files (they don't have optimization parameters)
+    if params.is_baseline
+        # Only check scaling for baseline files
+        if params.scaling !== nothing && !(params.scaling in config.scaling_factors)
+            return false
+        end
+        return true
+    end
+
+    # For optimized files, check all plotting filters
+    if config.plot_safety !== nothing && params.safety != config.plot_safety
+        return false
+    end
+    if config.plot_period_length !== nothing && params.period_length != config.plot_period_length
+        return false
+    end
+    # Check past_periods (computed from past_minutes / period_length)
+    if config.plot_past_periods !== nothing && params.period_length !== nothing && params.past_minutes !== nothing
+        computed_past_periods = div(params.past_minutes, params.period_length)
+        if computed_past_periods != config.plot_past_periods
+            return false
+        end
+    end
+    if config.plot_max_enter !== nothing && params.max_enter != config.plot_max_enter
+        return false
+    end
+    if config.plot_min_enter !== nothing && params.min_enter != config.plot_min_enter
+        return false
+    end
+    # Also check scaling is in allowed list
+    if params.scaling !== nothing && !(params.scaling in config.scaling_factors)
+        return false
+    end
+    return true
+end
+
+# Extract just the scaling factor (for grouping)
+function extract_scaling_from_filename(filename::String)
+    m = match(r"_(\d+\.?\d*)_(?:linweight|none)", filename)
+    if m !== nothing
+        return tryparse(Float64, m.captures[1])
+    end
+    return nothing
+end
+
 # Extended color palette
 const PLOT_COLORS = [:firebrick, :cyan4, :seashell4, :purple, :orange, :green, :blue,
                      :brown, :pink, :teal, :gold, :coral, :navy, :olive]
@@ -73,19 +172,21 @@ const PLOT_LINESTYLES = [:solid, :dash, :dot, :dashdot, :dashdotdot]
 # =============================================================================
 # Load demand data from configured region
 # =============================================================================
-data = DataFrame()
+println("\n" * "="^60)
+println("Loading demand data...")
+println("="^60)
+
 od_files = filter(f -> startswith(f, "OD_") && endswith(f, ".csv"), readdir(config.base_dir))
-for file in od_files
-    new_data = CSV.read(joinpath(config.base_dir, file), DataFrame)
-    global data = vcat(data, new_data)
+od_dfs = DataFrame[]
+@showprogress "Loading OD files: " for file in od_files
+    push!(od_dfs, CSV.read(joinpath(config.base_dir, file), DataFrame))
 end
+data = reduce(vcat, od_dfs)
 println("Loaded $(nrow(data)) demand records from $(length(od_files)) files")
 
 data.hour = hour.(data.datetime)
-data.daycode .= "irrelevant"
 
 # Dynamically assign daycode based on actual dates in data
-# A "day" runs from first open hour to last closed hour
 unique_dates = sort(unique(data.date))
 println("Found dates: ", unique_dates)
 
@@ -93,18 +194,8 @@ println("Found dates: ", unique_dates)
 first_open_hour = maximum(config.closed_hours) + 1
 last_closed_hour = minimum(config.closed_hours)
 
-for row in eachrow(data)
-    for i in 1:length(unique_dates)-1
-        current_date = unique_dates[i]
-        next_date = unique_dates[i+1]
-        # Day runs from first_open_hour on current_date to last_closed_hour on next_date
-        if (row.date == current_date && row.hour >= first_open_hour) ||
-           (row.date == next_date && row.hour <= last_closed_hour)
-            row.daycode = string(current_date)
-            break
-        end
-    end
-end
+# Vectorized daycode assignment
+data.daycode = assign_daycode.(data.date, data.hour, Ref(unique_dates), first_open_hour, last_closed_hour)
 
 # Overall demand of each interval
 gpd_demand = groupby(data, :daycode)
@@ -113,12 +204,8 @@ gpd_demand = combine(gpd_demand, :value => sum)
 # Peak for all stations
 gpd_peak = groupby(data, [:daycode,:datetime,:hour])
 gpd_peak = combine(gpd_peak, :value => sum)
-gpd_peak.changesort .= 0
-for row in eachrow(gpd_peak)
-    row.changesort = compute_changesort(row.hour, config.closed_hours)
-end
-sort!(gpd_peak,:datetime)
-sort!(gpd_peak,:changesort)
+gpd_peak.changesort = compute_changesort.(gpd_peak.hour, Ref(config.closed_hours))
+sort!(gpd_peak, [:changesort, :datetime])
 gpd_peak.stringday .= string.(Time.(gpd_peak.datetime))
 filter!(row -> !(row.daycode == "irrelevant"), gpd_peak)
 gpd_peak.day .= Date.(gpd_peak.daycode)
@@ -156,12 +243,8 @@ gpd_peak_station = filter(row -> row.origin == station, data)
 if nrow(gpd_peak_station) > 0
     gpd_peak_station = groupby(gpd_peak_station, [:daycode,:datetime,:hour])
     gpd_peak_station = combine(gpd_peak_station, :value => sum)
-    gpd_peak_station.changesort .= 0
-    for row in eachrow(gpd_peak_station)
-        row.changesort = compute_changesort(row.hour, config.closed_hours)
-    end
-    sort!(gpd_peak_station,:datetime)
-    sort!(gpd_peak_station,:changesort)
+    gpd_peak_station.changesort = compute_changesort.(gpd_peak_station.hour, Ref(config.closed_hours))
+    sort!(gpd_peak_station, [:changesort, :datetime])
     gpd_peak_station.stringday .= string.(Time.(gpd_peak_station.datetime))
     filter!(row -> !(row.daycode == "irrelevant"), gpd_peak_station)
     gpd_peak_station.day .= Date.(gpd_peak_station.daycode)
@@ -197,7 +280,9 @@ end
 # =============================================================================
 # Aggregate analysis from logfiles (adapted from data_paper analysis)
 # =============================================================================
-println("\n--- Aggregate Analysis from Logfiles ---")
+println("\n" * "="^60)
+println("Aggregate Analysis from Logfiles")
+println("="^60)
 
 # Find all logfiles for this region
 logfile_pattern = "logfile_$(config.name)_"
@@ -205,10 +290,28 @@ logfiles = filter(f -> startswith(f, logfile_pattern) && endswith(f, ".csv"), re
 println("Found $(length(logfiles)) logfiles for $(config.name)")
 
 if length(logfiles) > 0
-    logdata = DataFrame()
-    for file in logfiles
-        new_data = CSV.read("results/$file", DataFrame)
-        global logdata = vcat(logdata, new_data)
+    log_dfs = DataFrame[]
+    @showprogress "Loading logfiles: " for file in logfiles
+        push!(log_dfs, CSV.read("results/$file", DataFrame))
+    end
+    logdata = reduce(vcat, log_dfs)
+
+    # Filter to config parameters only (allows keeping old results while analyzing current config)
+    if nrow(logdata) > 0
+        valid_safety = Set(config.safety_factors)
+        valid_min = Set(Float64.(config.min_enter))
+        valid_max = Set(Float64.(config.max_enter))
+        valid_scaling = Set(config.scaling_factors)
+
+        before_filter = nrow(logdata)
+        filter!(row ->
+            row.safety in valid_safety &&
+            row.min_enter in valid_min &&
+            row.max_enter in valid_max &&
+            row.scaling in valid_scaling,
+            logdata
+        )
+        println("Filtered to config params: $(nrow(logdata)) rows (from $before_filter)")
     end
 
     if nrow(logdata) > 0 && hasproperty(logdata, :kind_simulation)
@@ -261,70 +364,109 @@ else
 end
 
 # =============================================================================
-# Detailed Plots arc utilization
+# Detailed Plots arc utilization - PER SCALING FACTOR
 # =============================================================================
-println("\n--- Arc Utilization Plots ---")
+println("\n" * "="^60)
+println("Arc Utilization Plots (per scaling factor)")
+println("="^60)
 
-data = DataFrame()
 dir = "results/arcs"
 
 # Only process files for the current region
-region_files = filter(f -> startswith(f, "sim_arcs_$(config.name)") && endswith(f, ".csv"), readdir(dir))
-println("Found $(length(region_files)) arc result files for $(config.name)")
+all_region_files = filter(f -> startswith(f, "sim_arcs_$(config.name)") && endswith(f, ".csv"), readdir(dir))
+println("Found $(length(all_region_files)) total arc files for $(config.name)")
 
-for file in region_files
-    new_data = CSV.read("$dir/$(file)", DataFrame)
-    new_data.kind .= "optimized"
-    if occursin("unbound", file)
-        new_data.kind .= "baseline"
-    end
-    # Extract date from datetime column
-    if hasproperty(new_data, :datetime) && nrow(new_data) > 0
-        new_data.date .= string(Date(new_data.datetime[1]))
-    else
-        new_data.date .= "unknown"
-    end
-    global data = vcat(data, new_data)
+# Print active plotting filters
+if any(x -> x !== nothing, [config.plot_safety, config.plot_period_length, config.plot_past_periods, config.plot_max_enter, config.plot_min_enter])
+    println("Active plotting filters:")
+    config.plot_safety !== nothing && println("  - safety: $(config.plot_safety)")
+    config.plot_period_length !== nothing && println("  - period_length: $(config.plot_period_length)")
+    config.plot_past_periods !== nothing && println("  - past_periods: $(config.plot_past_periods)")
+    config.plot_max_enter !== nothing && println("  - max_enter: $(config.plot_max_enter)")
+    config.plot_min_enter !== nothing && println("  - min_enter: $(config.plot_min_enter)")
 end
 
-if nrow(data) > 0
-    arcutil = groupby(data, [:kind,:date,:datetime])
+# Filter files by config parameters (scaling + optional plotting filters)
+region_files = String[]
+file_scaling_map = Dict{String, Float64}()
+file_params_map = Dict{String, FileParams}()
+
+println("Filtering files by config parameters...")
+@showprogress "Parsing filenames: " for file in all_region_files
+    params = parse_file_params(file)
+    if matches_plot_filters(params, config) && params.scaling !== nothing
+        push!(region_files, file)
+        file_scaling_map[file] = params.scaling
+        file_params_map[file] = params
+    end
+end
+println("Filtered to $(length(region_files)) files matching config parameters")
+
+# Colors for the 3 days: red, blue, grey
+day_colors = [:firebrick, :teal, :grey]
+
+# Process each scaling factor separately
+for target_scaling in sort(collect(config.scaling_factors))
+    println("\n--- Processing scaling factor: $target_scaling ---")
+
+    scaling_files = filter(f -> get(file_scaling_map, f, -1.0) == target_scaling, region_files)
+    println("  Files for this scaling: $(length(scaling_files))")
+
+    if isempty(scaling_files)
+        println("  No files found for scaling $target_scaling, skipping...")
+        continue
+    end
+
+    arc_dfs = DataFrame[]
+    @showprogress "  Loading arc files (scaling=$target_scaling): " for file in scaling_files
+        new_data = CSV.read("$dir/$(file)", DataFrame)
+        new_data.kind .= occursin("unbound", file) ? "baseline" : "optimized"
+        new_data.scaling .= target_scaling
+        new_data.date .= hasproperty(new_data, :datetime) && nrow(new_data) > 0 ? string(Date(new_data.datetime[1])) : "unknown"
+        push!(arc_dfs, new_data)
+    end
+    data_scaling = isempty(arc_dfs) ? DataFrame() : reduce(vcat, arc_dfs)
+
+    if nrow(data_scaling) == 0
+        println("  No data loaded for scaling $target_scaling")
+        continue
+    end
+
+    arcutil = groupby(data_scaling, [:kind,:date,:datetime])
     arcutil = combine(arcutil, :utilization => maximum)
     arcutil.combination .= arcutil.date .* " " .* arcutil.kind
-
-    arcutil.changesort .= 0
-    for row in eachrow(arcutil)
-        row.changesort = compute_changesort(hour(row.datetime), config.closed_hours)
-    end
-    sort!(arcutil, :datetime)
-    sort!(arcutil, :changesort)
+    arcutil.changesort = compute_changesort.(hour.(arcutil.datetime), Ref(config.closed_hours))
+    sort!(arcutil, [:changesort, :datetime])
     arcutil.stringday .= string.(Time.(arcutil.datetime))
 
     # Filter out closed hours using config
     closed_changesort = get_closed_changesort(config.closed_hours)
     filter!(row -> !(row.changesort in closed_changesort), arcutil)
 
-    # Colors for the 3 days: red, blue, grey
-    day_colors = [:firebrick, :blue, :grey]
+    if nrow(arcutil) == 0
+        println("  No data after filtering for scaling $target_scaling")
+        continue
+    end
 
     # Build color and linestyle arrays based on combinations (date + kind)
-    unique_dates = sort(unique(arcutil.date))
-    unique_combinations = sort(unique(arcutil.combination))
+    local unique_dates = sort(unique(arcutil.date))
+    local unique_combinations = sort(unique(arcutil.combination))
 
-    comb_colors = Symbol[]
-    comb_linestyles = Symbol[]
+    local comb_colors = Symbol[]
+    local comb_linestyles = Symbol[]
     for comb in unique_combinations
-        # Find which day this combination belongs to
-        day_idx = findfirst(d -> occursin(d, comb), unique_dates)
+        local day_idx = findfirst(d -> occursin(d, comb), unique_dates)
         day_idx = day_idx === nothing ? 1 : day_idx
         push!(comb_colors, day_colors[mod1(day_idx, length(day_colors))])
-        # Baseline = solid, optimized = dot
         if occursin("baseline", comb)
             push!(comb_linestyles, :solid)
         else
             push!(comb_linestyles, :dot)
         end
     end
+
+    # Combined plot for this scaling factor
+    local scaling_label = target_scaling == 1.0 ? "observed" : "+$(round(Int, (target_scaling - 1) * 100))%"
 
     @df arcutil plot(
         :stringday,
@@ -339,19 +481,17 @@ if nrow(data) > 0
         margin=5mm,
         fontfamily="Computer Modern",
         color=permutedims(comb_colors),
-        legend = :topright,
+        legend = :topleft,
     )
-    savefig("visuals/arcutil_$(config.name).pdf")
-    println("Saved: visuals/arcutil_$(config.name).pdf")
+    local scaling_suffix = replace(string(target_scaling), "." => "_")
+    savefig("visuals/arcutil_$(config.name)_scaling_$(scaling_suffix).pdf")
+    println("  Saved: visuals/arcutil_$(config.name)_scaling_$(scaling_suffix).pdf")
 
-    # Plot per-day arc utilization
-    unique_arc_dates = unique(arcutil.date)
-
-    for (y, x) in enumerate(unique_arc_dates)
+    # Per-day plots for this scaling factor
+    for (y, x) in enumerate(unique_dates)
         colorset = day_colors[mod1(y, length(day_colors))]
         day = filter(row -> row.date == x, arcutil)
 
-        # Baseline = solid, optimized = dot
         kind_linestyles = [k == "baseline" ? :solid : :dot for k in sort(unique(day.kind))]
 
         @df day plot(
@@ -366,66 +506,105 @@ if nrow(data) > 0
             size=(700,280),
             margin=5mm,
             fontfamily="Computer Modern",
-            legend = :topright,
+            legend = :topleft,
             color = colorset,
-            ylim = (0, maximum(arcutil.utilization_maximum)),
+            ylim = (0, max(1.5, maximum(arcutil.utilization_maximum))),
         )
-        savefig("visuals/arcutil_$(config.name)_$x.pdf")
-        println("Saved: visuals/arcutil_$(config.name)_$x.pdf")
+        savefig("visuals/arcutil_$(config.name)_$(x)_scaling_$(scaling_suffix).pdf")
+        println("  Saved: visuals/arcutil_$(config.name)_$(x)_scaling_$(scaling_suffix).pdf")
     end
-else
-    println("No arc data found for $(config.name)")
 end
 
 
 # =============================================================================
-# Detailed Plots waiting time
+# Detailed Plots waiting time - PER SCALING FACTOR
 # =============================================================================
-println("\n--- Queue Plots ---")
+println("\n" * "="^60)
+println("Queue Plots (per scaling factor)")
+println("="^60)
 
-data = DataFrame()
 dir = "results/queues"
 
 # Only process files for the current region
-region_queue_files = filter(f -> startswith(f, "sim_queues_$(config.name)") && endswith(f, ".csv"), readdir(dir))
-println("Found $(length(region_queue_files)) queue result files for $(config.name)")
+all_queue_files = filter(f -> startswith(f, "sim_queues_$(config.name)") && endswith(f, ".csv"), readdir(dir))
+println("Found $(length(all_queue_files)) total queue files for $(config.name)")
 
-for file in region_queue_files
-    new_data = CSV.read("$dir/$(file)", DataFrame)
-    new_data.kind .= "optimized"
-    if occursin("unbound", file)
-        new_data.kind .= "baseline"
+# Filter files by config parameters (scaling + optional plotting filters)
+queue_files = String[]
+queue_scaling_map = Dict{String, Float64}()
+
+println("Filtering files by config parameters...")
+@showprogress "Parsing queue filenames: " for file in all_queue_files
+    params = parse_file_params(file)
+    if matches_plot_filters(params, config) && params.scaling !== nothing
+        push!(queue_files, file)
+        queue_scaling_map[file] = params.scaling
     end
-    # Extract date from datetime column
-    if hasproperty(new_data, :datetime) && nrow(new_data) > 0
-        new_data.date .= string(Date(new_data.datetime[1]))
-    else
-        new_data.date .= "unknown"
-    end
-    global data = vcat(data, new_data)
 end
+println("Filtered to $(length(queue_files)) queue files matching config parameters")
 
-if nrow(data) > 0
-    queues = groupby(data, [:kind,:date,:datetime])
+# Process each scaling factor separately
+for target_scaling in sort(collect(config.scaling_factors))
+    println("\n--- Processing queues for scaling factor: $target_scaling ---")
+
+    scaling_files = filter(f -> get(queue_scaling_map, f, -1.0) == target_scaling, queue_files)
+    println("  Files for this scaling: $(length(scaling_files))")
+
+    if isempty(scaling_files)
+        println("  No queue files found for scaling $target_scaling, skipping...")
+        continue
+    end
+
+    queue_dfs = DataFrame[]
+    @showprogress "  Loading queue files (scaling=$target_scaling): " for file in scaling_files
+        new_data = CSV.read("$dir/$(file)", DataFrame)
+        new_data.kind .= occursin("unbound", file) ? "baseline" : "optimized"
+        new_data.scaling .= target_scaling
+        new_data.date .= hasproperty(new_data, :datetime) && nrow(new_data) > 0 ? string(Date(new_data.datetime[1])) : "unknown"
+        push!(queue_dfs, new_data)
+    end
+    data_scaling = isempty(queue_dfs) ? DataFrame() : reduce(vcat, queue_dfs)
+
+    if nrow(data_scaling) == 0
+        println("  No queue data loaded for scaling $target_scaling")
+        continue
+    end
+
+    queues = groupby(data_scaling, [:kind,:date,:datetime])
     queues = combine(queues, :queued => mean)
     queues.combination .= queues.date .* " " .* queues.kind
-
-    queues.changesort .= 0
-    for row in eachrow(queues)
-        row.changesort = compute_changesort(hour(row.datetime), config.closed_hours)
-    end
-    sort!(queues, :datetime)
-    sort!(queues, :changesort)
+    queues.changesort = compute_changesort.(hour.(queues.datetime), Ref(config.closed_hours))
+    sort!(queues, [:changesort, :datetime])
     queues.stringday .= string.(Time.(queues.datetime))
 
-    # Filter out closed hours using config
+    # Filter out closed hours
     closed_changesort = get_closed_changesort(config.closed_hours)
     filter!(row -> !(row.changesort in closed_changesort), queues)
 
-    # Dynamic styles based on combinations
-    n_combinations = length(unique(queues.combination))
-    comb_linestyles = repeat(PLOT_LINESTYLES, ceil(Int, n_combinations / length(PLOT_LINESTYLES)))[1:n_combinations]
-    comb_colors = repeat(PLOT_COLORS, ceil(Int, n_combinations / length(PLOT_COLORS)))[1:n_combinations]
+    if nrow(queues) == 0
+        println("  No queue data after filtering for scaling $target_scaling")
+        continue
+    end
+
+    # Dynamic styles
+    local unique_dates = sort(unique(queues.date))
+    local unique_combinations = sort(unique(queues.combination))
+
+    local comb_colors = Symbol[]
+    local comb_linestyles = Symbol[]
+    for comb in unique_combinations
+        local day_idx = findfirst(d -> occursin(d, comb), unique_dates)
+        day_idx = day_idx === nothing ? 1 : day_idx
+        push!(comb_colors, day_colors[mod1(day_idx, length(day_colors))])
+        if occursin("baseline", comb)
+            push!(comb_linestyles, :solid)
+        else
+            push!(comb_linestyles, :dot)
+        end
+    end
+
+    local scaling_label = target_scaling == 1.0 ? "observed" : "+$(round(Int, (target_scaling - 1) * 100))%"
+    local scaling_suffix = replace(string(target_scaling), "." => "_")
 
     @df queues plot(
         :stringday,
@@ -440,18 +619,17 @@ if nrow(data) > 0
         margin=5mm,
         fontfamily="Computer Modern",
         color=permutedims(comb_colors),
-        legend = :topright,
+        legend = :topleft,
     )
-    savefig("visuals/queues_$(config.name).pdf")
-    println("Saved: visuals/queues_$(config.name).pdf")
+    savefig("visuals/queues_$(config.name)_scaling_$(scaling_suffix).pdf")
+    println("  Saved: visuals/queues_$(config.name)_scaling_$(scaling_suffix).pdf")
 
     # Per-day queue plots
-    for (idx, x) in enumerate(unique(queues.date))
+    for (idx, x) in enumerate(unique_dates)
         day = filter(row -> row.date == x, queues)
-        colorset = PLOT_COLORS[mod1(idx, length(PLOT_COLORS))]
+        colorset = day_colors[mod1(idx, length(day_colors))]
 
-        n_kinds = length(unique(day.kind))
-        kind_linestyles = repeat([:solid, :dash], ceil(Int, n_kinds / 2))[1:n_kinds]
+        kind_linestyles = [k == "baseline" ? :solid : :dot for k in sort(unique(day.kind))]
 
         @df day plot(
             :stringday,
@@ -466,13 +644,13 @@ if nrow(data) > 0
             margin=5mm,
             fontfamily="Computer Modern",
             color=colorset,
-            legend = :topright,
+            legend = :topleft,
         )
-        savefig("visuals/queues_$(config.name)_$x.pdf")
-        println("Saved: visuals/queues_$(config.name)_$x.pdf")
+        savefig("visuals/queues_$(config.name)_$(x)_scaling_$(scaling_suffix).pdf")
+        println("  Saved: visuals/queues_$(config.name)_$(x)_scaling_$(scaling_suffix).pdf")
     end
-else
-    println("No queue data found for $(config.name)")
 end
 
-println("\n=== Analysis complete for $(config.display_name) ===")
+println("\n" * "="^60)
+println("Analysis complete for $(config.display_name)")
+println("="^60)

@@ -1,0 +1,47 @@
+\begin{table}[H]
+\caption{Impact of the period length $m$ and the past periods $\bar{s}$}
+\label{tab:past_length_period}
+\begin{threeparttable}
+\begin{tabular}{rrrrrrrr}
+\hline
+\multicolumn{1}{l}{$m$} &
+  $\bar{s}$ &
+  $MAC>c_e$ &
+  Util.$^a$ (max) &
+  Util.$^a$ (mean) &
+  Queue$^b$ &
+  Moved$^c$ \\ \hline
+15 & 1 & 172.7 & 117.1 \% & 29.3 \% & 3994 & 78.1 \% \\
+ & 2 & 116.4 & 111.7 \% & 29.0 \% & 4087 & 77.2 \% \\
+ & 3 & 97.6 & 110.6 \% & 28.8 \% & 4142 & 76.8 \% \\
+ & 4 & 85.6 & 107.6 \% & 28.7 \% & 4189 & 76.3 \% \\
+ & 5 & 78.7 & 106.8 \% & 28.6 \% & 4218 & 76.0 \% \\
+ & 6 & 75.5 & 105.3 \% & 28.5 \% & 4247 & 75.7 \% \\
+30 & 1 & 128.0 & 108.3 \% & 29.1 \% & 3921 & 78.3 \% \\
+ & 2 & 87.4 & 106.8 \% & 28.8 \% & 4015 & 77.4 \% \\
+ & 3 & 69.2 & 102.4 \% & 28.6 \% & 4067 & 76.9 \% \\
+ & 4 & 66.2 & 102.1 \% & 28.5 \% & 4102 & 76.5 \% \\
+ & 5 & 61.9 & 100.3 \% & 28.4 \% & 4130 & 76.2 \% \\
+ & 6 & 59.7 & 100.8 \% & 28.3 \% & 4146 & 75.9 \% \\
+45 & 1 & 108.0 & 106.6 \% & 29.0 \% & 4080 & 80.0 \% \\
+ & 2 & 79.1 & 103.4 \% & 28.7 \% & 4176 & 79.1 \% \\
+ & 3 & 66.1 & 101.8 \% & 28.5 \% & 4227 & 78.5 \% \\
+ & 4 & 61.3 & 101.9 \% & 28.4 \% & 4257 & 78.1 \% \\
+ & 5 & 59.3 & 101.3 \% & 28.2 \% & 4279 & 77.7 \% \\
+ & 6 & 56.9 & 100.2 \% & 28.1 \% & 4300 & 77.3 \% \\
+60 & 1 & 100.7 & 101.9 \% & 29.1 \% & 3866 & 78.2 \% \\
+ & 2 & 61.1 & 99.7 \% & 28.8 \% & 3941 & 77.4 \% \\
+ & 3 & 57.4 & 98.7 \% & 28.6 \% & 3979 & 77.0 \% \\
+ & 4 & 53.8 & 98.3 \% & 28.4 \% & 4003 & 76.5 \% \\
+ & 5 & 52.1 & 98.1 \% & 28.3 \% & 4020 & 76.1 \% \\
+ & 6 & 52.9 & 97.1 \% & 28.2 \% & 4031 & 75.8 \% \\
+\hline
+\multicolumn{2}{l}{Baseline} & \multicolumn{1}{r}{8628.1} & \multicolumn{1}{r}{248.9 \%} & \multicolumn{1}{r}{37.0 \%} & \multicolumn{1}{r}{0} & \multicolumn{1}{r}{100.0 \%} \\ \hline
+\end{tabular}
+\begin{tablenotes}
+\small
+\item Mean of the aggregated results over all scenarios, including the variation of the entry restrictions $c_{o}^{min}$ and $c_{o}^{max}$ and allowed arc utilization $\alpha$. $^a$Arc utilization measured across all arcs based on the individual arc capacities in the graph. $^b$Mean queue length across all URT stations and minutes of the simulation. $^c$Share of people in queue transported with the URT system compared against the baseline scenario in the last row with a transport demand of 1686476 passengers.
+
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
