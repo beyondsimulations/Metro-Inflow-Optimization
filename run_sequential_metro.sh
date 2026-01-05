@@ -40,7 +40,7 @@ MINUTES_VALUES=(60 40 20)
 
 # Run mode: "bound" for optimized runs, "unbound" for baseline (no optimization)
 # Set to "unbound" to generate baseline data for comparison
-RUN_MODE="unbound"  # Options: "bound", "unbound"
+RUN_MODE="bound"  # Options: "bound", "unbound"
 
 # =============================================================================
 
