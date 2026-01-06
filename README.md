@@ -114,10 +114,3 @@ Results are saved with region prefix:
 ## License
 
 This project is licensed under the MIT License.
-
-## Citation
-
-If you use this code, please cite our upcoming research paper on metro inflow optimization.
-
-For the Shanghai OD data, please cite:
-> https://www.nature.com/articles/s41597-025-05416-8

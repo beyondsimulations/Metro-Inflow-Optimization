@@ -18,29 +18,44 @@ CONFIG="config/shanghai.toml"
 # Number of threads for Julia (use "auto" for automatic detection)
 JULIA_THREADS="auto"
 
-# Define multiple time periods to analyze
-# Each element should be in format "start_time,end_time"
-# Doha dates:
-#TIME_PERIODS=(
-#     "2022-11-27T05:00:00.00,2022-11-28T04:59:00.00"
-#     "2022-11-28T05:00:00.00,2022-11-29T04:59:00.00"
-#     "2022-11-29T05:00:00.00,2022-11-30T04:59:00.00"
-#)
-# Shanghai dates (after running transform_od.jl):
-TIME_PERIODS=(
-    "2017-05-15T05:00:00.00,2017-05-16T04:59:00.00"
-    "2017-05-16T05:00:00.00,2017-05-17T04:59:00.00"
-    "2017-05-17T05:00:00.00,2017-05-18T04:59:00.00"
-)
+# Read analysis dates from TOML config and convert to time periods
+# Each date becomes a 24-hour period: YYYY-MM-DDT05:00:00 to next day T04:59:00
+echo "Reading dates from $CONFIG..."
+DATES=($(grep 'analysis_dates' "$CONFIG" | sed 's/.*\[\(.*\)\].*/\1/' | tr -d '"' | tr ',' ' '))
 
-# Array of minutes_in_period values to test (you can modify this list)
-# For Doha (15-min intervals): use multiples of 15
-# For Shanghai (10-min intervals): use multiples of 10
-MINUTES_VALUES=(60)
+if [ ${#DATES[@]} -eq 0 ]; then
+    echo "Error: No analysis_dates found in $CONFIG"
+    exit 1
+fi
+
+# Convert dates to time periods (05:00 to 04:59 next day)
+TIME_PERIODS=()
+for date in "${DATES[@]}"; do
+    # Calculate next day (macOS and Linux compatible)
+    next_day=$(date -j -v+1d -f "%Y-%m-%d" "$date" "+%Y-%m-%d" 2>/dev/null || date -d "$date + 1 day" "+%Y-%m-%d")
+    TIME_PERIODS+=("${date}T05:00:00.00,${next_day}T04:59:00.00")
+done
+
+# Read minutes_in_period values from TOML config
+INTERVAL=$(grep '^interval_minutes' "$CONFIG" | sed 's/.*= *\([0-9]*\).*/\1/')
+MINUTES_VALUES=($(grep '^minutes_in_period' "$CONFIG" | sed 's/.*\[\(.*\)\].*/\1/' | tr -d ' ' | tr ',' ' '))
+
+if [ ${#MINUTES_VALUES[@]} -eq 0 ]; then
+    echo "Error: No minutes_in_period found in $CONFIG"
+    exit 1
+fi
+
+# Verify all values are divisible by interval_minutes
+for minutes in "${MINUTES_VALUES[@]}"; do
+    if [ $((minutes % INTERVAL)) -ne 0 ]; then
+        echo "Error: minutes_in_period value $minutes is not divisible by interval_minutes ($INTERVAL)"
+        exit 1
+    fi
+done
 
 # Run mode: "bound" for optimized runs, "unbound" for baseline (no optimization)
 # Set to "unbound" to generate baseline data for comparison
-RUN_MODE="unbound"  # Options: "bound", "unbound"
+RUN_MODE="bound"  # Options: "bound", "unbound"
 
 # =============================================================================
 

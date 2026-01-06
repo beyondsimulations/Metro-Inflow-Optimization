@@ -14,6 +14,7 @@ od_file_pattern = "OD_{date}.csv"
 interval_minutes = 15           # Doha data has 15-minute resolution
 closed_hours = [3, 4, 5]        # Metro closed during these hours
 date_format = "yyyy-mm-dd"
+analysis_dates = ["2022-11-27", "2022-11-28", "2022-11-29"]  # FIFA World Cup match days
 
 [optimization]
 # Parameter ranges for grid search
@@ -25,9 +26,7 @@ past_periods = [1, 2, 3, 4, 5, 6]            # s̄: number of past periods
 kind_opt = ["linweight"]       # optimization objective types
 kind_queue = ["lag_periods"]  # queue handling methods
 
-# Reference only - not used by metro_framework_parallel.jl
-# The actual minutes_in_period is passed as CLI argument (see run_sequential_metro.sh)
-minutes_in_period = [15, 30, 45, 60]         # m: optimization period lengths (documentation only)
+minutes_in_period = [15, 30, 45, 60]         # m: optimization period lengths (must be divisible by interval_minutes)
 
 [plotting]
 # Specific parameters for paper figures (filters arc utilization and queue plots)

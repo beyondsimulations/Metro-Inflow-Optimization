@@ -11,6 +11,9 @@ using Dates
     RegionConfig
 
 Holds all region-specific configuration settings loaded from a TOML file.
+
+Fields include region identification, file paths, time settings (including analysis_dates
+for specifying which dates to process), optimization parameters, and plotting filters.
 """
 struct RegionConfig
     # Region identification
@@ -27,6 +30,7 @@ struct RegionConfig
     interval_minutes::Int
     closed_hours::Vector{Int}
     date_format::String
+    analysis_dates::Vector{Date}
 
     # Optimization parameters
     safety_factors::Vector{Float64}
@@ -81,6 +85,12 @@ function load_config(config_path::String)::RegionConfig
     base_interval = time["interval_minutes"]
     default_minutes = [base_interval * i for i in 1:4 if base_interval * i <= 60]
 
+    # Parse analysis dates
+    date_fmt = DateFormat(time["date_format"])
+    analysis_dates = haskey(time, "analysis_dates") ?
+        [Date(d, date_fmt) for d in time["analysis_dates"]] :
+        Date[]
+
     # Helper to get optional plotting parameter
     get_optional(d, key, T) = haskey(d, key) ? convert(T, d[key]) : nothing
 
@@ -97,6 +107,7 @@ function load_config(config_path::String)::RegionConfig
         time["interval_minutes"],
         convert(Vector{Int}, time["closed_hours"]),
         time["date_format"],
+        analysis_dates,
         # Optimization (with defaults)
         convert(Vector{Float64}, get(opt, "safety_factors", [0.9])),
         convert(Vector{Int}, get(opt, "min_enter", [0])),

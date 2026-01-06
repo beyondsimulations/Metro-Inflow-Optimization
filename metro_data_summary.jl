@@ -1,3 +1,26 @@
+# =============================================================================
+# Metro Data Summary and Visualization
+# =============================================================================
+#
+# Purpose:
+#   Generates publication-quality figures for metro optimization results.
+#   Produces arc utilization plots, queue visualizations, and transport demand
+#   analysis for both Doha and Shanghai metro systems.
+#
+# Usage:
+#   julia --project=metroflow metro_data_summary.jl [--config PATH]
+#
+# Options:
+#   --config PATH     Path to region configuration file (default: processes all)
+#
+# Output:
+#   - PDF figures in visuals/ directory
+#   - Arc utilization heatmaps
+#   - Queue length time series
+#   - Transport demand distributions
+#
+# =============================================================================
+
 # load packages
 using Pkg
 Pkg.activate("metroflow")

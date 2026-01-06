@@ -41,7 +41,6 @@ function build_optimization_model(modelInstance)
     return im, X
 end
 
-# Function to build the restricted optimization model that only consideres a slice of the overall periods
 """
     build_restricted_optimization_model(modelInstance, current_period, queue_period_age, inflow_raw)
 

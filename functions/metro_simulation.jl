@@ -46,7 +46,7 @@ function create_entry_list!(im, real_allowed_entry, queues)
 end
 
 """
-    simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kind_sim, queue_period_age, infeasible_solutions, config)
+    simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kind_sim, queue_period_age, infeasible_solutions, config; verbose=false)
 
 Purpose: Simulates passenger flow through the metro network given entry constraints and demand patterns.
 Details: Performs a minute-by-minute simulation that:
@@ -66,19 +66,22 @@ The function also:
 - Calculates performance metrics (queue lengths, utilization rates, etc.)
 - Logs detailed statistics to CSV files for further analysis
 
+Arguments:
+- verbose: If true, print demand verification details (default: false)
+
 Returns: Two DataFrames with simulation results - station queue information and arc utilization data
 """
-function simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kind_sim, queue_period_age, infeasible_solutions, config)
+function simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kind_sim, queue_period_age, infeasible_solutions, config; verbose::Bool=false)
     real_arc_use = zeros(Float64, im.nr_minutes, im.nr_arcs)
     real_queue_use = zeros(Float64, im.nr_minutes, im.nr_nodes)
     real_od_queue = zeros(Float64, im.nr_minutes, im.nr_nodes, im.nr_nodes)
 
     exceeded = Vector{String}
 
-    ## load all queues into a tensor
+    # Load all queues into a tensor
     create_od_queue!(im, real_od_queue, config)
 
-    ## create the list that saves the number of allowed people
+    # Create the list that saves the number of allowed people
     real_allowed_entry = zeros(Float64, im.nr_minutes, im.nr_nodes)
     create_entry_list!(im, real_allowed_entry, queues)
 
@@ -91,19 +94,21 @@ function simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kin
     opt_total_allowed = sum(queues.allowed) * im.minutes_in_period  # allowed is per-minute rate
     sim_total_allowed = sum(real_allowed_entry)  # Already minute-level
 
-    println("\n=== Demand & Capacity Verification ===")
-    println("  Optimization total demand:  $(round(Int, opt_total_demand))")
-    println("  Simulation total demand:    $(round(Int, sim_total_demand))")
-    println("  Demand difference:          $(round(demand_diff_pct, digits=2))%")
-    println("  ---")
-    println("  Opt total allowed entries:  $(round(Int, opt_total_allowed))")
-    println("  Sim total allowed entries:  $(round(Int, sim_total_allowed))")
-    println("  Expected end queue (opt):   $(round(Int, max(0, opt_total_demand - opt_total_allowed)))")
-    println("  Expected end queue (sim):   $(round(Int, max(0, sim_total_demand - sim_total_allowed)))")
-    if demand_diff_pct > 0.1
-        println("  WARNING: Demand sources differ! This will cause queue mismatch.")
+    if verbose
+        println("\n=== Demand & Capacity Verification ===")
+        println("  Optimization total demand:  $(round(Int, opt_total_demand))")
+        println("  Simulation total demand:    $(round(Int, sim_total_demand))")
+        println("  Demand difference:          $(round(demand_diff_pct, digits=2))%")
+        println("  ---")
+        println("  Opt total allowed entries:  $(round(Int, opt_total_allowed))")
+        println("  Sim total allowed entries:  $(round(Int, sim_total_allowed))")
+        println("  Expected end queue (opt):   $(round(Int, max(0, opt_total_demand - opt_total_allowed)))")
+        println("  Expected end queue (sim):   $(round(Int, max(0, sim_total_demand - sim_total_allowed)))")
+        if demand_diff_pct > 0.1
+            println("  WARNING: Demand sources differ! This will cause queue mismatch.")
+        end
+        println("======================================\n")
     end
-    println("======================================\n")
 
     stats = DataFrame(
         minute=Int64[],
@@ -112,7 +117,7 @@ function simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kin
         moved_demand=Float64[],
     )
 
-    ## start the flow through the network
+    # Start the flow through the network
     println("Simulating passenger flow...")
     split_flow = zeros(Float64, im.nr_nodes)  # Preallocate once
     n_minutes = size(real_arc_use, 1)
@@ -150,7 +155,7 @@ function simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kin
 
         for origin in eachindex(nodes)
 
-            ## determine the number of people allowed to enter in the minute at station
+            # Determine the number of people allowed to enter in the minute at station
             queue_sum = @views sum(real_od_queue[earliest_nonempty[origin]:minute, origin, :])
 
             # Skip origins with no passengers waiting
@@ -167,7 +172,7 @@ function simulate_metro(im, queues, opt_duration, build_duration, grapharcs, kin
                 moved_minute = queue_sum
             end
 
-            ## dispatch the ratio according to each destination
+            # Dispatch the ratio according to each destination
             if moved_minute > 0
                 for queue_minute in earliest_nonempty[origin]:minute
                     queue_length = @views sum(real_od_queue[queue_minute, origin, :])

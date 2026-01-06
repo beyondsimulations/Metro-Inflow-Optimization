@@ -1,5 +1,5 @@
 """
-    heuristic_adding_queues(im, config)
+    heuristic_adding_queues(im, config; verbose=false)
 
 Purpose: Implements a time-based heuristic to optimize passenger inflow across metro stations while managing queues.
 Details: Works period by period to:
@@ -12,14 +12,20 @@ Details: Works period by period to:
 
 The function maintains a running queue of passengers who couldn't enter in previous periods and prioritizes them in subsequent periods.
 
-Returns: Five items:
+Arguments:
+- im: Model instance containing demand data and optimization parameters
+- config: Region configuration
+- verbose: If true, print detailed debug information for each period (default: false)
+
+Returns: Six items:
 - results_queues: DataFrame of station-level statistics (allowed entries, moved passengers, queue length)
 - results_arcs: DataFrame of connection-level utilization metrics
 - optimization_duration: Time taken to solve each period's optimization model
+- build_duration: Time taken to build each period's optimization model
 - queue_period_age: Matrix tracking how long passengers have been waiting at each station
 - infeasible_solutions: Count of periods where no feasible solution was found
 """
-function heuristic_adding_queues(im, config)
+function heuristic_adding_queues(im, config; verbose::Bool=false)
     # Initialization of variables
     remaining_queue = copy(im.demand_od_in_period) # Initialize a new variable to store the remaining queue data
     inflow_raw = zeros(Float64, im.nr_nodes, im.nr_periods) .= im.min_entry_origin  # Initialize an array to store the values of the X variable
@@ -39,15 +45,19 @@ function heuristic_adding_queues(im, config)
 
     @showprogress for fix_period in 1:im.nr_periods
 
-        println()
-        println("Running period ", fix_period)
+        if verbose
+            println()
+            println("Running period ", fix_period)
+        end
         im.cum_demand_od_in_period[:, :, fix_period] .= sum(remaining_queue[:, :, 1:fix_period], dims=3)
 
         # Prepare the upper and lower bound of the observed time slice
         lower_period::Int64 = max(1, fix_period - ceil((longest_path + im.minutes_in_period) / im.minutes_in_period))
         upper_period::Int64 = min(fix_period, im.nr_periods)
 
-        println(sum(sum(remaining_queue[:, :, 1:fix_period], dims=3)))
+        if verbose
+            println(sum(sum(remaining_queue[:, :, 1:fix_period], dims=3)))
+        end
 
         for o in 1:nr_nodes
             for queue_period in 1:fix_period
@@ -58,12 +68,14 @@ function heuristic_adding_queues(im, config)
             end
         end
 
-        println("Queue Age")
-        println(queue_period_age[:, fix_period])
-        println("Queue Length")
-        println(round.(Int64, sum(im.cum_demand_od_in_period[:, :, fix_period], dims=2)))
-        println("Total Queue Length")
-        println(round.(Int64, sum(im.cum_demand_od_in_period[:, :, fix_period])))
+        if verbose
+            println("Queue Age")
+            println(queue_period_age[:, fix_period])
+            println("Queue Length")
+            println(round.(Int64, sum(im.cum_demand_od_in_period[:, :, fix_period], dims=2)))
+            println("Total Queue Length")
+            println(round.(Int64, sum(im.cum_demand_od_in_period[:, :, fix_period])))
+        end
 
         if im.closed_period[fix_period] == false
             # Only build and solve model during open periods
@@ -103,15 +115,19 @@ function heuristic_adding_queues(im, config)
             GC.gc()
         else
             # Closed period: skip model building entirely
-            println("Skipping closed period $fix_period")
+            if verbose
+                println("Skipping closed period $fix_period")
+            end
             inflow_raw[:, fix_period] .= 0
         end
 
         demand_fulfiled = inflow_raw[:, fix_period] .* im.minutes_in_period
-        println("Dispatch")
-        println(round.(demand_fulfiled))
-        println("Total Dispatch")
-        println(sum(demand_fulfiled))
+        if verbose
+            println("Dispatch")
+            println(round.(demand_fulfiled))
+            println("Total Dispatch")
+            println(sum(demand_fulfiled))
+        end
 
         for o in 1:im.nr_nodes
             for p in 1:fix_period

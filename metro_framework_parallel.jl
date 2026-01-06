@@ -1,3 +1,29 @@
+# =============================================================================
+# Metro Inflow Optimization Framework (Parallel Execution)
+# =============================================================================
+#
+# Purpose:
+#   Main entry point for running metro passenger inflow optimization experiments.
+#   Executes parameter sweeps across safety factors, entry restrictions, and
+#   time period configurations for both baseline (unbound) and optimized scenarios.
+#
+# Usage:
+#   julia --project=metroflow metro_framework_parallel.jl [OPTIONS]
+#
+# Options:
+#   --config PATH     Path to region configuration file (default: config/doha.toml)
+#   --start DATE      Start date in YYYY-MM-DD format
+#   --end DATE        End date in YYYY-MM-DD format
+#   --period MINUTES  Optimization period length in minutes
+#   --mode MODE       Execution mode: "all", "bound", or "unbound"
+#   --help            Show help message
+#
+# Output:
+#   - CSV logfiles in results_paper/ directory with simulation metrics
+#   - Console progress updates during execution
+#
+# =============================================================================
+
 # load packages
 using Pkg
 Pkg.activate("metroflow")
@@ -245,7 +271,7 @@ if unbound_mode
     for scaling in set_scaling
         global combination_count += 1
 
-        println("/n[$combination_count/$total_combinations] UNBOUND: scaling=$scaling")
+        println("\n[$combination_count/$total_combinations] UNBOUND: scaling=$scaling")
         println(log_file, "[$combination_count/$total_combinations] Processing: scaling=$scaling (unbound baseline)")
         flush(log_file)
 
@@ -310,10 +336,6 @@ if unbound_mode
             sim_queues, sim_arcs = simulate_metro(modelInstance, queues, opt_duration, build_duration, grapharcs, kind_sim, queue_period_age, infeasible_solutions, config)
 
             println(log_file, "  ✓ Completed successfully")
-
-            # Generate visualization GIFs (uncomment to enable - adds ~15min per run)
-            # println("Generating visualization GIFs...")
-            # plot_simulation!(sim_queues, sim_arcs, kind_sim, config, kind_opt, kind_queue, minutes_in_period, past_minutes, start_time, safety, max_enter, nodes)
 
         catch e
             println("Error in unbound scenario $combination_count: $e")
@@ -388,11 +410,6 @@ else
 
                                     # You can add specific result saving here if needed
                                     println(log_file, "  ✓ Completed successfully")
-
-                                    # Generate visualization GIFs (uncomment to enable - adds ~15min per run)
-                                    # println("Generating visualization GIFs...")
-                                    # plot_optimization!(arcs, config, kind_opt, kind_queue, minutes_in_period, past_minutes, start_time, safety)
-                                    # plot_simulation!(sim_queues, sim_arcs, kind_sim, config, kind_opt, kind_queue, minutes_in_period, past_minutes, start_time, safety, max_enter, nodes)
 
                                 catch e
                                     println("Error in combination $combination_count: $e")
